@@ -3,6 +3,8 @@ package su.nightexpress.nexshop.shop.virtual.impl;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
+import su.nexmedia.engine.api.item.PluginItem;
+import su.nexmedia.engine.api.item.PluginItemRegistry;
 import su.nightexpress.nexshop.Placeholders;
 import su.nightexpress.nexshop.ShopAPI;
 import su.nightexpress.nexshop.api.IScheduled;
@@ -85,9 +87,13 @@ public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, V
             cfg.saveChanges();
         }
 
-
+        //
 
         ItemStack preview = cfg.getItemEncoded(path + ".Shop_View.Preview");
+        // Start - Integrations with custom items from external plugins
+        PluginItem<?> pluginItem1 = PluginItemRegistry.fromItemStack(preview);
+        if (pluginItem1 != null) preview = pluginItem1.createItemStack();
+        // End
         if (preview == null || preview.getType().isAir()) {
             throw new IllegalStateException("Invalid preview item!");
         }
@@ -102,7 +108,13 @@ public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, V
         product.setPage(cfg.getInt(path + ".Shop_View.Page", -1));
         product.setDiscountAllowed(cfg.getBoolean(path + ".Discount.Allowed"));
         product.setItemMetaEnabled(cfg.getBoolean(path + ".Item_Meta_Enabled"));
-        product.setItem(cfg.getItemEncoded(path + ".Reward.Item"));
+
+        ItemStack real = cfg.getItemEncoded(path + ".Reward.Item");
+        // Start - integrations with custom items from external plugins
+        PluginItem<?> pluginItem2 = PluginItemRegistry.fromItemStack(preview);
+        if (pluginItem2 != null) real = pluginItem2.createItemStack();
+        // End
+        product.setItem(real);
         product.setCommands(cfg.getStringList(path + ".Reward.Commands"));
 
         PriceType priceType = cfg.getEnum(path + ".Price.Type", PriceType.class, PriceType.FLAT);
