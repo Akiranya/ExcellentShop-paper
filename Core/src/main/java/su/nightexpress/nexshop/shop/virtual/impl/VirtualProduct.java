@@ -61,8 +61,7 @@ public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, V
                 pricer.setTimes(IScheduled.parseTimesOld(cfg.getStringList(path + ".Purchase.Randomizer.Times.Times")));
                 cfg.addMissing(path + ".Price.Type", pricer.getType().name());
                 pricer.write(cfg, path + ".Price");
-            }
-            else {
+            } else {
                 FlatProductPricer pricer = new FlatProductPricer();
                 pricer.setPrice(TradeType.BUY, buyMin);
                 pricer.setPrice(TradeType.SELL, sellMin);
@@ -195,6 +194,16 @@ public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, V
     @Override
     public boolean isEmpty() {
         return super.isEmpty() && !this.hasCommands();
+    }
+
+    @Override
+    public boolean isItemMatches(@NotNull ItemStack item) {
+        if (this.getPluginItemOrNull() != null) {
+            // If PluginItem is set for the real item,
+            // we match items using PluginItem#matches()
+            return this.getPluginItemOrNull().matches(item);
+        }
+        return super.isItemMatches(item);
     }
 
     public int getSlot() {
