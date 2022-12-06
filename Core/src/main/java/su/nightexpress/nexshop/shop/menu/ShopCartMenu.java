@@ -103,12 +103,11 @@ public class ShopCartMenu extends AbstractMenu<ExcellentShop> {
                                 if (shop instanceof ChestShop shopChest) {
                                     int chestSpace = product.getStock().getLeftAmount(TradeType.SELL);
                                     if (chestSpace >= 0) capacitySpace = chestSpace;
-
                                     //shopBalance = shopChest.getBank().getBalance(product.getCurrency());
                                 }
                                 // Allow to sell no more than player have in inventory.
                                 if (tradeType == TradeType.SELL) {
-                                    int userHas = PlayerUtil.countItem(player, item);
+                                    int userHas = product.countItem(player);
                                     capacityCart = Math.min(capacityCart, userHas);
                                 }
                             }
