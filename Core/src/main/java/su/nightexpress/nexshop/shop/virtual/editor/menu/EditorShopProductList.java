@@ -7,6 +7,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import su.nexmedia.engine.api.item.PluginItem;
+import su.nexmedia.engine.api.item.PluginItemRegistry;
 import su.nexmedia.engine.api.menu.IMenuClick;
 import su.nexmedia.engine.api.menu.IMenuItem;
 import su.nexmedia.engine.api.menu.MenuItem;
@@ -164,6 +166,11 @@ public class EditorShopProductList extends EditorProductList<VirtualShop> {
             if (shopProduct == null) {
                 shopProduct = new VirtualProduct(VirtualShopModule.defaultCurrency, cursor);
                 shopProduct.setItem(cursor);
+                // Start - Integrations with custom items from external plugins
+                PluginItem<?> pluginItem = PluginItemRegistry.fromItemStackNullable(cursor);
+                shopProduct.setPluginItem(pluginItem);
+                shopProduct.setPreviewPluginItem(pluginItem);
+                // End
                 shopProduct.setPricer(new FlatProductPricer());
                 shopProduct.setStock(new VirtualProductStock());
             }
