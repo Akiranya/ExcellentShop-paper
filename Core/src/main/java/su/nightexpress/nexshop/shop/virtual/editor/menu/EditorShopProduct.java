@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.editor.EditorButtonType;
 import su.nexmedia.engine.api.editor.EditorInput;
+import su.nexmedia.engine.api.item.PluginItemRegistry;
 import su.nexmedia.engine.api.menu.IMenuClick;
 import su.nexmedia.engine.api.menu.IMenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
@@ -130,6 +131,9 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
 
                         ItemStack cursor = e.getCursor();
                         if (cursor != null && !cursor.getType().isAir()) {
+                            // Start - integrations with custom items from external plugins
+                            product.setPluginItem(PluginItemRegistry.fromItemStackNullable(cursor));
+                            // End
                             product.setItem(cursor);
                             e.getView().setCursor(null);
                         }
@@ -144,9 +148,12 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
                             return;
                         }
 
-                        ItemStack item = e.getCursor();
-                        if (item != null && !item.getType().isAir()) {
-                            product.setPreview(item);
+                        ItemStack cursor = e.getCursor();
+                        if (cursor != null && !cursor.getType().isAir()) {
+                            // Start - integrations with custom items from external plugins
+                            product.setPreviewPluginItem(PluginItemRegistry.fromItemStackNullable(cursor));
+                            // End
+                            product.setPreview(cursor);
                             e.getView().setCursor(null);
                         }
                     }

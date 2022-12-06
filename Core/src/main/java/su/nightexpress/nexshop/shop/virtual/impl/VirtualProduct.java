@@ -87,12 +87,18 @@ public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, V
             cfg.saveChanges();
         }
 
-        //
+        // Start - Integrations with custom items from external plugins
+        PluginItem<?> pluginItemPreview = null;
+        PluginItem<?> pluginItemReal = null;
+        // End
 
         ItemStack preview = cfg.getItemEncoded(path + ".Shop_View.Preview");
         // Start - Integrations with custom items from external plugins
-        PluginItem<?> pluginItem1 = PluginItemRegistry.fromItemStack(preview);
-        if (pluginItem1 != null) preview = pluginItem1.createItemStack();
+        String reference1 = cfg.getString(path + ".Shop_View.PluginItem");
+        if (PluginItemRegistry.isPluginItemId(reference1)) {
+            pluginItemPreview = PluginItemRegistry.fromConfig(reference1);
+            preview = pluginItemPreview.createItemStack();
+        }
         // End
         if (preview == null || preview.getType().isAir()) {
             throw new IllegalStateException("Invalid preview item!");
@@ -111,8 +117,11 @@ public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, V
 
         ItemStack real = cfg.getItemEncoded(path + ".Reward.Item");
         // Start - integrations with custom items from external plugins
-        PluginItem<?> pluginItem2 = PluginItemRegistry.fromItemStack(preview);
-        if (pluginItem2 != null) real = pluginItem2.createItemStack();
+        String reference2 = cfg.getString(path + ".Reward.PluginItem");
+        if (PluginItemRegistry.isPluginItemId(reference2)) {
+            pluginItemReal = PluginItemRegistry.fromConfig(reference2);
+            real = pluginItemReal.createItemStack();
+        }
         // End
         product.setItem(real);
         product.setCommands(cfg.getStringList(path + ".Reward.Commands"));
@@ -120,6 +129,10 @@ public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, V
         PriceType priceType = cfg.getEnum(path + ".Price.Type", PriceType.class, PriceType.FLAT);
         product.setPricer(ProductPricer.read(priceType, cfg, path + ".Price"));
         product.setStock(VirtualProductStock.read(cfg, path + ".Stock"));
+        // Start - integrations with custom items from external plugins
+        product.setPreviewPluginItem(pluginItemPreview);
+        product.setPluginItem(pluginItemReal);
+        // End
         return product;
     }
 
@@ -137,6 +150,10 @@ public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, V
         cfg.set(path + ".Price", pricer);
         cfg.setItemEncoded(path + ".Reward.Item", this.getItem());
         cfg.set(path + ".Reward.Commands", this.getCommands());
+        // Start - integrations with custom items from external plugins
+        cfg.set(path + ".Shop_View.PluginItem", this.getPreviewPluginItemOrNull() != null ? this.getPreviewPluginItemOrNull().asReference() : null);
+        cfg.set(path + ".Reward.PluginItem", this.getPluginItemOrNull() != null ? this.getPluginItemOrNull().asReference() : null);
+        // End
     }
 
     @Override

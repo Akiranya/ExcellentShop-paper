@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JWriter;
+import su.nexmedia.engine.api.item.PluginItem;
 import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.api.manager.ICleanable;
 import su.nexmedia.engine.api.manager.IEditable;
@@ -34,7 +35,9 @@ public abstract class Product<
 
     protected S             shop;
     protected ItemStack     itemPreview;
+    protected PluginItem<?> itemPreviewAsPluginItem;
     protected ItemStack     itemReal;
+    protected PluginItem<?> itemRealAsPluginItem;
     protected ICurrency     currency;
     protected ProductPricer pricer;
     protected T             stock;
@@ -287,6 +290,14 @@ public abstract class Product<
         this.itemPreview = new ItemStack(preview);
     }
 
+    public @Nullable PluginItem<?> getPreviewPluginItemOrNull() {
+        return itemPreviewAsPluginItem;
+    }
+
+    public void setPreviewPluginItem(@Nullable PluginItem<?> pluginItem) {
+        this.itemPreviewAsPluginItem = pluginItem;
+    }
+
     @NotNull
     public ItemStack getItem() {
         return new ItemStack(this.itemReal);
@@ -295,6 +306,14 @@ public abstract class Product<
     public void setItem(@Nullable ItemStack item) {
         this.itemReal = item == null ? new ItemStack(Material.AIR) : new ItemStack(item);
         this.itemReal.setAmount(1);
+    }
+
+    public @Nullable PluginItem<?> getPluginItemOrNull() {
+        return itemRealAsPluginItem;
+    }
+
+    public void setPluginItem(@Nullable PluginItem<?> pluginItem) {
+        this.itemRealAsPluginItem = pluginItem;
     }
 
     public boolean hasItem() {
