@@ -139,6 +139,7 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
                         }
                         else if (e.isRightClick()) {
                             product.setItem(new ItemStack(Material.AIR));
+                            product.setPluginItem(null);
                         }
                     }
                     case PRODUCT_CHANGE_PREVIEW -> {
