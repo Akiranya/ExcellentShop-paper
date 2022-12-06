@@ -33,7 +33,7 @@ public abstract class Product<
     protected final String id;
 
     protected S             shop;
-    protected ItemStack     itemPreivew;
+    protected ItemStack     itemPreview;
     protected ItemStack     itemReal;
     protected ICurrency     currency;
     protected ProductPricer pricer;
@@ -280,11 +280,11 @@ public abstract class Product<
 
     @NotNull
     public ItemStack getPreview() {
-        return new ItemStack(this.itemPreivew);
+        return new ItemStack(this.itemPreview);
     }
 
     public void setPreview(@NotNull ItemStack preview) {
-        this.itemPreivew = new ItemStack(preview);
+        this.itemPreview = new ItemStack(preview);
     }
 
     @NotNull
