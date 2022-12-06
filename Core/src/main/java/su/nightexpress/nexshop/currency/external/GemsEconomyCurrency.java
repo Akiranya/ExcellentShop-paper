@@ -39,26 +39,44 @@ public class GemsEconomyCurrency extends AbstractCurrency implements MultiCurren
 
     @Override
     public double getBalance(@NotNull Player player) {
-        Currency gemsCurrency = GemsEconomy.inst().getCurrencyManager().getCurrency(identifier);
-        return GemsEconomy.getAPI().pullAccount(player.getUniqueId()).getBalance(gemsCurrency);
+        Currency gemsCurrency = GemsEconomy.inst().getCurrencyManager().getCurrency(this.identifier);
+        Account account = GemsEconomy.inst().getAccountManager().getAccount(player);
+        validateCurrency(gemsCurrency);
+        validateAccount(account, player);
+        return account.getBalance(gemsCurrency);
     }
 
     @Override
     public void give(@NotNull Player player, double amount) {
-        Currency gemsCurrency = GemsEconomy.inst().getCurrencyManager().getCurrency(identifier);
-        Account account = GemsEconomy.getAPI().pullAccount(player.getUniqueId());
-        if (account != null) {
-            account.deposit(gemsCurrency, amount);
-        } else throw new IllegalStateException("Cannot find GemsEconomy account for player: " + player.getName());
+        Currency gemsCurrency = GemsEconomy.inst().getCurrencyManager().getCurrency(this.identifier);
+        Account account = GemsEconomy.inst().getAccountManager().getAccount(player);
+        validateCurrency(gemsCurrency);
+        validateAccount(account, player);
+        account.deposit(gemsCurrency, amount);
     }
 
     @Override
     public void take(@NotNull Player player, double amount) {
-        Currency gemsCurrency = GemsEconomy.inst().getCurrencyManager().getCurrency(identifier);
-        Account account = GemsEconomy.getAPI().pullAccount(player.getUniqueId());
-        if (account != null) {
-            account.withdraw(gemsCurrency, amount);
-        } else throw new IllegalStateException("Cannot find GemsEconomy account for player: " + player.getName());
+        Currency gemsCurrency = GemsEconomy.inst().getCurrencyManager().getCurrency(this.identifier);
+        Account account = GemsEconomy.inst().getAccountManager().getAccount(player);
+        validateCurrency(gemsCurrency);
+        validateAccount(account, player);
+        account.withdraw(gemsCurrency, amount);
+    }
+
+    private <T> void validateAccount(T account, Player player) {
+        if (account == null) {
+            throw new IllegalStateException("Cannot find GemsEconomy account for player: " + player.getName());
+        }
+    }
+
+    private <T> void validateCurrency(T currency) {
+        if (currency == null) {
+            throw new IllegalStateException("Cannot find GemsEconomy currency: " + this.identifier + ". "
+                                            + "You may have deleted a currency from the GemsEconomy database? "
+                                            + "Try to run command `/excellentshop reload` to load the "
+                                            + "currencies from GemsEconomy again.");
+        }
     }
 
 }
