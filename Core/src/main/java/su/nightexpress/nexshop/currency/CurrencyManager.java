@@ -18,12 +18,7 @@ import su.nightexpress.nexshop.currency.internal.ExpCurrency;
 import su.nightexpress.nexshop.currency.internal.ItemCurrency;
 import su.nightexpress.nexshop.hooks.HookId;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class CurrencyManager extends AbstractManager<ExcellentShop> {
 
@@ -37,7 +32,7 @@ public class CurrencyManager extends AbstractManager<ExcellentShop> {
     }
 
     @Override
-    public void onLoad() {
+    protected void onLoad() {
         this.currencyMap = new HashMap<>();
         this.plugin.getConfigManager().extract(DIR_DEFAULT);
         this.plugin.getConfigManager().extract(DIR_CUSTOM);
@@ -98,7 +93,7 @@ public class CurrencyManager extends AbstractManager<ExcellentShop> {
     }
 
     @Override
-    public void onShutdown() {
+    protected void onShutdown() {
         if (this.currencyMap != null) {
             this.currencyMap.clear();
             this.currencyMap = null;
