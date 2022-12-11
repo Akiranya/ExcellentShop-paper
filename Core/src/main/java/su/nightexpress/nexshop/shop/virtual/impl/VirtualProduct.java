@@ -95,7 +95,7 @@ public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, V
         // Start - Integrations with custom items from external plugins
         String reference1 = cfg.getString(path + ".Shop_View.PluginItem");
         if (PluginItemRegistry.isPluginItemId(reference1)) {
-            pluginItemPreview = PluginItemRegistry.fromConfig(reference1);
+            pluginItemPreview = PluginItemRegistry.fromReference(reference1);
             ItemStack pluginItemStack = pluginItemPreview.createItemStack();
             if (pluginItemStack != null) preview = pluginItemStack;
         }
@@ -119,7 +119,7 @@ public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, V
         // Start - integrations with custom items from external plugins
         String reference2 = cfg.getString(path + ".Reward.PluginItem");
         if (PluginItemRegistry.isPluginItemId(reference2)) {
-            pluginItemReal = PluginItemRegistry.fromConfig(reference2);
+            pluginItemReal = PluginItemRegistry.fromReference(reference2);
             ItemStack pluginItemStack = pluginItemReal.createItemStack();
             if (pluginItemStack != null) real = pluginItemStack;
         }

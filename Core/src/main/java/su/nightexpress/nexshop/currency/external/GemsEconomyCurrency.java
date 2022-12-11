@@ -31,7 +31,7 @@ public class GemsEconomyCurrency extends AbstractCurrency implements MultiCurren
         // we need to dynamically register an ICurrency for each currency in GemsEconomy database.
         // This also includes the dynamic creation of currency config files in ExcellentShop.
 
-        for (Currency currency : GemsEconomy.inst().getCurrencyManager().getCurrencies()) {
+        for (Currency currency : GemsEconomy.getInstance().getCurrencyManager().getCurrencies()) {
             ShopAPI.getCurrencyManager().registerCurrency(new GemsEconomyCurrency(currency.getSingular()));
         }
     }
@@ -49,8 +49,8 @@ public class GemsEconomyCurrency extends AbstractCurrency implements MultiCurren
 
     @Override
     public double getBalance(@NotNull Player player) {
-        Currency gemsCurrency = GemsEconomy.inst().getCurrencyManager().getCurrency(this.identifier);
-        Account account = GemsEconomy.inst().getAccountManager().getAccount(player);
+        Currency gemsCurrency = GemsEconomy.getInstance().getCurrencyManager().getCurrency(this.identifier);
+        Account account = GemsEconomy.getInstance().getAccountManager().getAccount(player);
         validateCurrency(gemsCurrency);
         validateAccount(account, player);
         return account.getBalance(gemsCurrency);
@@ -58,8 +58,8 @@ public class GemsEconomyCurrency extends AbstractCurrency implements MultiCurren
 
     @Override
     public void give(@NotNull Player player, double amount) {
-        Currency gemsCurrency = GemsEconomy.inst().getCurrencyManager().getCurrency(this.identifier);
-        Account account = GemsEconomy.inst().getAccountManager().getAccount(player);
+        Currency gemsCurrency = GemsEconomy.getInstance().getCurrencyManager().getCurrency(this.identifier);
+        Account account = GemsEconomy.getInstance().getAccountManager().getAccount(player);
         validateCurrency(gemsCurrency);
         validateAccount(account, player);
         account.deposit(gemsCurrency, amount);
@@ -67,8 +67,8 @@ public class GemsEconomyCurrency extends AbstractCurrency implements MultiCurren
 
     @Override
     public void take(@NotNull Player player, double amount) {
-        Currency gemsCurrency = GemsEconomy.inst().getCurrencyManager().getCurrency(this.identifier);
-        Account account = GemsEconomy.inst().getAccountManager().getAccount(player);
+        Currency gemsCurrency = GemsEconomy.getInstance().getCurrencyManager().getCurrency(this.identifier);
+        Account account = GemsEconomy.getInstance().getAccountManager().getAccount(player);
         validateCurrency(gemsCurrency);
         validateAccount(account, player);
         account.withdraw(gemsCurrency, amount);
