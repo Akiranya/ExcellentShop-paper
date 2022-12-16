@@ -13,7 +13,7 @@ plugins {
 
 dependencies {
     // NMS modules
-    api(project(":NMS"))
+    compileOnly(project(":NMS"))
     runtimeOnly(project(":V1_17_R1", configuration = "reobf"))
     runtimeOnly(project(":V1_18_R2", configuration = "reobf"))
     runtimeOnly(project(":V1_19", configuration = "reobf"))
