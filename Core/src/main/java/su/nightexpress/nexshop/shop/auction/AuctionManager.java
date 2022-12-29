@@ -1,5 +1,6 @@
 package su.nightexpress.nexshop.shop.auction;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,6 +13,7 @@ import su.nexmedia.engine.api.data.StorageType;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.NumberUtil;
 import su.nexmedia.engine.utils.PlayerUtil;
+import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.Perms;
 import su.nightexpress.nexshop.api.currency.ICurrency;
@@ -41,9 +43,7 @@ public class AuctionManager extends ShopModule {
     private static final Map<UUID, Set<AuctionListing>> PLAYER_LISTINGS_MAP = new ConcurrentHashMap<>();
     private static final Map<UUID, Set<AuctionCompletedListing>> PLAYER_COMPLETED_LISTINGS_MAP = new ConcurrentHashMap<>();
 
-    private static final Comparator<AbstractAuctionItem> SORT_BY_CREATION = (l1, l2) -> {
-        return Long.compare(l2.getDateCreation(), l1.getDateCreation());
-    };
+    private static final Comparator<AbstractAuctionItem> SORT_BY_CREATION = (l1, l2) -> Long.compare(l2.getDateCreation(), l1.getDateCreation());
 
     private AuctionDataHandler dataHandler;
 
@@ -183,14 +183,14 @@ public class AuctionManager extends ShopModule {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return true;
 
-        String metaName = meta.getDisplayName();
+        String metaName = StringUtil.asPlainText(Objects.requireNonNull(meta.displayName()));
         if (AuctionConfig.LISTINGS_DISABLED_NAMES.stream().anyMatch(metaName::contains)) {
             return false;
         }
 
-        List<String> metaLore = meta.getLore();
+        List<Component> metaLore = meta.lore();
         if (metaLore == null) return true;
-        if (metaLore.stream().anyMatch(line -> AuctionConfig.LISTINGS_DISABLED_LORES.stream().anyMatch(line::contains))) {
+        if (metaLore.stream().map(StringUtil::asPlainText).anyMatch(line -> AuctionConfig.LISTINGS_DISABLED_LORES.stream().anyMatch(line::contains))) {
             return false;
         }
 

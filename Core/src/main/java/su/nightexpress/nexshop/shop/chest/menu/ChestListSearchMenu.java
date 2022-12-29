@@ -1,5 +1,6 @@
 package su.nightexpress.nexshop.shop.chest.menu;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -14,7 +15,6 @@ import su.nexmedia.engine.api.menu.IMenuClick;
 import su.nexmedia.engine.api.menu.IMenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.shop.chest.ChestShopModule;
 import su.nightexpress.nexshop.shop.chest.impl.ChestProduct;
@@ -26,9 +26,9 @@ public class ChestListSearchMenu extends AbstractMenuAuto<ExcellentShop, ChestPr
     private final ChestShopModule                chestShop;
     private final Map<String, Set<ChestProduct>> searchCache;
 
-    private final int[]        productSlots;
-    private final String       productName;
-    private final List<String> productLore;
+    private final int[]           productSlots;
+    private final Component       productName;
+    private final List<Component> productLore;
 
     public ChestListSearchMenu(@NotNull ChestShopModule chestShop) {
         super(chestShop.plugin(), JYML.loadOrExtract(chestShop.plugin(), chestShop.getPath() + "menu/search.yml"), "");
@@ -36,8 +36,8 @@ public class ChestListSearchMenu extends AbstractMenuAuto<ExcellentShop, ChestPr
         this.searchCache = new HashMap<>();
 
         this.productSlots = cfg.getIntArray("Product.Slots");
-        this.productName = StringUtil.color(cfg.getString("Product.Name", ""));
-        this.productLore = StringUtil.color(cfg.getStringList("Product.Lore"));
+        this.productName = cfg.getComponent("Product.Name", Component.empty());
+        this.productLore = cfg.getComponentList("Product.Lore");
 
         IMenuClick click = (player, type, e) -> {
             if (type instanceof MenuItemType type2) {
@@ -82,7 +82,7 @@ public class ChestListSearchMenu extends AbstractMenuAuto<ExcellentShop, ChestPr
     @NotNull
     protected List<ChestProduct> getObjects(@NotNull Player player) {
         return new ArrayList<>(this.getSearchResult(player).stream()
-            .sorted((p1, p2) -> (int) (p1.getPricer().getPriceBuy() - p2.getPricer().getPriceBuy())).toList());
+                                   .sorted((p1, p2) -> (int) (p1.getPricer().getPriceBuy() - p2.getPricer().getPriceBuy())).toList());
     }
 
     @Override
@@ -92,8 +92,8 @@ public class ChestListSearchMenu extends AbstractMenuAuto<ExcellentShop, ChestPr
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return item;
 
-        meta.setDisplayName(this.productName);
-        meta.setLore(this.productLore);
+        meta.displayName(this.productName);
+        meta.lore(this.productLore);
         item.setItemMeta(meta);
 
         ItemUtil.replace(item, product.replacePlaceholders());

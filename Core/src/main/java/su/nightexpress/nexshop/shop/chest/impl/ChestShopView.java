@@ -1,5 +1,6 @@
 package su.nightexpress.nexshop.shop.chest.impl;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -30,7 +31,7 @@ public class ChestShopView extends ShopView<ChestShop> {
         super(shop, JYML.loadOrExtract(shop.plugin(), ShopAPI.getChestShop().getPath() + "view.yml"));
 
         PRODUCT_SLOTS = cfg.getIntArray("Product_Slots");
-        PRODUCT_FORMAT_LORE = StringUtil.color(cfg.getStringList("Product_Format.Lore.Text"));
+        PRODUCT_FORMAT_LORE = cfg.getStringList("Product_Format.Lore.Text");
 
         IMenuClick click = (player, type, e) -> {
             if (type instanceof MenuItemType type2) {
@@ -47,7 +48,7 @@ public class ChestShopView extends ShopView<ChestShop> {
             this.addItem(menuItem);
         }
 
-        this.setTitle(shop.getName());
+        this.setTitle(StringUtil.asComponent(shop.getName()));
     }
 
     @Override
@@ -67,20 +68,20 @@ public class ChestShopView extends ShopView<ChestShop> {
             ItemMeta meta = preview.getItemMeta();
 
             if (meta != null) {
-                List<String> lore = new ArrayList<>();
+                List<Component> lore = new ArrayList<>();
 
                 for (String lineFormat : PRODUCT_FORMAT_LORE) {
                     if (lineFormat.contains(Placeholders.GENERIC_LORE)) {
-                        List<String> list2 = meta.getLore();
+                        List<Component> list2 = meta.lore();
                         if (list2 != null) lore.addAll(list2);
                         continue;
                     }
-                    lore.add(lineFormat);
+                    lore.add(StringUtil.asComponent(lineFormat));
                 }
 
-                lore.replaceAll(product.replacePlaceholders(player));
-                lore.replaceAll(product.getCurrency().replacePlaceholders());
-                meta.setLore(lore);
+                lore = StringUtil.applyStringReplacer(product.replacePlaceholders(player), lore);
+                lore = StringUtil.applyStringReplacer(product.getCurrency().replacePlaceholders(), lore);
+                meta.lore(lore);
                 preview.setItemMeta(meta);
             }
 

@@ -35,9 +35,9 @@ public class ShopProductEditor extends AbstractEditorMenu<ExcellentShop, ChestPr
         super(product.getShop().plugin(), product, ChestConfig.EDITOR_TITLE.get(), 36);
 
         EditorInput<ChestProduct, ChestEditorType> input = (player, product2, type, e) -> {
-            String msg = StringUtil.color(e.getMessage());
+            String msg = e.getMessage();
             if (type == ChestEditorType.PRODUCT_CHANGE_CURRENCY) {
-                String id = StringUtil.colorOff(msg);
+                String id = StringUtil.asPlainText(msg);
                 ICurrency currency = plugin.getCurrencyManager().getCurrency(id);
                 if (currency == null) {
                     EditorManager.error(player, plugin.getMessage(Lang.EDITOR_GENERIC_ERROR_CURRENCY).getLocalized());
@@ -76,10 +76,10 @@ public class ShopProductEditor extends AbstractEditorMenu<ExcellentShop, ChestPr
                         plugin.getMessage(ChestLang.EDITOR_TIP_PRODUCT_CURRENCY).asList().forEach(line -> {
                             if (line.contains(Placeholders.CURRENCY_ID)) {
                                 for (ICurrency currency : ChestConfig.ALLOWED_CURRENCIES) {
-                                    MessageUtil.sendWithJSON(player, currency.replacePlaceholders().apply(line));
+                                    MessageUtil.sendMessage(player, currency.replacePlaceholders().apply(line));
                                 }
                             }
-                            else MessageUtil.sendWithJSON(player, line);
+                            else MessageUtil.sendMessage(player, line);
                         });
                         EditorManager.startEdit(player, product, type2, input);
                         player.closeInventory();

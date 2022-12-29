@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.menu.*;
 import su.nexmedia.engine.utils.ItemUtil;
+import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.shop.virtual.VirtualShopModule;
 import su.nightexpress.nexshop.shop.virtual.config.VirtualConfig;
@@ -49,8 +50,8 @@ public class VirtualMenuMain extends AbstractMenu<ExcellentShop> {
             ItemMeta meta = icon.getItemMeta();
             if (meta == null) continue;
 
-            meta.setDisplayName(VirtualConfig.SHOP_FORMAT_NAME.get());
-            meta.setLore(VirtualConfig.SHOP_FORMAT_LORE.get());
+            meta.displayName(StringUtil.asComponent(VirtualConfig.SHOP_FORMAT_NAME.get()));
+            meta.lore(StringUtil.asComponent(VirtualConfig.SHOP_FORMAT_LORE.get()));
             meta.addItemFlags(ItemFlag.values());
             icon.setItemMeta(meta);
 

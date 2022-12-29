@@ -83,7 +83,7 @@ public class ShopCartMenu extends AbstractMenu<ExcellentShop> {
                         if (type2 == ButtonType.SET) hasAmount = btnAmount;
                         else hasAmount += btnAmount;
 
-                        MessageUtil.sound(player, Config.SOUND_CART_ADDITEM);
+                        MessageUtil.playSound(player, Config.SOUND_CART_ADDITEM);
                         TradeType tradeType = prepared.getTradeType();
 
                         int capacitySpace = Integer.MAX_VALUE;

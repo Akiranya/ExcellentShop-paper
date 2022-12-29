@@ -1,5 +1,6 @@
 package su.nightexpress.nexshop.shop.auction.menu;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -28,18 +29,18 @@ import java.util.*;
 
 public class AuctionCurrencySelectorMenu extends AbstractMenuAuto<ExcellentShop, ICurrency> {
 
-    private final AuctionManager auctionManager;
-    private final int[]          objectSlots;
-    private final String         itemName;
-    private final List<String>   itemLore;
+    private final AuctionManager  auctionManager;
+    private final int[]           objectSlots;
+    private final Component       itemName;
+    private final List<Component> itemLore;
 
     private static final Map<Player, Pair<ItemStack, Double>> PREPARED_ITEM = new WeakHashMap<>();
 
     public AuctionCurrencySelectorMenu(@NotNull AuctionManager auctionManager, @NotNull JYML cfg) {
         super(auctionManager.plugin(), cfg, "");
         this.auctionManager = auctionManager;
-        this.itemName = StringUtil.color(cfg.getString("Items.Name", Placeholders.LISTING_ITEM_NAME));
-        this.itemLore = StringUtil.color(cfg.getStringList("Items.Lore"));
+        this.itemName = cfg.getComponent("Items.Name", StringUtil.asComponent(Placeholders.LISTING_ITEM_NAME));
+        this.itemLore = cfg.getComponentList("Items.Lore");
         this.objectSlots = cfg.getIntArray("Items.Slots");
 
         IMenuClick click = (player, type, e) -> {
@@ -93,8 +94,8 @@ public class AuctionCurrencySelectorMenu extends AbstractMenuAuto<ExcellentShop,
         double price = prepared.getSecond();
         double tax = AuctionUtils.calculateTax(price, AuctionConfig.LISTINGS_TAX_ON_LISTING_ADD);
 
-        meta.setDisplayName(this.itemName);
-        meta.setLore(this.itemLore);
+        meta.displayName(this.itemName);
+        meta.lore(this.itemLore);
         item.setItemMeta(meta);
 
         ItemUtil.replace(item, currency.replacePlaceholders());

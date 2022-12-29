@@ -1,7 +1,7 @@
 # Default GUI configuration settings you can see on the NexEngine wiki.
 # https://github.com/nulli0n/NexEngine-spigot/wiki/Menu-Config
 
-Title: '&8&m    &8&l[ &9&lCurrency Selector &8&l]&8&m    &7'
+Title: 'Currency Selector'
 Size: 27
 
 # Custom item format for the auction item categories.
@@ -11,13 +11,13 @@ Size: 27
 # - %price% - Formatted price with a currency format settings.
 # - %tax% - Formatted tax amount with a currency format settings.
 Items:
-  Name: '&e&l%currency_name%'
+  Name: '<yellow><b>%currency_name%'
   Lore:
-  - '&7You will sell your item for &f%price%&7.'
-  - '&7'
-  - '&e&l(!) #FFC300Tax amount to pay: &e%tax%#FFC300.'
-  - '&7'
-  - '#55e136&l[>]#86de2a Left-Click: &fSelect Currency'
+    - '<gray>You will sell your item for <white>%price%<gray>.'
+    - '<gray>'
+    - '<yellow><b>(!) <#FFC300>Tax amount to pay: <yellow>%tax%<#FFC300>.'
+    - '<gray>'
+    - '<#55e136><b>[>]<#86de2a> Left-Click: <white>Select Currency'
   Slots: 13,11,15,12,14
 
 # Default section for the GUI items.
@@ -29,15 +29,15 @@ Content:
       default:
         Item:
           Material: BLACK_STAINED_GLASS_PANE
-          Name: '&7'
+          Name: '<gray>'
     Slots: 0,1,2,3,4,5,6,7,8,9,10,16,17,18,19,20,21,22,23,24,25,26
-  
+
   page_next:
     Display:
       default:
         Item:
           Material: 'PLAYER_HEAD'
-          Name: '&e&lNext Page →'
+          Name: '<yellow><b>Next Page →'
           Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjgyYWQxYjljYjRkZDIxMjU5YzBkNzVhYTMxNWZmMzg5YzNjZWY3NTJiZTM5NDkzMzgxNjRiYWM4NGE5NmUifX19'
     Slots: 17
     Type: PAGE_NEXT
@@ -47,7 +47,7 @@ Content:
       default:
         Item:
           Material: 'PLAYER_HEAD'
-          Name: '&e&l← Previous Page'
+          Name: '<yellow><b>← Previous Page'
           Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0='
     Slots: 9
     Type: PAGE_PREVIOUS
@@ -57,6 +57,6 @@ Content:
       default:
         Item:
           Material: 'BARRIER'
-          Name: '&c&lCancel & Return ✗'
+          Name: '<red><b>Cancel & Return ✗'
     Type: CLOSE
     Slots: 22

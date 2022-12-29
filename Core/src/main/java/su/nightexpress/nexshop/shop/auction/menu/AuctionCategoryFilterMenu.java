@@ -1,5 +1,6 @@
 package su.nightexpress.nexshop.shop.auction.menu;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -25,17 +26,17 @@ import java.util.Set;
 
 public class AuctionCategoryFilterMenu extends AbstractMenuAuto<ExcellentShop, AuctionCategory> {
 
-    private final AuctionManager auctionManager;
-    private final int[]          objectSlots;
-    private final String       itemName;
-    private final List<String> itemLore;
-    private final ItemStack selectedIcon;
+    private final AuctionManager  auctionManager;
+    private final int[]           objectSlots;
+    private final Component       itemName;
+    private final List<Component> itemLore;
+    private final ItemStack       selectedIcon;
 
     public AuctionCategoryFilterMenu(@NotNull AuctionManager auctionManager, @NotNull JYML cfg) {
         super(auctionManager.plugin(), cfg, "");
         this.auctionManager = auctionManager;
-        this.itemName = StringUtil.color(cfg.getString("Items.Name", Placeholders.LISTING_ITEM_NAME));
-        this.itemLore = StringUtil.color(cfg.getStringList("Items.Lore"));
+        this.itemName = cfg.getComponent("Items.Name", StringUtil.asComponent(Placeholders.LISTING_ITEM_NAME));
+        this.itemLore = cfg.getComponentList("Items.Lore");
         this.objectSlots = cfg.getIntArray("Items.Slots");
         this.selectedIcon = cfg.getItem("Selected");
 
@@ -44,11 +45,9 @@ public class AuctionCategoryFilterMenu extends AbstractMenuAuto<ExcellentShop, A
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.RETURN || type2 == MenuItemType.CONFIRMATION_DECLINE) {
                     this.auctionManager.getMainMenu().open(player, 1);
-                }
-                else if (type2 == MenuItemType.CONFIRMATION_ACCEPT) {
+                } else if (type2 == MenuItemType.CONFIRMATION_ACCEPT) {
                     this.auctionManager.getMainMenu().open(player, 1);
-                }
-                else this.onItemClickDefault(player, type2);
+                } else this.onItemClickDefault(player, type2);
             }
         };
 
@@ -82,8 +81,8 @@ public class AuctionCategoryFilterMenu extends AbstractMenuAuto<ExcellentShop, A
         ItemStack item = isSelected ? new ItemStack(this.selectedIcon) : category.getIcon();
         ItemMeta meta = item.getItemMeta();
         if (meta != null && !isSelected) {
-            meta.setDisplayName(this.itemName);
-            meta.setLore(this.itemLore);
+            meta.displayName(this.itemName);
+            meta.lore(this.itemLore);
             item.setItemMeta(meta);
         }
 

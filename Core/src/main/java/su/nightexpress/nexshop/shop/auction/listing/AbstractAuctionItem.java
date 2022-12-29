@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.manager.IPlaceholder;
 import su.nexmedia.engine.utils.ItemUtil;
+import su.nexmedia.engine.utils.StringUtil;
 import su.nexmedia.engine.utils.TimeUtil;
 import su.nightexpress.nexshop.api.currency.ICurrency;
 import su.nightexpress.nexshop.shop.auction.config.AuctionConfig;
@@ -48,8 +49,8 @@ public abstract class AbstractAuctionItem implements IPlaceholder {
             .replace(Placeholders.LISTING_PRICE, this.getCurrency().format(this.getPrice()))
             .replace(Placeholders.LISTING_DATE_CREATION, AuctionConfig.DATE_FORMAT.format(TimeUtil.getLocalDateTimeOf(this.getDateCreation())))
             .replace(Placeholders.LISTING_ITEM_AMOUNT, String.valueOf(this.getItemStack().getAmount()))
-            .replace(Placeholders.LISTING_ITEM_NAME, ItemUtil.getItemName(this.getItemStack()))
-            .replace(Placeholders.LISTING_ITEM_LORE, String.join("\n", ItemUtil.getLore(this.getItemStack())))
+            .replace(Placeholders.LISTING_ITEM_NAME, StringUtil.asMiniMessage(ItemUtil.getItemName(this.getItemStack())))
+            .replace(Placeholders.LISTING_ITEM_LORE, String.join("\n", StringUtil.asMiniMessage(ItemUtil.getLore(this.getItemStack()))))
             .replace(Placeholders.LISTING_ITEM_VALUE, String.valueOf(ItemUtil.toBase64(this.getItemStack())))
             .replace(Placeholders.LISTING_DELETES_IN, TimeUtil.formatTimeLeft(this.getDeleteDate()))
             ;

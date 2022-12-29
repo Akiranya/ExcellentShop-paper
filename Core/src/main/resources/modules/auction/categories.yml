@@ -1,5 +1,5 @@
 default:
-  Name: '&fAll'
+  Name: '<white>All'
   Icon:
     Material: CHEST
     Name: '%category_name%'
@@ -8,7 +8,7 @@ default:
   Materials:
     - '*'
 brewing:
-  Name: '&fBrewing'
+  Name: '<white>Brewing'
   Icon:
     Material: POTION
     Name: '%category_name%'
@@ -31,7 +31,7 @@ brewing:
     - RABBIT_FOOT
     - SPLASH_POTION
 building_blocks:
-  Name: '&fBuilding Blocks'
+  Name: '<white>Building Blocks'
   Icon:
     Material: BRICKS
     Name: '%category_name%'
@@ -430,7 +430,7 @@ building_blocks:
     - YELLOW_TERRACOTTA
     - YELLOW_WOOL
 combat:
-  Name: '&fCombat'
+  Name: '<white>Combat'
   Icon:
     Material: GOLDEN_SWORD
     Name: '%category_name%'
@@ -477,7 +477,7 @@ combat:
     - TURTLE_HELMET
     - WOODEN_SWORD
 decorations:
-  Name: '&fDecorations'
+  Name: '<white>Decorations'
   Icon:
     Material: RED_TULIP
     Name: '%category_name%'
@@ -803,7 +803,7 @@ decorations:
     - YELLOW_STAINED_GLASS_PANE
     - ZOMBIE_HEAD
 tools:
-  Name: '&fTools'
+  Name: '<white>Tools'
   Icon:
     Material: IRON_AXE
     Name: '%category_name%'
@@ -844,7 +844,7 @@ tools:
     - WOODEN_PICKAXE
     - WOODEN_SHOVEL
 food:
-  Name: '&fFood'
+  Name: '<white>Food'
   Icon:
     Material: APPLE
     Name: '%category_name%'
@@ -890,7 +890,7 @@ food:
     - SWEET_BERRIES
     - TROPICAL_FISH
 redstone:
-  Name: '&fRedstone'
+  Name: '<white>Redstone'
   Icon:
     Material: REDSTONE
     Name: '%category_name%'
@@ -975,7 +975,7 @@ redstone:
     - WARPED_PRESSURE_PLATE
     - WARPED_TRAPDOOR
 transportation:
-  Name: '&fTransportation'
+  Name: '<white>Transportation'
   Icon:
     Material: POWERED_RAIL
     Name: '%category_name%'
@@ -1010,7 +1010,7 @@ transportation:
     - TNT_MINECART
     - WARPED_FUNGUS_ON_A_STICK
 misc:
-  Name: '&fMisc'
+  Name: '<white>Misc'
   Icon:
     Material: LAVA_BUCKET
     Name: '%category_name%'

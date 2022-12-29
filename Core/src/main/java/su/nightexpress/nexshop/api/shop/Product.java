@@ -15,6 +15,7 @@ import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.NumberUtil;
 import su.nexmedia.engine.utils.PlayerUtil;
+import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.Placeholders;
 import su.nightexpress.nexshop.api.currency.ICurrency;
 import su.nightexpress.nexshop.api.type.ShopClickType;
@@ -57,7 +58,7 @@ public abstract class Product<
     @NotNull
     public UnaryOperator<String> replacePlaceholders() {
         ItemStack buyItem = this.getItem();
-        String itemName = !buyItem.getType().isAir() ? ItemUtil.getItemName(buyItem) : "null";
+        String itemName = !buyItem.getType().isAir() ? StringUtil.asMiniMessage(ItemUtil.getItemName(buyItem)) : "null";
 
         return str -> {
             str = this.replacePlaceholdersView().apply(str);
@@ -67,9 +68,9 @@ public abstract class Product<
                 .replace(Placeholders.PRODUCT_DISCOUNT_ALLOWED, LangManager.getBoolean(this.isDiscountAllowed()))
                 .replace(Placeholders.PRODUCT_ITEM_META_ENABLED, LangManager.getBoolean(this.isItemMetaEnabled()))
                 .replace(Placeholders.PRODUCT_ITEM_NAME, itemName)
-                .replace(Placeholders.PRODUCT_ITEM_LORE, String.join("\n", ItemUtil.getLore(buyItem)))
-                .replace(Placeholders.PRODUCT_PREVIEW_NAME, ItemUtil.getItemName(this.getPreview()))
-                .replace(Placeholders.PRODUCT_PREVIEW_LORE, String.join("\n", ItemUtil.getLore(this.getPreview())))
+                .replace(Placeholders.PRODUCT_ITEM_LORE, String.join("\n", StringUtil.asMiniMessage(ItemUtil.getLore(buyItem))))
+                .replace(Placeholders.PRODUCT_PREVIEW_NAME, StringUtil.asMiniMessage(ItemUtil.getItemName(this.getPreview())))
+                .replace(Placeholders.PRODUCT_PREVIEW_LORE, String.join("\n", StringUtil.asMiniMessage(ItemUtil.getLore(this.getPreview()))))
                 ;
         };
     }

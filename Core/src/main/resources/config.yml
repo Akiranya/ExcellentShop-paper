@@ -2,7 +2,7 @@ Plugin:
   Command_Aliases: 'excellentshop,eshop'
   Language: en
   Name: 'ExcellentShop'
-  Prefix: '&e%plugin_name% &8» &7'
+  Prefix: '<yellow>%plugin_name% <dark_gray>» <gray>'
 
 Database:
   Auto_Save_Interval: 20

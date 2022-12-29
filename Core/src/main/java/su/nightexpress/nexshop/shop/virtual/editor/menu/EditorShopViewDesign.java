@@ -17,7 +17,6 @@ import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PDCUtil;
-import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.editor.GenericEditorType;
 import su.nightexpress.nexshop.shop.virtual.impl.VirtualProduct;
@@ -113,7 +112,7 @@ public class EditorShopViewDesign extends AbstractMenu<ExcellentShop> {
 
     private void updateItem(@NotNull ItemStack item) {
         ItemUtil.delLore(item, TAG_LORE);
-        String str = StringUtil.color("&e&l" + this.getType(item).name());
+        String str = "<yellow><b>" + this.getType(item).name();
         ItemUtil.addLore(item, TAG_LORE, str, -1);
     }
 

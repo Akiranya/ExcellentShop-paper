@@ -29,12 +29,11 @@ public final class VirtualShop extends Shop<VirtualShop, VirtualProduct> impleme
     private final JYML configView;
 
     private final Set<VirtualDiscount> discountConfigs;
-    private       String               name;
-    private       List<String>        description;
-    private       int                 pages;
-    private       boolean             isPermissionRequired;
-    private       ItemStack           icon;
-    private       int[]               citizensIds = new int[0];
+    private       String               description;
+    private       int                  pages;
+    private       boolean              isPermissionRequired;
+    private       ItemStack            icon;
+    private       int[]                citizensIds = new int[0];
 
     private ShopView<VirtualShop> view;
     private EditorShopMain        editor;
@@ -53,7 +52,7 @@ public final class VirtualShop extends Shop<VirtualShop, VirtualProduct> impleme
     public boolean load() {
         this.setBank(new VirtualShopBank(this));
         this.setName(cfg.getString("Name", this.configView.getString("Title", this.getId())));
-        this.setDescription(cfg.getStringList("Description"));
+        this.setDescription(cfg.getString("Description", ""));
         this.setPages(cfg.getInt("Pages", 1));
         this.setPermissionRequired(cfg.getBoolean("Permission_Required", false));
         this.setIcon(cfg.getItem("Icon"));
@@ -77,8 +76,7 @@ public final class VirtualShop extends Shop<VirtualShop, VirtualProduct> impleme
         this.getConfigProducts().getSection("List").stream().map(productId -> {
             try {
                 return VirtualProduct.read(this.getConfigProducts(), "List." + productId, productId);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 this.plugin.error("Could not load '" + productId + "' product in '" + getId() + "' shop!");
                 e.printStackTrace();
                 return null;
@@ -90,18 +88,16 @@ public final class VirtualShop extends Shop<VirtualShop, VirtualProduct> impleme
     @NotNull
     public UnaryOperator<String> replacePlaceholders() {
         return str -> super.replacePlaceholders().apply(str
-            .replace(Placeholders.SHOP_BANK_BALANCE, plugin.getCurrencyManager().getCurrencies().stream()
-                .map(currency -> currency.format(this.getBank().getBalance(currency))).collect(Collectors.joining(DELIMITER_DEFAULT)))
-            .replace(Placeholders.SHOP_VIRTUAL_DESCRIPTION, String.join("\n", this.getDescription()))
+            .replace(Placeholders.SHOP_BANK_BALANCE, plugin.getCurrencyManager().getCurrencies().stream().map(currency -> currency.format(this.getBank().getBalance(currency))).collect(Collectors.joining(DELIMITER_DEFAULT)))
+            .replace(Placeholders.SHOP_VIRTUAL_DESCRIPTION, this.getDescription())
             .replace(Placeholders.SHOP_VIRTUAL_PERMISSION_NODE, Perms.PREFIX_VIRTUAL_SHOP + this.getId())
             .replace(Placeholders.SHOP_VIRTUAL_PERMISSION_REQUIRED, LangManager.getBoolean(this.isPermissionRequired()))
-            .replace(Placeholders.SHOP_VIRTUAL_ICON_NAME, ItemUtil.getItemName(this.getIcon()))
+            .replace(Placeholders.SHOP_VIRTUAL_ICON_NAME, StringUtil.asMiniMessage(ItemUtil.getItemName(this.getIcon())))
             .replace(Placeholders.SHOP_VIRTUAL_ICON_TYPE, this.getIcon().getType().name())
             .replace(Placeholders.SHOP_VIRTUAL_PAGES, String.valueOf(this.getPages()))
             .replace(Placeholders.SHOP_VIRTUAL_VIEW_SIZE, String.valueOf(this.getView().getSize()))
-            .replace(Placeholders.SHOP_VIRTUAL_VIEW_TITLE, this.getView().getTitle())
-            .replace(Placeholders.SHOP_VIRTUAL_NPC_IDS, String.join(", ", IntStream.of(this.getCitizensIds()).boxed()
-                .map(String::valueOf).toList()))
+            .replace(Placeholders.SHOP_VIRTUAL_VIEW_TITLE, StringUtil.asMiniMessage(this.getView().getTitle()))
+            .replace(Placeholders.SHOP_VIRTUAL_NPC_IDS, String.join(", ", IntStream.of(this.getCitizensIds()).boxed().map(String::valueOf).toList()))
         );
     }
 
@@ -199,12 +195,12 @@ public final class VirtualShop extends Shop<VirtualShop, VirtualProduct> impleme
     }
 
     @NotNull
-    public List<String> getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(@NotNull List<String> description) {
-        this.description = StringUtil.color(description);
+    public void setDescription(@NotNull String description) {
+        this.description = description;
     }
 
     public boolean hasPermission(@NotNull Player player) {

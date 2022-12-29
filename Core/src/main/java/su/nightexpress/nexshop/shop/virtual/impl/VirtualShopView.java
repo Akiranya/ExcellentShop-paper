@@ -1,5 +1,6 @@
 package su.nightexpress.nexshop.shop.virtual.impl;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -67,18 +68,18 @@ public class VirtualShopView extends ShopView<VirtualShop> {
                 loreFormat = VirtualConfig.PRODUCT_FORMAT_LORE_GENERAL_BUY_ONLY.get();
             }
 
-            List<String> lore = new ArrayList<>();
+            List<Component> lore = new ArrayList<>();
 
             Label_Format:
             for (String lineFormat : loreFormat) {
                 if (lineFormat.equalsIgnoreCase("%lore%")) {
-                    List<String> list2 = meta.getLore();
+                    List<Component> list2 = meta.lore();
                     if (list2 != null) lore.addAll(list2);
                     continue;
                 }
                 else if (lineFormat.equalsIgnoreCase("%discount%")) {
                     if (this.getShop().hasDiscount(product)) {
-                        lore.addAll(VirtualConfig.PRODUCT_FORMAT_LORE_DISCOUNT.get());
+                        lore.addAll(StringUtil.asComponent(VirtualConfig.PRODUCT_FORMAT_LORE_DISCOUNT.get()));
                     }
                     continue;
                 }
@@ -86,18 +87,18 @@ public class VirtualShopView extends ShopView<VirtualShop> {
                     for (TradeType tradeType : TradeType.values()) {
                         if (lineFormat.equalsIgnoreCase("%stock_" + stockType.name() + "_" + tradeType.name() + "%")) {
                             if (!product.getStock().isUnlimited(stockType, tradeType)) {
-                                lore.addAll(VirtualConfig.PRODUCT_FORMAT_LORE_STOCK.get().getOrDefault(stockType, Collections.emptyMap()).getOrDefault(tradeType, Collections.emptyList()));
+                                lore.addAll(StringUtil.asComponent(VirtualConfig.PRODUCT_FORMAT_LORE_STOCK.get().getOrDefault(stockType, Collections.emptyMap()).getOrDefault(tradeType, Collections.emptyList())));
                             }
                             continue Label_Format;
                         }
                     }
                 }
-                lore.add(lineFormat);
+                lore.add(StringUtil.asComponent(lineFormat));
             }
 
-            lore.replaceAll(product.replacePlaceholders(player));
-            lore.replaceAll(product.getCurrency().replacePlaceholders());
-            meta.setLore(StringUtil.stripEmpty(lore));
+            lore = StringUtil.applyStringReplacer(product.replacePlaceholders(player), lore);
+            lore = StringUtil.applyStringReplacer(product.getCurrency().replacePlaceholders(), lore);
+            meta.lore(lore);
             preview.setItemMeta(meta);
 
             IMenuItem menuItem = new MenuItem(preview);

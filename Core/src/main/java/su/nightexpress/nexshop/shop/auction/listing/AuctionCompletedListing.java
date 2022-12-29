@@ -3,6 +3,7 @@ package su.nightexpress.nexshop.shop.auction.listing;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.utils.StringUtil;
 import su.nexmedia.engine.utils.TimeUtil;
 import su.nightexpress.nexshop.Perms;
 import su.nightexpress.nexshop.api.currency.ICurrency;
@@ -24,7 +25,7 @@ public class AuctionCompletedListing extends AbstractAuctionItem {
                 UUID.randomUUID(),
                 listing.getOwner(),
                 listing.getOwnerName(),
-                buyer.getDisplayName(),
+                StringUtil.asMiniMessage(buyer.displayName()),
                 listing.getItemStack(),
                 listing.getCurrency(),
                 listing.getPrice(),

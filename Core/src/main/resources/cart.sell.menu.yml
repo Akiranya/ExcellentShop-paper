@@ -1,4 +1,4 @@
-Title: '&0Selling'
+Title: '<black>Selling'
 Size: 54
 
 Product:
@@ -10,11 +10,11 @@ Content:
       default:
         Item:
           Material: EMERALD
-          Name: '&a&lAccept'
+          Name: '<green><b>Accept'
           Lore:
-            - '&aSelected Quantity: &f%amount% &7(~&f%amount_stacks% stack(s)&7)'
-            - '&eFinal Price: &6%price%'
-            - '&eBalance: &6%balance%'
+            - '<green>Selected Quantity: <white>%amount% <gray>(~<white>%amount_stacks% stack(s)<gray>)'
+            - '<yellow>Final Price: <gold>%price%'
+            - '<yellow>Balance: <gold>%balance%'
     Slots: 53
     Type: CONFIRMATION_ACCEPT
 
@@ -23,7 +23,7 @@ Content:
       default:
         Item:
           Material: BARRIER
-          Name: '&c&lCancel'
+          Name: '<red><b>Cancel'
     Slots: 45
     Type: CONFIRMATION_DECLINE
 
@@ -40,7 +40,7 @@ Amount_Buttons:
       default:
         Item:
           Material: LIME_STAINED_GLASS_PANE
-          Name: '&a[Add] &2+1'
+          Name: '<green>[Add] <dark_green>+1'
           Amount: 1
     Product_Amount: 1
     Slots: 42
@@ -51,7 +51,7 @@ Amount_Buttons:
       default:
         Item:
           Material: LIME_STAINED_GLASS_PANE
-          Name: '&a[Add] &2+16'
+          Name: '<green>[Add] <dark_green>+16'
           Amount: 16
     Product_Amount: 16
     Slots: 43
@@ -62,7 +62,7 @@ Amount_Buttons:
       default:
         Item:
           Material: LIME_STAINED_GLASS_PANE
-          Name: '&a[Add] &2+32'
+          Name: '<green>[Add] <dark_green>+32'
           Amount: 32
     Product_Amount: 32
     Slots: 44
@@ -73,7 +73,7 @@ Amount_Buttons:
       default:
         Item:
           Material: RED_STAINED_GLASS_PANE
-          Name: '&c[Deduct] &4-1'
+          Name: '<red>[Deduct] <dark_red>-1'
           Amount: 1
     Product_Amount: -1
     Slots: 38
@@ -84,7 +84,7 @@ Amount_Buttons:
       default:
         Item:
           Material: RED_STAINED_GLASS_PANE
-          Name: '&c[Deduct] &4-16'
+          Name: '<red>[Deduct] <dark_red>-16'
           Amount: 16
     Product_Amount: -16
     Slots: 37
@@ -95,7 +95,7 @@ Amount_Buttons:
       default:
         Item:
           Material: RED_STAINED_GLASS_PANE
-          Name: '&c[Deduct] &4-32'
+          Name: '<red>[Deduct] <dark_red>-32'
           Amount: 32
     Product_Amount: -32
     Slots: 36
@@ -106,7 +106,7 @@ Amount_Buttons:
       default:
         Item:
           Material: CYAN_STAINED_GLASS_PANE
-          Name: '&b[Set] &31'
+          Name: '<aqua>[Set] <dark_aqua>1'
           Amount: 1
     Product_Amount: 1
     Slots: 39
@@ -117,7 +117,7 @@ Amount_Buttons:
       default:
         Item:
           Material: CYAN_STAINED_GLASS_PANE
-          Name: '&b[Set] &332'
+          Name: '<aqua>[Set] <dark_aqua>32'
           Amount: 32
     Product_Amount: 32
     Slots: 40
@@ -128,7 +128,7 @@ Amount_Buttons:
       default:
         Item:
           Material: CYAN_STAINED_GLASS_PANE
-          Name: '&b[Set] &364'
+          Name: '<aqua>[Set] <dark_aqua>64'
           Amount: 64
     Product_Amount: 64
     Slots: 41

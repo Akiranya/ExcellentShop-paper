@@ -1,5 +1,6 @@
 package su.nightexpress.nexshop.shop.chest.editor;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.editor.EditorButtonType;
@@ -14,56 +15,56 @@ public enum ChestEditorType implements EditorButtonType {
     SHOP_CHANGE_NAME(Material.NAME_TAG, "Shop Name",
         EditorButtonType.current(Placeholders.SHOP_NAME),
         EditorButtonType.info("Sets the shop display name. This name is displayed above the shop."),
-        EditorButtonType.click("Left-Click to &fChange")),
+        EditorButtonType.click("Left-Click to <white>Change</white>")),
     SHOP_CHANGE_TYPE(Material.REDSTONE, "Shop Type",
         EditorButtonType.current(Placeholders.SHOP_CHEST_TYPE),
         EditorButtonType.info("Sets the shop type."),
         EditorButtonType.note("Admin shops have unlimited funds and items."),
         EditorButtonType.note("Player shop have to be restocked with items and funds."),
-        EditorButtonType.click("Left-Click to &fToggle")),
+        EditorButtonType.click("Left-Click to <white>Toggle</white>")),
     SHOP_CHANGE_TRANSACTIONS(Material.WRITABLE_BOOK, "Enabled Transactions",
-        EditorButtonType.current("Buying Enabled: &f" + Placeholders.SHOP_BUY_ALLOWED + "\nSelling Enabled: &f" + Placeholders.SHOP_SELL_ALLOWED),
+        EditorButtonType.current("Buying Enabled: <white>" + Placeholders.SHOP_BUY_ALLOWED + "</white>\nSelling Enabled: <white>" + Placeholders.SHOP_SELL_ALLOWED) + "</white>",
         EditorButtonType.info("Enables or disables Buying and Selling in the shop."),
-        EditorButtonType.click("Left-Click to &fToggle Buying\nRight-Click to &fToggle Selling")),
+        EditorButtonType.click("Left-Click to <white>Toggle Buying</white>\nRight-Click to <white>Toggle Selling</white>")),
     SHOP_CHANGE_PRODUCTS(Material.CHEST, "Shop Products",
         EditorButtonType.info("Here you can manage your products and add new ones."),
-        EditorButtonType.click("Left-Click to &fNavigate")),
+        EditorButtonType.click("Left-Click to <white>Navigate</white>")),
     SHOP_BANK(Material.EMERALD, "Shop Bank",
         EditorButtonType.current("Balance:\n" + Placeholders.SHOP_BANK_BALANCE),
         EditorButtonType.info("Bank is where you deposit funds for the shop to be able to purchase items from players. And where all incoming funds from sales are stored for you to withdraw them later."),
         EditorButtonType.warn("If shop don't have enough funds, players won't be able to sell into it"),
-        EditorButtonType.click("Left-Click to &fDeposit\nRight-Click to &fWithdraw")),
+        EditorButtonType.click("Left-Click to <white>Deposit</white>\nRight-Click to <white>Withdraw</white>")),
     SHOP_BANK_DEPOSIT,
     SHOP_BANK_WITHDRAW,
     SHOP_DELETE(Material.BARRIER, "Delete Shop",
         EditorButtonType.info("Permanently deletes this shop."),
         EditorButtonType.warn("You have to remove all product items from the container first."),
-        EditorButtonType.click("Shift-Left to &fDelete")),
+        EditorButtonType.click("Shift-Left to <white>Delete</white>")),
 
     PRODUCT_OBJECT(Material.EMERALD, "%product_preview_name%",
-        EditorButtonType.click("Left to &fEdit\nShift-Right to &fRemove &7(No Undo)")),
+        EditorButtonType.click("Left to <white>Edit</white>\nShift-Right to <white>Remove</white> (No Undo)")),
     PRODUCT_CHANGE_CURRENCY(Material.EMERALD, "Product Currency",
         EditorButtonType.current(Placeholders.PRODUCT_CURRENCY),
         EditorButtonType.info("Sets the product currency."),
-        EditorButtonType.click("Left-Click to &fEdit")),
+        EditorButtonType.click("Left-Click to <white>Edit</white>")),
     PRODUCT_CHANGE_PRICE(Material.NAME_TAG, "Price Manager",
-        EditorButtonType.current("Buy: &f" + Placeholders.PRODUCT_PRICE_BUY + "\nSell: &f" + Placeholders.PRODUCT_PRICE_SELL),
+        EditorButtonType.current("Buy: <white>" + Placeholders.PRODUCT_PRICE_BUY + "</white>\nSell: <white>" + Placeholders.PRODUCT_PRICE_SELL + "</white>"),
         EditorButtonType.info("Here you can change product price type and set prices."),
-        EditorButtonType.click("Left-Click to &fNavigate\n[Q] Key to &fRefresh")),
+        EditorButtonType.click("Left-Click to <white>Navigate</white>\n[Q] Key to <white>Refresh</white>")),
     ;
 
-    private final Material material;
-    private           String   name;
-    private       List<String> lore;
+    private final Material        material;
+    private       Component       name;
+    private       List<Component> lore;
 
     ChestEditorType() {
         this(Material.AIR, "", "");
     }
 
-    ChestEditorType(@NotNull Material material, @NotNull String name, @NotNull String... lores) {
+    ChestEditorType(@NotNull Material material, @NotNull String name, @NotNull String... lore) {
         this.material = material;
-        this.setName(name);
-        this.setLore(EditorButtonType.fineLore(lores));
+        this.setName(StringUtil.asComponent(name));
+        this.setLore(StringUtil.asComponent(EditorButtonType.fineLore(lore)));
     }
 
     @NotNull
@@ -73,20 +74,20 @@ public enum ChestEditorType implements EditorButtonType {
     }
 
     @NotNull
-    public String getName() {
+    public Component getName() {
         return name;
     }
 
-    public void setName(@NotNull String name) {
-        this.name = StringUtil.color(name);
+    public void setName(@NotNull Component name) {
+        this.name = name;
     }
 
     @NotNull
-    public List<String> getLore() {
+    public List<Component> getLore() {
         return lore;
     }
 
-    public void setLore(@NotNull List<String> lore) {
-        this.lore = StringUtil.color(new ArrayList<>(lore));
+    public void setLore(@NotNull List<Component> lore) {
+        this.lore = new ArrayList<>(lore);
     }
 }

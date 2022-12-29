@@ -1,7 +1,7 @@
 # Default GUI configuration settings you can see on the NexEngine wiki.
 # https://github.com/nulli0n/NexEngine-spigot/wiki/Menu-Config
 
-Title: '&8&m         &8&l[ &9&lMy Listings &8&l]&8&m         &7'
+Title: 'My Listings'
 Size: 54
 
 # Animation timer is used here to simply update the GUI to replace dynamic placeholders
@@ -15,16 +15,16 @@ Animation:
 # Additional placeholders available:
 # - %lore_format% - Applies lore format from the 'Lore_Format' section depends on the listing viewer.
 Items:
-  Name: '&f%listing_item_name%'
+  Name: '<white>%listing_item_name%'
   Lore:
     - '%listing_item_lore%'
-    - '&7'
-    - '&c▸ &7Price: &c%listing_price%'
-    - '&f▸ &7Added: &f%listing_date_creation%'
-    - '&7'
-    - '&c&l(!) #C70039Expires in: &c%listing_expires_in%'
-    - '&7'
-    - '#55e136&l[>] #86de2aShift + RMB: &fRemove Listing'
+    - '<gray>'
+    - '<red>▸ <gray>Price: <red>%listing_price%'
+    - '<white>▸ <gray>Added: <white>%listing_date_creation%'
+    - '<gray>'
+    - '<red><b>(!) <#C70039>Expires in: <red>%listing_expires_in%'
+    - '<gray>'
+    - '<#55e136><b>[>] <#86de2a>Shift + RMB: <white>Remove Listing'
   Slots: 10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34,37,38,39,40,41,42,43
 
 # Custom lore format for different listing's viewers.
@@ -46,15 +46,15 @@ Content:
       default:
         Item:
           Material: BLACK_STAINED_GLASS_PANE
-          Name: '&7'
+          Name: '<gray>'
     Slots: 0,1,2,3,4,5,6,7,8,9,17,18,26,27,35,36,44,45,46,47,48,49,50,51,52,53
-  
+
   page_next:
     Display:
       default:
         Item:
           Material: 'PLAYER_HEAD'
-          Name: '&e&lNext Page →'
+          Name: '<yellow><b>Next Page →'
           Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjgyYWQxYjljYjRkZDIxMjU5YzBkNzVhYTMxNWZmMzg5YzNjZWY3NTJiZTM5NDkzMzgxNjRiYWM4NGE5NmUifX19'
     Slots: 53
     Type: PAGE_NEXT
@@ -64,7 +64,7 @@ Content:
       default:
         Item:
           Material: 'PLAYER_HEAD'
-          Name: '&e&l← Previous Page'
+          Name: '<yellow><b>← Previous Page'
           Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0='
     Slots: 45
     Type: PAGE_PREVIOUS
@@ -74,6 +74,6 @@ Content:
       default:
         Item:
           Material: BARRIER
-          Name: '&c&lBack &4&l↓'
+          Name: '<red><b>Back <dark_red><b>↓'
     Slots: 49
     Type: RETURN

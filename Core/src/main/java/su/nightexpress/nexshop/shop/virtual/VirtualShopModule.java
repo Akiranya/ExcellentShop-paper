@@ -154,8 +154,8 @@ public class VirtualShopModule extends ShopModule {
         }
         JYML cfg = new JYML(this.getFullPath() + DIR_SHOPS + id, "config.yml");
         VirtualShop shop = new VirtualShop(this, cfg, id);
-        shop.setName("&e&l" + StringUtil.capitalizeFully(id.replace("_", " ")));
-        shop.setDescription(Arrays.asList("&7Freshly created shop.", "&7Edit me in &a/shop editor"));
+        shop.setName("<yellow><b>" + StringUtil.capitalizeFully(id.replace("_", " ")));
+        shop.setDescription("<gray>Edit me in <green>/shop editor");
         shop.setIcon(new ItemStack(Material.REDSTONE));
         shop.setBank(new VirtualShopBank(shop));
         shop.setupView();

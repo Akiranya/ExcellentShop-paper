@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.hook.AbstractHook;
 import su.nexmedia.engine.utils.ItemUtil;
+import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.api.shop.PreparedProduct;
 import su.nightexpress.nexshop.api.shop.Product;
@@ -162,7 +163,7 @@ public class BrokerHook extends AbstractHook<ExcellentShop> {
 
         @Override
         public String getDisplayName(Optional<UUID> playerId, Optional<UUID> worldId, ItemStack itemStack) {
-            return ItemUtil.getItemName(itemStack);
+            return StringUtil.asPlainText(ItemUtil.getItemName(itemStack));
         }
 
         @Override

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractListener;
 import su.nexmedia.engine.utils.MessageUtil;
+import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.Perms;
 import su.nightexpress.nexshop.api.event.ChestShopPurchaseEvent;
@@ -80,13 +81,13 @@ public class ChestShopListener extends AbstractListener<ExcellentShop> {
                     .replace(prepared.replacePlaceholders())
                     .send(player);
             }
-            MessageUtil.sound(player, Config.SOUND_PURCHASE_FAILURE);
+            MessageUtil.playSound(player, Config.SOUND_PURCHASE_FAILURE);
             return;
         }
 
         this.chestShop.getLogger().logTransaction(e);
 
-        MessageUtil.sound(player, Config.SOUND_PURCHASE_SUCCESS);
+        MessageUtil.playSound(player, Config.SOUND_PURCHASE_SUCCESS);
         Player owner = shop.getOwner().getPlayer();
 
         if (e.getTradeType() == TradeType.BUY) {
@@ -96,7 +97,7 @@ public class ChestShopListener extends AbstractListener<ExcellentShop> {
                 .send(player);
 
             if (owner != null && !shop.isAdminShop()) plugin.getMessage(ChestLang.SHOP_TRADE_BUY_INFO_OWNER)
-                .replace("%player%", player.getDisplayName())
+                .replace("%player%", StringUtil.asMiniMessage(player.displayName()))
                 .replace(prepared.replacePlaceholders())
                 .replace(shop.replacePlaceholders())
                 .send(owner);
@@ -108,7 +109,7 @@ public class ChestShopListener extends AbstractListener<ExcellentShop> {
                 .send(player);
 
             if (owner != null && !shop.isAdminShop()) plugin.getMessage(ChestLang.SHOP_TRADE_SELL_INFO_OWNER)
-                .replace("%player%", player.getDisplayName())
+                .replace("%player%", StringUtil.asMiniMessage(player.displayName()))
                 .replace(prepared.replacePlaceholders())
                 .replace(shop.replacePlaceholders())
                 .send(owner);

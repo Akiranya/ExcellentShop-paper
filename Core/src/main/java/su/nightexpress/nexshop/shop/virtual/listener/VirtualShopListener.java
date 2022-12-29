@@ -47,12 +47,12 @@ public class VirtualShopListener extends AbstractListener<ExcellentShop> {
                     .replace(prepared.replacePlaceholders())
                     .send(player);
             }
-            MessageUtil.sound(player, Config.SOUND_PURCHASE_FAILURE);
+            MessageUtil.playSound(player, Config.SOUND_PURCHASE_FAILURE);
             return;
         }
         this.virtualShop.getLogger().logTransaction(e);
 
-        MessageUtil.sound(player, Config.SOUND_PURCHASE_SUCCESS);
+        MessageUtil.playSound(player, Config.SOUND_PURCHASE_SUCCESS);
         plugin.getMessage(e.getTradeType() == TradeType.BUY ? VirtualLang.PRODUCT_PURCHASE_BUY : VirtualLang.PRODUCT_PURCHASE_SELL)
             .replace(prepared.replacePlaceholders())
             .send(player);

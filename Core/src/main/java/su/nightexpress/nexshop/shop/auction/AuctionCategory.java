@@ -21,7 +21,7 @@ public class AuctionCategory implements IPlaceholder {
     public AuctionCategory(@NotNull String id, @NotNull String name, @NotNull ItemStack icon,
                            @NotNull Set<String> materials) {
         this.id = id.toLowerCase().replace(" ", "_");
-        this.name = StringUtil.color(name);
+        this.name = name;
         this.icon = new ItemStack(icon);
         this.materials = materials.stream().map(String::toLowerCase).collect(Collectors.toSet());
 
@@ -34,8 +34,8 @@ public class AuctionCategory implements IPlaceholder {
         return str -> str
             .replace(Placeholders.CATEGORY_ID, this.getId())
             .replace(Placeholders.CATEGORY_NAME, this.getName())
-            .replace(Placeholders.CATEGORY_ICON_NAME, ItemUtil.getItemName(this.getIcon()))
-            .replace(Placeholders.CATEGORY_ICON_LORE, String.join("\n", ItemUtil.getLore(this.getIcon())))
+            .replace(Placeholders.CATEGORY_ICON_NAME, StringUtil.asMiniMessage(ItemUtil.getItemName(this.getIcon())))
+            .replace(Placeholders.CATEGORY_ICON_LORE, String.join("\n", StringUtil.asMiniMessage(ItemUtil.getLore(this.getIcon()))))
             ;
     }
 

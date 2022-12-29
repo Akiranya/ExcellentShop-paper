@@ -1,7 +1,7 @@
 # Default GUI configuration settings you can see on the NexEngine wiki.
 # https://github.com/nulli0n/NexEngine-spigot/wiki/Menu-Config
 
-Title: '&8&m &8&l[ &9&lPurchase Confirmation &8&l]&8&m &7'
+Title: 'Purchase Confirmation'
 Size: 9
 
 # Slot, where the listing a player is about to purchase will be displayed.
@@ -18,10 +18,10 @@ Content:
       default:
         Item:
           Material: 'LIME_STAINED_GLASS_PANE'
-          Name: '&a&lConfirm & Purchase ✓'
+          Name: '<green><b>Confirm & Purchase ✓'
           Lore:
-            - '&c▸ &7Price: &c%listing_price%'
-            - '&f▸ &7Seller: &f%listing_seller%'
+            - '<red>▸ <gray>Price: <red>%listing_price%'
+            - '<white>▸ <gray>Seller: <white>%listing_seller%'
     Type: CONFIRMATION_ACCEPT
     Slots: 5,6,7,8
 
@@ -30,6 +30,6 @@ Content:
       default:
         Item:
           Material: 'RED_STAINED_GLASS_PANE'
-          Name: '&c&lCancel & Return ✗'
+          Name: '<red><b>Cancel & Return ✗'
     Type: CONFIRMATION_DECLINE
     Slots: 0,1,2,3

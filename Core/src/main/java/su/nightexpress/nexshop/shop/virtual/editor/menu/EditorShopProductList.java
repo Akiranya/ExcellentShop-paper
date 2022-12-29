@@ -93,8 +93,8 @@ public class EditorShopProductList extends EditorProductList<VirtualShop> {
             if (productMeta == null) continue;
 
             ItemStack editorIcon = VirtualEditorType.PRODUCT_OBJECT.getItem();
-            productMeta.setDisplayName(ItemUtil.getItemName(editorIcon));
-            productMeta.setLore(ItemUtil.getLore(editorIcon));
+            productMeta.displayName(ItemUtil.getItemName(editorIcon));
+            productMeta.lore(ItemUtil.getLore(editorIcon));
             productIcon.setItemMeta(productMeta);
             ItemUtil.replace(productIcon, shopProduct.replacePlaceholders());
 

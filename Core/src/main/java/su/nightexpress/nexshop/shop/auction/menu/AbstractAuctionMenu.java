@@ -1,5 +1,6 @@
 package su.nightexpress.nexshop.shop.auction.menu;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -18,17 +19,18 @@ import su.nightexpress.nexshop.shop.auction.Placeholders;
 import su.nightexpress.nexshop.shop.auction.listing.AbstractAuctionItem;
 
 import java.util.*;
+import java.util.List;
 
 public abstract class AbstractAuctionMenu<A extends AbstractAuctionItem> extends AbstractMenuAuto<ExcellentShop, A> {
 
     protected AuctionManager auctionManager;
 
-    protected int[]        objectSlots;
-    protected String       itemName;
-    protected List<String> itemLore;
+    protected int[]           objectSlots;
+    protected Component       itemName;
+    protected List<Component> itemLore;
 
     protected Map<FormatType, List<String>> loreFormat;
-    protected Map<Player, UUID> seeOthers;
+    protected Map<Player, UUID>             seeOthers;
 
     private static final String PLACEHOLDER_LORE_FORMAT = "%lore_format%";
 
@@ -38,11 +40,11 @@ public abstract class AbstractAuctionMenu<A extends AbstractAuctionItem> extends
         this.seeOthers = new WeakHashMap<>();
         this.loreFormat = new HashMap<>();
 
-        this.itemName = StringUtil.color(cfg.getString("Items.Name", Placeholders.LISTING_ITEM_NAME));
-        this.itemLore = StringUtil.color(cfg.getStringList("Items.Lore"));
+        this.itemName = cfg.getComponent("Items.Name", StringUtil.asComponent(Placeholders.LISTING_ITEM_NAME));
+        this.itemLore = cfg.getComponentList("Items.Lore");
         this.objectSlots = cfg.getIntArray("Items.Slots");
         for (FormatType formatType : FormatType.values()) {
-            this.loreFormat.put(formatType, StringUtil.color(cfg.getStringList("Lore_Format." + formatType.name())));
+            this.loreFormat.put(formatType, cfg.getStringList("Lore_Format." + formatType.name()));
         }
     }
 
@@ -69,8 +71,8 @@ public abstract class AbstractAuctionMenu<A extends AbstractAuctionItem> extends
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return item;
 
-        meta.setDisplayName(this.itemName);
-        meta.setLore(this.itemLore);
+        meta.displayName(this.itemName);
+        meta.lore(this.itemLore);
         item.setItemMeta(meta);
 
         ItemUtil.replaceLore(item, PLACEHOLDER_LORE_FORMAT, this.getLoreFormat(player, aucItem));

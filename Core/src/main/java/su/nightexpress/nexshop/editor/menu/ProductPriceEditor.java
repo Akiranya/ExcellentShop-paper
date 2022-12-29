@@ -44,10 +44,10 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
         super(product.getShop().plugin(), product, Placeholders.EDITOR_VIRTUAL_TITLE, 45);
 
         EditorInput<Product<?, ?, ?>, GenericEditorType> input = (player, product2, type, e) -> {
-            String msg = StringUtil.color(e.getMessage());
+            String msg = e.getMessage();
             switch (type) {
                 case PRODUCT_CHANGE_PRICE_FLAT_SELL, PRODUCT_CHANGE_PRICE_FLAT_BUY -> {
-                    double price = StringUtil.getDouble(StringUtil.colorOff(msg), -1D, true);
+                    double price = StringUtil.getDouble(StringUtil.asPlainText(msg), -1D, true);
                     if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLAT_BUY) {
                         product2.getPricer().setPrice(TradeType.BUY, price);
                     }
@@ -57,7 +57,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                 }
                 case PRODUCT_CHANGE_PRICE_FLOAT_BUY_MIN, PRODUCT_CHANGE_PRICE_FLOAT_BUY_MAX, PRODUCT_CHANGE_PRICE_FLOAT_SELL_MIN, PRODUCT_CHANGE_PRICE_FLOAT_SELL_MAX -> {
                     FloatProductPricer pricer = (FloatProductPricer) product2.getPricer();
-                    double price = StringUtil.getDouble(StringUtil.colorOff(msg), -1D, true);
+                    double price = StringUtil.getDouble(StringUtil.asPlainText(msg), -1D, true);
                     if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_BUY_MIN) {
                         pricer.setPriceMin(TradeType.BUY, price);
                     }
@@ -95,7 +95,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                 }
                 case PRODUCT_CHANGE_PRICE_DYNAMIC_BUY_MIN, PRODUCT_CHANGE_PRICE_DYNAMIC_BUY_MAX, PRODUCT_CHANGE_PRICE_DYNAMIC_SELL_MIN, PRODUCT_CHANGE_PRICE_DYNAMIC_SELL_MAX -> {
                     DynamicProductPricer pricer = (DynamicProductPricer) product2.getPricer();
-                    double price = StringUtil.getDouble(StringUtil.colorOff(msg), 0D);
+                    double price = StringUtil.getDouble(StringUtil.asPlainText(msg), 0D);
                     if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_BUY_MIN) {
                         pricer.setPriceMin(TradeType.BUY, price);
                     }
@@ -111,7 +111,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                 }
                 case PRODUCT_CHANGE_PRICE_DYNAMIC_INITIAL_BUY, PRODUCT_CHANGE_PRICE_DYNAMIC_INITIAL_SELL -> {
                     DynamicProductPricer pricer = (DynamicProductPricer) product2.getPricer();
-                    double price = StringUtil.getDouble(StringUtil.colorOff(msg), 0D);
+                    double price = StringUtil.getDouble(StringUtil.asPlainText(msg), 0D);
                     if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_INITIAL_BUY) {
                         pricer.setInitial(TradeType.BUY, price);
                     }
@@ -121,7 +121,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                 }
                 case PRODUCT_CHANGE_PRICE_DYNAMIC_STEP_BUY, PRODUCT_CHANGE_PRICE_DYNAMIC_STEP_SELL -> {
                     DynamicProductPricer pricer = (DynamicProductPricer) product2.getPricer();
-                    double price = StringUtil.getDouble(StringUtil.colorOff(msg), 0D);
+                    double price = StringUtil.getDouble(StringUtil.asPlainText(msg), 0D);
                     if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_STEP_BUY) {
                         pricer.setStep(TradeType.BUY, price);
                     }

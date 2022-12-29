@@ -3,7 +3,6 @@ package su.nightexpress.nexshop.shop.virtual.config;
 import com.google.common.collect.Sets;
 import org.bukkit.GameMode;
 import su.nexmedia.engine.api.config.JOption;
-import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.Placeholders;
 import su.nightexpress.nexshop.api.type.StockType;
 import su.nightexpress.nexshop.api.type.TradeType;
@@ -36,18 +35,32 @@ public class VirtualConfig {
         "You can use 'Shop' placeholders here:" + Placeholders.URL_WIKI_PLACEHOLDERS
     );
     public static final JOption<List<String>> SHOP_FORMAT_LORE = JOption.create("GUI.Shop_Format.Lore",
-        Arrays.asList("&7Need Permission: &f" + Placeholders.SHOP_VIRTUAL_PERMISSION_REQUIRED, "", Placeholders.SHOP_VIRTUAL_DESCRIPTION, "", "&aLeft-Click to &fOpen"),
+        Arrays.asList(
+            "<gray>Need Permission: <white>" + Placeholders.SHOP_VIRTUAL_PERMISSION_REQUIRED,
+            "",
+            Placeholders.SHOP_VIRTUAL_DESCRIPTION,
+            "",
+            "<green>Left-Click to <white>Open"),
         "Sets lore for the shop item in the Main Menu.",
         "You can use 'Shop' placeholders here: " + Placeholders.URL_WIKI_PLACEHOLDERS
     );
 
     public static final JOption<List<String>> PRODUCT_FORMAT_LORE_GENERAL_ALL = JOption.create("GUI.Product_Format.Lore.General.All",
-        Arrays.asList(Placeholders.GENERIC_LORE, "", Placeholders.GENERIC_DISCOUNT, "",
-            "&eBuy: &6" + Placeholders.PRODUCT_PRICE_BUY_FORMATTED + " &8| &eSell: &6" + Placeholders.PRODUCT_PRICE_SELL_FORMATTED,
-            "", "%stock_global_buy%", "%stock_global_sell%", "%stock_player_buy%", "%stock_player_sell%", "",
-            "&cLeft-Click &8→ &fSelect Quantity &8← &cRight-Click",
-            "&cShift-Left &8→ &fBuy &7(Quick) &fSell &8← &cShift-Right",
-            "&c[F] Key &8→ &fSell All &7(" + Placeholders.PRODUCT_PRICE_SELL_ALL_FORMATTED + ")"),
+        Arrays.asList(
+            Placeholders.GENERIC_LORE,
+            "",
+            Placeholders.GENERIC_DISCOUNT,
+            "",
+            "<yellow>Buy: <gold>" + Placeholders.PRODUCT_PRICE_BUY_FORMATTED + "</gold> <dark_gray>|</dark_gray> Sell: <gold>" + Placeholders.PRODUCT_PRICE_SELL_FORMATTED,
+            "",
+            "%stock_global_buy%",
+            "%stock_global_sell%",
+            "%stock_player_buy%",
+            "%stock_player_sell%",
+            "",
+            "<dark_gray><red>Left-Click</red> → <white>Select Quantity</white> ← <red>Right-Click</red>",
+            "<dark_gray><red>Shift-Left</red> → <white>Buy</white> <gray>(Quick)</gray> <white>Sell</white> ← <red>Shift-Right</red>",
+            "<dark_gray><red>[F] Key</red> → <white>Sell All</white> <gray>(" + Placeholders.PRODUCT_PRICE_SELL_ALL_FORMATTED + ")</gray>"),
         "Sets lore for the product preview item in Virtual Shop GUI.",
         "This lore will be used when both Buy and Sell prices are available.",
         "Local Placeholders:",
@@ -61,11 +74,19 @@ public class VirtualConfig {
     );
 
     public static final JOption<List<String>> PRODUCT_FORMAT_LORE_GENERAL_BUY_ONLY = JOption.create("GUI.Product_Format.Lore.General.Buy_Only",
-        Arrays.asList(Placeholders.GENERIC_LORE, "", Placeholders.GENERIC_DISCOUNT, "",
-            "&eBuy: &6" + Placeholders.PRODUCT_PRICE_BUY_FORMATTED,
-            "", "%stock_global_buy%", "%stock_player_buy%", "",
-            "&cLeft-Click &8→ &fSelect Quantity",
-            "&cShift-Left &8→ &fQuick Buy"),
+        Arrays.asList(
+            Placeholders.GENERIC_LORE,
+            "",
+            Placeholders.GENERIC_DISCOUNT,
+            "",
+            "<yellow>Buy: <gold>" + Placeholders.PRODUCT_PRICE_BUY_FORMATTED,
+            "",
+            "%stock_global_buy%",
+            "%stock_player_buy%",
+            "",
+            "<dark_gray><red>Left-Click</red> → <white>Select Quantity</white>",
+            "<dark_gray><red>Shift-Left</red> → <white>Quick Buy</white>"
+        ),
         "Sets lore for the product preview item in Virtual Shop GUI.",
         "This lore will be used when only Buy price is available.",
         "Local Placeholders:",
@@ -77,12 +98,20 @@ public class VirtualConfig {
     );
 
     public static final JOption<List<String>> PRODUCT_FORMAT_LORE_GENERAL_SELL_ONLY = JOption.create("GUI.Product_Format.Lore.General.Sell_Only",
-        Arrays.asList(Placeholders.GENERIC_LORE, "", "%discount%", "",
-            "&eSell: &6" + Placeholders.PRODUCT_PRICE_SELL_FORMATTED,
-            "", "%stock_global_sell%", "%stock_player_sell%", "",
-            "&cLeft-Click &8→ &fSelect Quantity",
-            "&cShift-Left &8→ &fQuick Sell",
-            "&c[F] Key &8→ &fSell All &7(" + Placeholders.PRODUCT_PRICE_SELL_ALL_FORMATTED + ")"),
+        Arrays.asList(
+            Placeholders.GENERIC_LORE,
+            "",
+            "%discount%",
+            "",
+            "<yellow>Sell: <gold>" + Placeholders.PRODUCT_PRICE_SELL_FORMATTED,
+            "",
+            "%stock_global_sell%",
+            "%stock_player_sell%",
+            "",
+            "<dark_gray><red>Left-Click</red> → <white>Select Quantity</white>",
+            "<dark_gray><red>Shift-Left → <white>Quick Sell</white>",
+            "<dark_gray><red>[F] Key → <white>Sell All</white> <gray>(" + Placeholders.PRODUCT_PRICE_SELL_ALL_FORMATTED + ")</gray>"
+        ),
         "Sets lore for the product preview item in Virtual Shop GUI.",
         "This lore will be used when only Sell price is available.",
         "Local Placeholders:",
@@ -93,7 +122,9 @@ public class VirtualConfig {
     );
 
     public static final JOption<List<String>> PRODUCT_FORMAT_LORE_DISCOUNT = JOption.create("GUI.Product_Format.Lore.Discount",
-        Collections.singletonList("&c&l[!] #C70039&lSALE &e&l" + Placeholders.PRODUCT_DISCOUNT_AMOUNT + "%#C70039&l OFF &c&l[!]"),
+        Collections.singletonList(
+            "<red><b>[!] <#C70039>SALE <yellow>" + Placeholders.PRODUCT_DISCOUNT_AMOUNT + "</yellow>% OFF</#C70039> [!]"
+        ),
         "Sets the discount display format when there is active discounts in the shop applicable to a product.",
         "You can use 'Product' placeholders here: " + Placeholders.URL_WIKI_PLACEHOLDERS
     );
@@ -103,20 +134,20 @@ public class VirtualConfig {
             Map<StockType, Map<TradeType, List<String>>> map = new HashMap<>();
             for (StockType stockType : StockType.values()) {
                 for (TradeType tradeType : TradeType.values()) {
-                    List<String> lore = StringUtil.color(cfg.getStringList(path + "." + stockType.name() + "." + tradeType.name()));
+                    List<String> lore = cfg.getStringList(path + "." + stockType.name() + "." + tradeType.name());
                     map.computeIfAbsent(stockType, k -> new HashMap<>()).put(tradeType, lore);
                 }
             }
             return map;
         },
         () -> {
-        Map<StockType, Map<TradeType, List<String>>> map = new HashMap<>();
-        map.computeIfAbsent(StockType.GLOBAL, k -> new HashMap<>()).put(TradeType.BUY, Collections.singletonList("#95fafaBuy Stock &8→ #84dbdb" + Placeholders.PRODUCT_STOCK_GLOBAL_BUY_AMOUNT_LEFT + "&7/#84dbdb" + Placeholders.PRODUCT_STOCK_GLOBAL_BUY_AMOUNT_INITIAL + " &7(⟳ &f" + Placeholders.PRODUCT_STOCK_GLOBAL_BUY_RESTOCK_DATE + "&7)"));
-        map.computeIfAbsent(StockType.GLOBAL, k -> new HashMap<>()).put(TradeType.SELL, Collections.singletonList("#95fafaSell Stock &8→ #84dbdb" + Placeholders.PRODUCT_STOCK_GLOBAL_SELL_AMOUNT_LEFT + "&7/#84dbdb" + Placeholders.PRODUCT_STOCK_GLOBAL_SELL_AMOUNT_INITIAL + " &7(⟳ &f" + Placeholders.PRODUCT_STOCK_GLOBAL_SELL_RESTOCK_DATE + "&7)"));
-        map.computeIfAbsent(StockType.PLAYER, k -> new HashMap<>()).put(TradeType.BUY, Collections.singletonList("#FF7777Buy Limit &8→ #e16060" + Placeholders.PRODUCT_STOCK_PLAYER_BUY_AMOUNT_LEFT + "&7/#e16060" + Placeholders.PRODUCT_STOCK_PLAYER_BUY_AMOUNT_INITIAL + " &7(⟳ &f" + Placeholders.PRODUCT_STOCK_PLAYER_BUY_RESTOCK_DATE + "&7)"));
-        map.computeIfAbsent(StockType.PLAYER, k -> new HashMap<>()).put(TradeType.SELL, Collections.singletonList("#FF7777Sell Limit &8→ #e16060" + Placeholders.PRODUCT_STOCK_PLAYER_SELL_AMOUNT_LEFT + "&7/#e16060" + Placeholders.PRODUCT_STOCK_PLAYER_SELL_AMOUNT_INITIAL + " &7(⟳ &f" + Placeholders.PRODUCT_STOCK_PLAYER_SELL_RESTOCK_DATE + "&7)"));
-        return map;
-    },
+            Map<StockType, Map<TradeType, List<String>>> map = new HashMap<>();
+            map.computeIfAbsent(StockType.GLOBAL, k -> new HashMap<>()).put(TradeType.BUY, Collections.singletonList("<#95fafa>Buy Stock <dark_gray>→</dark_gray> <#84dbdb>" + Placeholders.PRODUCT_STOCK_GLOBAL_BUY_AMOUNT_LEFT + "<gray>/</gray>" + Placeholders.PRODUCT_STOCK_GLOBAL_BUY_AMOUNT_INITIAL + "</#84dbdb> <gray>(⟳ <white>" + Placeholders.PRODUCT_STOCK_GLOBAL_BUY_RESTOCK_DATE + "</white>)</gray>"));
+            map.computeIfAbsent(StockType.GLOBAL, k -> new HashMap<>()).put(TradeType.SELL, Collections.singletonList("<#95fafa>Sell Stock <dark_gray>→</dark_gray> <#84dbdb>" + Placeholders.PRODUCT_STOCK_GLOBAL_SELL_AMOUNT_LEFT + "<gray>/</gray>" + Placeholders.PRODUCT_STOCK_GLOBAL_SELL_AMOUNT_INITIAL + "</#84dbdb> <gray>(⟳ <white>" + Placeholders.PRODUCT_STOCK_GLOBAL_SELL_RESTOCK_DATE + "</white>)</gray>"));
+            map.computeIfAbsent(StockType.PLAYER, k -> new HashMap<>()).put(TradeType.BUY, Collections.singletonList("<#ff7777>Buy Limit <dark_gray>→</dark_gray> <#e16060>" + Placeholders.PRODUCT_STOCK_PLAYER_BUY_AMOUNT_LEFT + "<gray>/</gray>" + Placeholders.PRODUCT_STOCK_PLAYER_BUY_AMOUNT_INITIAL + "</#e16060> <gray>(⟳ <white>" + Placeholders.PRODUCT_STOCK_PLAYER_BUY_RESTOCK_DATE + "</white>)</gray>"));
+            map.computeIfAbsent(StockType.PLAYER, k -> new HashMap<>()).put(TradeType.SELL, Collections.singletonList("<#ff7777>Sell Limit <dark_gray>→</dark_gray> <#e16060>" + Placeholders.PRODUCT_STOCK_PLAYER_SELL_AMOUNT_LEFT + "<gray>/</gray>" + Placeholders.PRODUCT_STOCK_PLAYER_SELL_AMOUNT_INITIAL + "</#e16060> <gray>(⟳ <white>" + Placeholders.PRODUCT_STOCK_PLAYER_SELL_RESTOCK_DATE + "</white>)</gray>"));
+            return map;
+        },
         "Sets the stock display format for each Stock and Trade types.",
         "If product stock settings is undefined, format will be skipped.",
         "You can use 'Product' placeholders here: " + Placeholders.URL_WIKI_PLACEHOLDERS

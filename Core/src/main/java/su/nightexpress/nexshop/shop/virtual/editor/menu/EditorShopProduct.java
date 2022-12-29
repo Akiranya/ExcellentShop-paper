@@ -40,11 +40,11 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
 
         VirtualShop shop = product.getShop();
         EditorInput<VirtualProduct, VirtualEditorType> input = (player, product2, type, e) -> {
-            String msg = StringUtil.color(e.getMessage());
+            String msg = e.getMessage();
             switch (type) {
-                case PRODUCT_CHANGE_COMMANDS -> product2.getCommands().add(StringUtil.colorRaw(msg));
+                case PRODUCT_CHANGE_COMMANDS -> product2.getCommands().add(msg);
                 case PRODUCT_CHANGE_CURRENCY -> {
-                    String id = StringUtil.colorOff(msg);
+                    String id = StringUtil.asPlainText(msg);
                     ICurrency currency = plugin.getCurrencyManager().getCurrency(id);
                     if (currency == null) {
                         EditorManager.error(player, plugin.getMessage(Lang.EDITOR_GENERIC_ERROR_CURRENCY).getLocalized());
@@ -54,35 +54,35 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
                     product2.setCurrency(currency);
                 }
                 case PRODUCT_CHANGE_STOCK_GLOBAL_BUY_INITIAL_AMOUNT -> {
-                    int value = StringUtil.getInteger(StringUtil.colorOff(msg), -1, true);
+                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), -1, true);
                     product2.getStock().setInitialAmount(StockType.GLOBAL, TradeType.BUY, value);
                 }
                 case PRODUCT_CHANGE_STOCK_GLOBAL_BUY_RESTOCK_TIME -> {
-                    int value = StringUtil.getInteger(StringUtil.colorOff(msg), -1, true);
+                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), -1, true);
                     product2.getStock().setRestockCooldown(StockType.GLOBAL, TradeType.BUY, value);
                 }
                 case PRODUCT_CHANGE_STOCK_GLOBAL_SELL_INITIAL_AMOUNT -> {
-                    int value = StringUtil.getInteger(StringUtil.colorOff(msg), -1, true);
+                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), -1, true);
                     product2.getStock().setInitialAmount(StockType.GLOBAL, TradeType.SELL, value);
                 }
                 case PRODUCT_CHANGE_STOCK_GLOBAL_SELL_RESTOCK_TIME -> {
-                    int value = StringUtil.getInteger(StringUtil.colorOff(msg), -1, true);
+                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), -1, true);
                     product2.getStock().setRestockCooldown(StockType.GLOBAL, TradeType.SELL, value);
                 }
                 case PRODUCT_CHANGE_STOCK_PLAYER_BUY_INITIAL_AMOUNT -> {
-                    int value = StringUtil.getInteger(StringUtil.colorOff(msg), -1, true);
+                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), -1, true);
                     product2.getStock().setInitialAmount(StockType.PLAYER, TradeType.BUY, value);
                 }
                 case PRODUCT_CHANGE_STOCK_PLAYER_BUY_RESTOCK_TIME -> {
-                    int value = StringUtil.getInteger(StringUtil.colorOff(msg), -1, true);
+                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), -1, true);
                     product2.getStock().setRestockCooldown(StockType.PLAYER, TradeType.BUY, value);
                 }
                 case PRODUCT_CHANGE_STOCK_PLAYER_SELL_INITIAL_AMOUNT -> {
-                    int value = StringUtil.getInteger(StringUtil.colorOff(msg), -1, true);
+                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), -1, true);
                     product2.getStock().setInitialAmount(StockType.PLAYER, TradeType.SELL, value);
                 }
                 case PRODUCT_CHANGE_STOCK_PLAYER_SELL_RESTOCK_TIME -> {
-                    int value = StringUtil.getInteger(StringUtil.colorOff(msg), -1, true);
+                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), -1, true);
                     product2.getStock().setRestockCooldown(StockType.PLAYER, TradeType.SELL, value);
                 }
                 default -> {}
@@ -160,8 +160,7 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
                     }
                     case PRODUCT_CHANGE_CURRENCY -> {
                         EditorManager.tip(player, plugin.getMessage(Lang.EDITOR_PRODUCT_ENTER_CURRENCY).getLocalized());
-                        EditorManager.suggestValues(player, plugin.getCurrencyManager()
-                                .getCurrencies().stream().map(ICurrency::getId).toList(), true);
+                        EditorManager.suggestValues(player, plugin.getCurrencyManager().getCurrencies().stream().map(ICurrency::getId).toList(), true);
                         EditorManager.startEdit(player, product, type2, input);
                         player.closeInventory();
                         return;

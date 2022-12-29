@@ -87,8 +87,8 @@ public class EditorShopList extends AbstractEditorMenuAuto<ExcellentShop, Virtua
         ItemMeta meta2 = editor.getItemMeta();
         if (meta2 == null) return item;
 
-        meta.setDisplayName(meta2.getDisplayName());
-        meta.setLore(meta2.getLore());
+        meta.displayName(meta2.displayName());
+        meta.lore(meta2.lore());
         meta.addItemFlags(ItemFlag.values());
         item.setItemMeta(meta);
 

@@ -47,10 +47,10 @@ Display:
     Slide_Interval: 3
     Values:
       PLAYER:
-        - '&a%shop_name%'
-        - '&7Owner: &6%shop_owner%'
+        - '<green>%shop_name%'
+        - '<gray>Owner: <gold>%shop_owner%'
       ADMIN:
-        - '&a%shop_name%'
+        - '<green>%shop_name%'
 
 Transaction_Logs:
   Output:
@@ -58,4 +58,4 @@ Transaction_Logs:
     Console: true
   Format:
     Date: dd/MM/yyyy HH:mm:ss
-    Purchase: '(%type%) %player% - x%amount% of %item% for %price%&7 in %shop_name%&r shop owned by %shop_owner%.'
+    Purchase: '(%type%) %player% - x%amount% of %item% for %price%<gray> in %shop_name%<reset> shop owned by %shop_owner%.'

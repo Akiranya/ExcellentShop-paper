@@ -6,7 +6,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.hooks.Hooks;
-import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.api.currency.ICurrency;
 import su.nightexpress.nexshop.shop.auction.AuctionCategory;
 import su.nightexpress.nexshop.shop.auction.AuctionManager;
@@ -99,8 +98,8 @@ public class AuctionConfig {
         }
         LISTINGS_DISABLED_MATERIALS = cfg.getStringSet(path + "Disabled_Materials").stream()
                 .map(String::toUpperCase).collect(Collectors.toSet());
-        LISTINGS_DISABLED_NAMES = StringUtil.color(cfg.getStringSet(path + "Disabled_Names"));
-        LISTINGS_DISABLED_LORES = StringUtil.color(cfg.getStringSet(path + "Disabled_Lores"));
+        LISTINGS_DISABLED_NAMES = cfg.getStringSet(path + "Disabled_Names");
+        LISTINGS_DISABLED_LORES = cfg.getStringSet(path + "Disabled_Lores");
 
         path = "Settings.Listings.Price.";
 

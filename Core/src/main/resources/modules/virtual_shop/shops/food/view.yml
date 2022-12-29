@@ -6,6 +6,6 @@ Content:
       default:
         Item:
           Material: BARRIER
-          Name: '&c&lReturn'
+          Name: '<red><b>Return'
     Slots: '49'
     Type: RETURN

@@ -7,10 +7,7 @@ import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.menu.IMenuClick;
 import su.nexmedia.engine.api.menu.IMenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
-import su.nexmedia.engine.utils.CollectionsUtil;
-import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.NumberUtil;
-import su.nexmedia.engine.utils.TimeUtil;
+import su.nexmedia.engine.utils.*;
 import su.nightexpress.nexshop.Perms;
 import su.nightexpress.nexshop.api.currency.ICurrency;
 import su.nightexpress.nexshop.config.Config;
@@ -18,6 +15,7 @@ import su.nightexpress.nexshop.config.Lang;
 import su.nightexpress.nexshop.shop.auction.AuctionCategory;
 import su.nightexpress.nexshop.shop.auction.AuctionManager;
 import su.nightexpress.nexshop.shop.auction.config.AuctionConfig;
+import su.nightexpress.nexshop.shop.auction.listing.AbstractAuctionItem;
 import su.nightexpress.nexshop.shop.auction.listing.AuctionListing;
 
 import java.util.*;
@@ -174,8 +172,8 @@ public class AuctionMainMenu extends AbstractAuctionMenu<AuctionListing> {
     public enum AuctionSortType {
 
         NAME((l1, l2) -> {
-            String name1 = ItemUtil.getItemName(l1.getItemStack());
-            String name2 = ItemUtil.getItemName(l2.getItemStack());
+            String name1 = StringUtil.asPlainText(ItemUtil.getItemName(l1.getItemStack()));
+            String name2 = StringUtil.asPlainText(ItemUtil.getItemName(l2.getItemStack()));
             return name1.compareTo(name2);
         }),
         MATERIAL((l1, l2) -> {
@@ -183,21 +181,11 @@ public class AuctionMainMenu extends AbstractAuctionMenu<AuctionListing> {
             String type2 = l2.getItemStack().getType().name();
             return type1.compareTo(type2);
         }),
-        SELLER((l1, l2) -> {
-            return l1.getOwnerName().compareTo(l2.getOwnerName());
-        }),
-        NEWEST((l1, l2) -> {
-            return Long.compare(l2.getExpireDate(), l1.getExpireDate());
-        }),
-        OLDEST((l1, l2) -> {
-            return Long.compare(l1.getExpireDate(), l2.getExpireDate());
-        }),
-        MOST_EXPENSIVE((l1, l2) -> {
-            return Double.compare(l2.getPrice(), l1.getPrice());
-        }),
-        LEAST_EXPENSIVE((l1, l2) -> {
-            return Double.compare(l1.getPrice(), l2.getPrice());
-        }),
+        SELLER(Comparator.comparing(AbstractAuctionItem::getOwnerName)),
+        NEWEST((l1, l2) -> Long.compare(l2.getExpireDate(), l1.getExpireDate())),
+        OLDEST(Comparator.comparingLong(AuctionListing::getExpireDate)),
+        MOST_EXPENSIVE((l1, l2) -> Double.compare(l2.getPrice(), l1.getPrice())),
+        LEAST_EXPENSIVE(Comparator.comparingDouble(AbstractAuctionItem::getPrice)),
         ;
 
         private final Comparator<AuctionListing> comparator;

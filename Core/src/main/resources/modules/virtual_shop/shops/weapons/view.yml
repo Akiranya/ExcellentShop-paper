@@ -6,7 +6,7 @@ Content:
       default:
         Item:
           Material: BARRIER
-          Name: '&c&lReturn'
+          Name: '<red><b>Return'
     Slots: '49'
     Type: RETURN
 
@@ -15,7 +15,7 @@ Content:
       default:
         Item:
           Material: 'PLAYER_HEAD'
-          Name: '&e&lNext Page'
+          Name: '<yellow><b>Next Page'
           Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjgyYWQxYjljYjRkZDIxMjU5YzBkNzVhYTMxNWZmMzg5YzNjZWY3NTJiZTM5NDkzMzgxNjRiYWM4NGE5NmUifX19'
     Slots: 53
     Type: PAGE_NEXT
@@ -25,7 +25,7 @@ Content:
       default:
         Item:
           Material: 'PLAYER_HEAD'
-          Name: '&e&lPrevious Page'
+          Name: '<yellow><b>Previous Page'
           Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0='
     Slots: 45
     Type: PAGE_PREVIOUS

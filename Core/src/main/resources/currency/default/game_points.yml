@@ -6,6 +6,6 @@ Icon:
   Material: SUNFLOWER
   Amount: 1
   Durability: 0
-  Name: '&e%currency_name%'
+  Name: '<yellow>%currency_name%'
   Item_Flags: []
   Unbreakable: false

@@ -1,7 +1,7 @@
 # Default GUI configuration settings you can see on the NexEngine wiki.
 # https://github.com/nulli0n/NexEngine-spigot/wiki/Menu-Config
 
-Title: '&8&m            &8&l[ &9&lAuction &8&l]&8&m            &7'
+Title: 'Auction'
 Size: 54
 
 # Animation timer is used here to simply update the GUI to replace dynamic placeholders
@@ -15,7 +15,7 @@ Animation:
 # Additional placeholders available:
 # - %lore_format% - Applies lore format from the 'Lore_Format' section depends on the listing viewer.
 Items:
-  Name: '&f%listing_item_name%'
+  Name: '<white>%listing_item_name%'
   Lore:
     - '%lore_format%'
   Slots: 10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34,37,38,39,40,41,42,43
@@ -29,31 +29,31 @@ Items:
 # - ADMIN - Lore format for the player who has permission to remove other listings.
 Lore_Format:
   OWNER:
-    - '&8&o(This is your listing)'
+    - '<dark_gray><i>(This is your listing)'
     - '%listing_item_lore%'
-    - '&7'
-    - '&c▸ &7Price: &c%listing_price%'
-    - '&f▸ &7Expires in: &f%listing_expires_in%'
-    - '&7'
-    - '#55e136&l[>]#86de2a Shift + RMB: &fRemove Listing'
+    - '<gray>'
+    - '<red>▸ <gray>Price: <red>%listing_price%'
+    - '<white>▸ <gray>Expires in: <white>%listing_expires_in%'
+    - '<gray>'
+    - '<#55e136><b>[>]<#86de2a> Shift + RMB: <white>Remove Listing'
   PLAYER:
     - '%listing_item_lore%'
-    - '&7'
-    - '&c▸ &7Price: &c%listing_price%'
-    - '&f▸ &7Seller: &f%listing_seller%'
-    - '&f▸ &7Expires in: &f%listing_expires_in%'
-    - '&7'
-    - '&7      #55e136&lClick to purchase!'
+    - '<gray>'
+    - '<red>▸ <gray>Price: <red>%listing_price%'
+    - '<white>▸ <gray>Seller: <white>%listing_seller%'
+    - '<white>▸ <gray>Expires in: <white>%listing_expires_in%'
+    - '<gray>'
+    - '<gray>      <#55e136><b>Click to purchase!'
   ADMIN:
     - '%listing_item_lore%'
-    - '&7'
-    - '&c▸ &7Price: &c%listing_price%'
-    - '&f▸ &7Seller: &f%listing_seller%'
-    - '&f▸ &7Added: &f%listing_date_creation%'
-    - '&f▸ &7Expires in: &f%listing_expires_in%'
-    - '&7'
-    - '#55e136&l[>]#86de2a Left Click: &fPurchase'
-    - '#55e136&l[>]#86de2a Shift + RMB: &fRemove Listing'
+    - '<gray>'
+    - '<red>▸ <gray>Price: <red>%listing_price%'
+    - '<white>▸ <gray>Seller: <white>%listing_seller%'
+    - '<white>▸ <gray>Added: <white>%listing_date_creation%'
+    - '<white>▸ <gray>Expires in: <white>%listing_expires_in%'
+    - '<gray>'
+    - '<#55e136><b>[>]<#86de2a> Left Click: <white>Purchase'
+    - '<#55e136><b>[>]<#86de2a> Shift + RMB: <white>Remove Listing'
 
 # Special item section for the additional GUI buttons Type.
 # Allowed Types:
@@ -76,15 +76,15 @@ Special:
       default:
         Item:
           Material: 'HOPPER'
-          Name: '&b&lExpired Items &7(&fMenu&7)'
+          Name: '<aqua><b>Expired Items <gray>(<white>Menu<gray>)'
           Lore:
-            - '&7A list of ''expired'' items'
-            - '&7that have not been sold to anyone.'
-            - '&7'
-            - '&e&l(!) #FFC300You have &e%expired_amount% #FFC300expired items.'
-            - '&7'
-            - '&c&l(!) #C70039Don''t forget to &ctake#C70039 these'
-            - '#C70039items back, otherwise they can be &cdeleted#C70039!'
+            - '<gray>A list of ''expired'' items'
+            - '<gray>that have not been sold to anyone.'
+            - '<gray>'
+            - '<yellow><b>(!) <#FFC300>You have <yellow>%expired_amount% <#FFC300>expired items.'
+            - '<gray>'
+            - '<red><b>(!) <#C70039>Don''t forget to <red>take<#C70039> these'
+            - '<#C70039>items back, otherwise they can be <red>deleted<#C70039>!'
     Type: EXPIRED_LISTINGS
     Slots: 47
 
@@ -93,10 +93,10 @@ Special:
       default:
         Item:
           Material: 'WRITABLE_BOOK'
-          Name: '&6&lSales History &7(&fMenu&7)'
+          Name: '<gold><b>Sales History <gray>(<white>Menu<gray>)'
           Lore:
-            - '&7A list of all items you'
-            - '&7have sold on auction.'
+            - '<gray>A list of all items you'
+            - '<gray>have sold on auction.'
     Type: SALES_HISTORY
     Slots: 51
 
@@ -105,15 +105,15 @@ Special:
       default:
         Item:
           Material: 'GOLD_NUGGET'
-          Name: '&e&lSold & Unclaimed Items &7(&fMenu&7)'
+          Name: '<yellow><b>Sold & Unclaimed Items <gray>(<white>Menu<gray>)'
           Lore:
-            - '&7A list of items you have sold,'
-            - '&7but didn''t claim the reward.'
-            - '&7'
-            - '&e&l(!) #FFC300You have &e%unclaimed_amount% #FFC300unclaimed items.'
-            - '&7'
-            - '&c&l(!) #C70039Don''t forget to &cclaim#C70039 your'
-            - '#C70039rewards, otherwise they can be &cdeleted#C70039!'
+            - '<gray>A list of items you have sold,'
+            - '<gray>but didn''t claim the reward.'
+            - '<gray>'
+            - '<yellow><b>(!) <#FFC300>You have <yellow>%unclaimed_amount% <#FFC300>unclaimed items.'
+            - '<gray>'
+            - '<red><b>(!) <#C70039>Don''t forget to <red>claim<#C70039> your'
+            - '<#C70039>rewards, otherwise they can be <red>deleted<#C70039>!'
     Type: UNCLAIMED_ITEMS
     Slots: 50
 
@@ -122,14 +122,14 @@ Special:
       default:
         Item:
           Material: 'COMPASS'
-          Name: '&b&lItem Categories &7(&fMenu&7)'
+          Name: '<aqua><b>Item Categories <gray>(<white>Menu<gray>)'
           Lore:
-            - '&7Select listing categories you'
-            - '&7want to browse here.'
-            - '&7'
-            - '&e&l(!) #FFC300Current: &e%categories%'
-            - '&7'
-            - '#55e136&l[>] #86de2aRight-Click: &fReset'
+            - '<gray>Select listing categories you'
+            - '<gray>want to browse here.'
+            - '<gray>'
+            - '<yellow><b>(!) <#FFC300>Current: <yellow>%categories%'
+            - '<gray>'
+            - '<#55e136><b>[>] <#86de2a>Right-Click: <white>Reset'
     Type: CATEGORY_FILTER
     Slots: 46
 
@@ -138,14 +138,14 @@ Special:
       default:
         Item:
           Material: 'EMERALD'
-          Name: '&a&lCurrencies &7(&fMenu&7)'
+          Name: '<green><b>Currencies <gray>(<white>Menu<gray>)'
           Lore:
-            - '&7Select listing currencies you'
-            - '&7want to browse here.'
-            - '&7'
-            - '&e&l(!) #FFC300Current: &e%currencies%'
-            - '&7'
-            - '#55e136&l[>] #86de2aRight-Click: &fReset'
+            - '<gray>Select listing currencies you'
+            - '<gray>want to browse here.'
+            - '<gray>'
+            - '<yellow><b>(!) <#FFC300>Current: <yellow>%currencies%'
+            - '<gray>'
+            - '<#55e136><b>[>] <#86de2a>Right-Click: <white>Reset'
     Type: CURRENCY_FILTER
     Slots: 49
 
@@ -154,9 +154,9 @@ Special:
       default:
         Item:
           Material: 'BOOK'
-          Name: '&6&lMy Items &7(&fMenu&7)'
+          Name: '<gold><b>My Items <gray>(<white>Menu<gray>)'
           Lore:
-            - '&7Items you''re selling now.'
+            - '<gray>Items you''re selling now.'
     Type: OWN_LISTINGS
     Slots: 48
 
@@ -165,12 +165,12 @@ Special:
       default:
         Item:
           Material: 'NAME_TAG'
-          Name: '&6&lItems Order'
+          Name: '<gold><b>Items Order'
           Lore:
-            - '&7Items are displayed'
-            - '&7in a &6%listing_order% &7order.'
-            - '&7'
-            - '#55e136&l[>] #86de2aLeft-Click: &fToggle'
+            - '<gray>Items are displayed'
+            - '<gray>in a <gold>%listing_order% <gray>order.'
+            - '<gray>'
+            - '<#55e136><b>[>] <#86de2a>Left-Click: <white>Toggle'
     Type: LISTING_ORDER
     Slots: 52
 
@@ -183,15 +183,15 @@ Content:
       default:
         Item:
           Material: BLACK_STAINED_GLASS_PANE
-          Name: '&7'
+          Name: '<gray>'
     Slots: 0,1,2,3,4,5,6,7,8,9,17,18,26,27,35,36,44,45,53
-  
+
   page_next:
     Display:
       default:
         Item:
           Material: 'PLAYER_HEAD'
-          Name: '&e&lNext Page →'
+          Name: '<yellow><b>Next Page →'
           Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjgyYWQxYjljYjRkZDIxMjU5YzBkNzVhYTMxNWZmMzg5YzNjZWY3NTJiZTM5NDkzMzgxNjRiYWM4NGE5NmUifX19'
     Slots: 53
     Type: PAGE_NEXT
@@ -201,7 +201,7 @@ Content:
       default:
         Item:
           Material: 'PLAYER_HEAD'
-          Name: '&e&l← Previous Page'
+          Name: '<yellow><b>← Previous Page'
           Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0='
     Slots: 45
     Type: PAGE_PREVIOUS
@@ -211,29 +211,29 @@ Content:
       default:
         Item:
           Material: 'LECTERN'
-          Name: '&6Information'
+          Name: '<gold>Information'
           Lore:
-            - '&6&lSelling Items:'
-            - '&6▸ &7Hold item and type'
-            - '  &6/ah sell <price>'
-            - '&7'
-            - '&6&lItem Expire:'
-            - '&6▸ &7When you put an item to'
-            - '  &7auction, it will have &6%expire%'
-            - '  &7to be sold before it will be removed'
-            - '  &7from the auction.'
-            - '&7'
-            - '&6&lTaxes:'
-            - '&6▸ &7You will have to pay'
-            - '&7  &6%tax%% &7of the item price'
-            - '&7  to be able to put in on auction.'
-            - '&7'
-            - '&6&lCancel Items:'
-            - '&6▸ &7Use &6Shift+Right Click'
-            - '&7  to cancel any item you''re selling.'
+            - '<gold><b>Selling Items:'
+            - '<gold>▸ <gray>Hold item and type'
+            - '  <gold>/ah sell <price>'
+            - '<gray>'
+            - '<gold><b>Item Expire:'
+            - '<gold>▸ <gray>When you put an item to'
+            - '  <gray>auction, it will have <gold>%expire%'
+            - '  <gray>to be sold before it will be removed'
+            - '  <gray>from the auction.'
+            - '<gray>'
+            - '<gold><b>Taxes:'
+            - '<gold>▸ <gray>You will have to pay'
+            - '<gray>  <gold>%tax%% <gray>of the item price'
+            - '<gray>  to be able to put in on auction.'
+            - '<gray>'
+            - '<gold><b>Cancel Items:'
+            - '<gold>▸ <gray>Use <gold>Shift+Right Click'
+            - '<gray>  to cancel any item you''re selling.'
           Enchants:
             fortune: 1
           Item_Flags:
-          - '*'
+            - '*'
     Type: NONE
     Slots: 4

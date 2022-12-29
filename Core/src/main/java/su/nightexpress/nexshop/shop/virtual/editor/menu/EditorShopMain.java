@@ -38,13 +38,13 @@ public class EditorShopMain extends AbstractEditorMenu<ExcellentShop, VirtualSho
         super(plugin, shop, Placeholders.EDITOR_VIRTUAL_TITLE, 45);
 
         EditorInput<VirtualShop, VirtualEditorType> input = (player, shop2, type, e) -> {
-            String msg = StringUtil.color(e.getMessage());
+            String msg = e.getMessage();
             switch (type) {
                 case SHOP_CHANGE_NAME -> shop2.setName(msg);
-                case SHOP_CHANGE_DESCRIPTION -> shop2.getDescription().add(msg);
-                case SHOP_CHANGE_TITLE -> shop2.getView().setTitle(msg);
+                case SHOP_CHANGE_DESCRIPTION -> shop2.setDescription(msg);
+                case SHOP_CHANGE_TITLE -> shop2.getView().setTitle(StringUtil.asComponent(msg));
                 case SHOP_CHANGE_CITIZENS_ID -> {
-                    msg = StringUtil.colorOff(msg);
+                    msg = StringUtil.asPlainText(msg);
                     int inputN = StringUtil.getInteger(msg, -1);
                     if (inputN < 0) {
                         EditorManager.error(player, EditorManager.ERROR_NUM_NOT_INT);
@@ -83,7 +83,7 @@ public class EditorShopMain extends AbstractEditorMenu<ExcellentShop, VirtualSho
                     }
                     case SHOP_CHANGE_DESCRIPTION -> {
                         if (e.isRightClick()) {
-                            shop.getDescription().clear();
+                            shop.setDescription("");
                             break;
                         }
                         EditorManager.tip(player, plugin.getMessage(VirtualLang.EDITOR_ENTER_DESCRIPTION).getLocalized());

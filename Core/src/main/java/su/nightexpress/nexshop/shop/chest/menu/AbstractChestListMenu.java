@@ -1,5 +1,6 @@
 package su.nightexpress.nexshop.shop.chest.menu;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -14,7 +15,6 @@ import su.nexmedia.engine.api.menu.IMenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.shop.chest.ChestShopModule;
 import su.nightexpress.nexshop.shop.chest.config.ChestLang;
@@ -26,38 +26,35 @@ public abstract class AbstractChestListMenu extends AbstractMenuAuto<ExcellentSh
 
     protected ChestShopModule chestShop;
 
-    protected int[]        objectSlots;
-    protected String       shopName;
-    protected List<String> shopLore;
+    protected int[]           objectSlots;
+    protected Component       shopName;
+    protected List<Component> shopLore;
 
     public AbstractChestListMenu(@NotNull ChestShopModule chestShop, @NotNull JYML cfg) {
         super(chestShop.plugin(), cfg, "");
         this.chestShop = chestShop;
 
         this.objectSlots = cfg.getIntArray("Shop_Icon.Slots");
-        this.shopName = StringUtil.color(cfg.getString("Shop_Icon.Name", ""));
-        this.shopLore = StringUtil.color(cfg.getStringList("Shop_Icon.Lore"));
+        this.shopName = cfg.getComponent("Shop_Icon.Name", Component.empty());
+        this.shopLore = cfg.getComponentList("Shop_Icon.Lore");
 
         IMenuClick click = (player, type, e) -> {
 
             if (type instanceof MenuItemType type2) {
                 this.onItemClickDefault(player, type2);
-            }
-            else if (type instanceof ItemType type2) {
+            } else if (type instanceof ItemType type2) {
                 if (type2 == ItemType.LIST_GLOBAL_TOGGLE) {
                     boolean isGlobal = false;
                     if (this instanceof ChestListOwnMenu) {
                         this.chestShop.getListGlobalMenu().open(player, 1);
                         isGlobal = true;
-                    }
-                    else if (this instanceof ChestListGlobalMenu) {
+                    } else if (this instanceof ChestListGlobalMenu) {
                         this.chestShop.getListOwnMenu().open(player, 1);
-                    }
-                    else return;
+                    } else return;
 
                     plugin.getMessage(ChestLang.SHOP_LIST_INFO_SWITCH)
-                        .replace("%state%", LangManager.getBoolean(isGlobal))
-                        .send(player);
+                          .replace("%state%", LangManager.getBoolean(isGlobal))
+                          .send(player);
                 }
             }
         };
@@ -97,8 +94,8 @@ public abstract class AbstractChestListMenu extends AbstractMenuAuto<ExcellentSh
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return item;
 
-        meta.setDisplayName(this.shopName);
-        meta.setLore(this.shopLore);
+        meta.displayName(this.shopName);
+        meta.lore(this.shopLore);
         meta.addItemFlags(ItemFlag.values());
         item.setItemMeta(meta);
 

@@ -88,7 +88,7 @@ public abstract class ShopModule extends AbstractModule<ExcellentShop> {
             this.outFile = cfg.getBoolean(path + "Output.File");
             this.outConsole = cfg.getBoolean(path + "Output.Console");
             this.dateFormat = DateTimeFormatter.ofPattern(cfg.getString(path + "Format.Date", "dd/MM/yyyy HH:mm:ss"));
-            this.format = StringUtil.color(cfg.getString(path + "Format.Purchase", "%type%: %player% - x%amount% of %item% for %price%&7 in %shop_name% shop."));
+            this.format = cfg.getString(path + "Format.Purchase", "%type%: %player% - x%amount% of %item% for %price% in %shop_name% shop.");
         }
 
         public void logTransaction(@NotNull ShopPurchaseEvent<?> event) {
@@ -111,7 +111,7 @@ public abstract class ShopModule extends AbstractModule<ExcellentShop> {
             }
             if (this.outFile) {
                 String date = LocalDateTime.now().format(this.dateFormat);
-                String outFile = "[" + date + "] " + StringUtil.colorOff(text);
+                String outFile = "[" + date + "] " + StringUtil.asPlainText(text);
 
                 BufferedWriter output;
                 try {

@@ -1,6 +1,7 @@
 package su.nightexpress.nexshop.currency.config;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -28,8 +29,8 @@ public class CurrencyConfig extends AbstractLoadableItem<ExcellentShop> implemen
         super(plugin, cfg);
 
         this.isEnabled = cfg.getBoolean("Enabled", true);
-        this.name = StringUtil.color(cfg.getString("Name", StringUtil.capitalizeFully(this.getId().replace("_", " "))));
-        this.format = StringUtil.color(cfg.getString("Format", Placeholders.GENERIC_PRICE + " " + Placeholders.CURRENCY_NAME));
+        this.name = cfg.getString("Name", StringUtil.capitalizeFully(this.getId().replace("_", " ")));
+        this.format = cfg.getString("Format", Placeholders.GENERIC_PRICE + " " + Placeholders.CURRENCY_NAME);
         this.numberFormat = new DecimalFormat(cfg.getString("Number_Format", "#,###.##"), new DecimalFormatSymbols(Locale.ENGLISH));
 
         ItemStack icon = cfg.getItem("Icon");
@@ -38,7 +39,7 @@ public class CurrencyConfig extends AbstractLoadableItem<ExcellentShop> implemen
 
             ItemMeta meta = this.icon.getItemMeta();
             if (meta != null) {
-                meta.setDisplayName(ChatColor.YELLOW + Placeholders.CURRENCY_NAME);
+                meta.displayName(Component.text(Placeholders.CURRENCY_NAME).color(NamedTextColor.YELLOW));
             }
             this.icon.setItemMeta(meta);
         }

@@ -1,6 +1,7 @@
 package su.nightexpress.nexshop.shop.chest.config;
 
 import com.google.common.collect.Sets;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -42,7 +43,7 @@ public class ChestConfig {
     public static Set<ICurrency> ALLOWED_CURRENCIES;
     public static String         ADMIN_SHOP_NAME;
     public static final JOption<String> DEFAULT_NAME = JOption.create("Shops.Default_Name",
-        "&a" + Placeholders.Player.NAME + "'s Shop",
+        "<green>" + Placeholders.Player.NAME + "'s Shop",
         "Default shop name, that will be used on shop creation."
     );
 
@@ -68,8 +69,8 @@ public class ChestConfig {
         if (!cfg.isConfigurationSection("Display.Title.Values")) {
             cfg.remove("Display.Title.Values");
         }
-        cfg.addMissing("Display.Title.Values." + ChestShopType.PLAYER, Arrays.asList("&a%shop_name%", "&7Owner: &6%shop_owner%"));
-        cfg.addMissing("Display.Title.Values." + ChestShopType.ADMIN, Arrays.asList("&a%shop_name%", "&7Server Shop"));
+        cfg.addMissing("Display.Title.Values." + ChestShopType.PLAYER, Arrays.asList("<green>%shop_name%", "<gray>Owner: <gold>%shop_owner%"));
+        cfg.addMissing("Display.Title.Values." + ChestShopType.ADMIN, Arrays.asList("<green>%shop_name%", "<gray>Server Shop"));
 
         String path = "Shops.";
         DELETE_INVALID_SHOP_CONFIGS = cfg.getBoolean(path + "Delete_Invalid_Shop_Configs", false);
@@ -77,7 +78,7 @@ public class ChestConfig {
         ALLOWED_CURRENCIES = cfg.getStringSet(path + "Allowed_Currencies").stream().map(String::toLowerCase)
             .map(currencyId -> plugin.getCurrencyManager().getCurrency(currencyId))
             .filter(Objects::nonNull).collect(Collectors.toSet());
-        ADMIN_SHOP_NAME = StringUtil.color(cfg.getString(path + "AdminShop_Name", "MyServerCraft"));
+        ADMIN_SHOP_NAME = cfg.getString(path + "AdminShop_Name", "MyServerCraft");
 
         path = "Shops.Creation.";
         SHOP_CREATION_COST_CREATE = cfg.getDouble(path + "Cost.Create");
@@ -108,7 +109,7 @@ public class ChestConfig {
         DISPLAY_SLIDE_INTERVAL = cfg.getInt(path + "Title.Slide_Interval", 3);
         DISPLAY_TEXT = new HashMap<>();
         for (ChestShopType type : ChestShopType.values()) {
-            DISPLAY_TEXT.put(type, StringUtil.color(cfg.getStringList(path + "Title.Values." + type.name())));
+            DISPLAY_TEXT.put(type, cfg.getStringList(path + "Title.Values." + type.name()));
         }
 
         cfg.saveChanges();
@@ -136,14 +137,15 @@ public class ChestConfig {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             if (meta.hasDisplayName()) {
-                String name = meta.getDisplayName();
+                //noinspection DataFlowIssue
+                String name = StringUtil.asPlainText(meta.displayName());
                 if (ChestConfig.SHOP_PRODUCT_DENIED_NAMES.stream().anyMatch(name::contains)) {
                     return false;
                 }
             }
-            List<String> lore = meta.getLore();
+            List<Component> lore = meta.lore();
             if (lore != null) {
-                return lore.stream().noneMatch(line -> SHOP_PRODUCT_DENIED_LORES.stream().anyMatch(line::contains));
+                return lore.stream().map(StringUtil::asPlainText).noneMatch(line -> SHOP_PRODUCT_DENIED_LORES.stream().anyMatch(line::contains));
             }
         }
         return true;

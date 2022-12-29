@@ -37,14 +37,14 @@ public class EditorShopDiscount extends AbstractEditorMenu<ExcellentShop, Virtua
         this.shop = shop;
 
         EditorInput<VirtualDiscount, VirtualEditorType> input = (player2, discount2, type, e) -> {
-            String msg = StringUtil.color(e.getMessage());
+            String msg = e.getMessage();
             switch (type) {
                 case DISCOUNT_CHANGE_DISCOUNT -> {
-                    double value = StringUtil.getDouble(StringUtil.colorOff(msg), 0);
+                    double value = StringUtil.getDouble(StringUtil.asPlainText(msg), 0);
                     discount2.setDiscount(value);
                 }
                 case DISCOUNT_CHANGE_DURATION -> {
-                    int value = StringUtil.getInteger(StringUtil.colorOff(msg), 0);
+                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), 0);
                     discount2.setDuration(value);
                 }
                 case DISCOUNT_CHANGE_DAY -> {

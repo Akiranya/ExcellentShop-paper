@@ -38,7 +38,7 @@ public class ShopEditor extends AbstractEditorMenu<ExcellentShop, ChestShop> {
         super(shop.plugin(), shop, ChestConfig.EDITOR_TITLE.get(), 9);
 
         EditorInput<ChestShop, ChestEditorType> input = (player, shop2, type, e) -> {
-            String msg = StringUtil.color(e.getMessage());
+            String msg = e.getMessage();
             switch (type) {
                 case SHOP_CHANGE_NAME -> {
                     shop2.setName(msg);
@@ -111,10 +111,10 @@ public class ShopEditor extends AbstractEditorMenu<ExcellentShop, ChestShop> {
                         plugin.getMessage(ChestLang.EDITOR_TIP_BANK_CURRENCY).asList().forEach(line -> {
                             if (line.contains(Placeholders.CURRENCY_ID)) {
                                 for (ICurrency currency : ChestConfig.ALLOWED_CURRENCIES) {
-                                    MessageUtil.sendWithJSON(player, currency.replacePlaceholders().apply(line));
+                                    MessageUtil.sendMessage(player, currency.replacePlaceholders().apply(line));
                                 }
                             }
-                            else MessageUtil.sendWithJSON(player, line);
+                            else MessageUtil.sendMessage(player, line);
                         });
                         player.closeInventory();
                         return;
