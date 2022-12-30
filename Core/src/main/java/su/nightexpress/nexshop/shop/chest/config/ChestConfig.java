@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JOption;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.hooks.Hooks;
+import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.Placeholders;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
@@ -23,16 +24,16 @@ import java.util.stream.Collectors;
 
 public class ChestConfig {
 
-    public static  ItemStack                        DISPLAY_SHOWCASE;
-    public static final JOption<Boolean> DISPLAY_HOLOGRAM_ENABLED = JOption.create("Display.Title.Enabled", true, "When 'true', creates a client-side hologram above the shop.");
-    private static Map<ChestShopType, List<String>> DISPLAY_TEXT;
-    public static  int                              DISPLAY_SLIDE_INTERVAL;
+    public static       ItemStack                        DISPLAY_SHOWCASE;
+    public static final JOption<Boolean>                 DISPLAY_HOLOGRAM_ENABLED = JOption.create("Display.Title.Enabled", true, "When 'true', creates a client-side hologram above the shop.");
+    private static      Map<ChestShopType, List<String>> DISPLAY_TEXT;
+    public static       int                              DISPLAY_SLIDE_INTERVAL;
 
-    public static final JOption<String> EDITOR_TITLE = JOption.create("Shops.Editor_Title", "Shop Editor",
+    public static final JOption<String>      EDITOR_TITLE       = JOption.create("Shops.Editor_Title", "Shop Editor",
         "Sets title for Editor GUIs."
     );
-    public static boolean        DELETE_INVALID_SHOP_CONFIGS;
-    public static ICurrency      DEFAULT_CURRENCY;
+    public static       boolean              DELETE_INVALID_SHOP_CONFIGS;
+    public static       ICurrency            DEFAULT_CURRENCY;
     public static final JOption<Set<String>> ALLOWED_CONTAINERS = new JOption<Set<String>>("Shops.Allowed_Containers",
         (cfg, path, def) -> cfg.getStringSet(path).stream().map(String::toUpperCase).collect(Collectors.toSet()),
         () -> Sets.newHashSet(Material.CHEST.name(), Material.TRAPPED_CHEST.name(), Material.BARREL.name(), Material.SHULKER_BOX.name()),
@@ -40,9 +41,9 @@ public class ChestConfig {
         "Allowed: CHEST, TRAPPED_CHEST, BARREL, SHULKER_BOX (and colored ones).",
         "https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html"
     );
-    public static Set<ICurrency> ALLOWED_CURRENCIES;
-    public static String         ADMIN_SHOP_NAME;
-    public static final JOption<String> DEFAULT_NAME = JOption.create("Shops.Default_Name",
+    public static       Set<ICurrency>       ALLOWED_CURRENCIES;
+    public static       String               ADMIN_SHOP_NAME;
+    public static final JOption<String>      DEFAULT_NAME       = JOption.create("Shops.Default_Name",
         "<green>" + Placeholders.Player.NAME + "'s Shop",
         "Default shop name, that will be used on shop creation."
     );
@@ -76,8 +77,8 @@ public class ChestConfig {
         DELETE_INVALID_SHOP_CONFIGS = cfg.getBoolean(path + "Delete_Invalid_Shop_Configs", false);
         DEFAULT_CURRENCY = plugin.getCurrencyManager().getCurrency(cfg.getString(path + "Default_Currency", CurrencyId.VAULT));
         ALLOWED_CURRENCIES = cfg.getStringSet(path + "Allowed_Currencies").stream().map(String::toLowerCase)
-            .map(currencyId -> plugin.getCurrencyManager().getCurrency(currencyId))
-            .filter(Objects::nonNull).collect(Collectors.toSet());
+                                .map(currencyId -> plugin.getCurrencyManager().getCurrency(currencyId))
+                                .filter(Objects::nonNull).collect(Collectors.toSet());
         ADMIN_SHOP_NAME = cfg.getString(path + "AdminShop_Name", "MyServerCraft");
 
         path = "Shops.Creation.";
@@ -100,7 +101,7 @@ public class ChestConfig {
         }
 
         SHOP_PRODUCT_DENIED_MATERIALS = cfg.getStringSet(path + "Material_Blacklist").stream()
-            .map(String::toUpperCase).collect(Collectors.toSet());
+                                           .map(String::toUpperCase).collect(Collectors.toSet());
         SHOP_PRODUCT_DENIED_LORES = cfg.getStringSet(path + "Lore_Blacklist");
         SHOP_PRODUCT_DENIED_NAMES = cfg.getStringSet(path + "Name_Blacklist");
 
@@ -137,15 +138,15 @@ public class ChestConfig {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             if (meta.hasDisplayName()) {
-                //noinspection DataFlowIssue
-                String name = StringUtil.asPlainText(meta.displayName());
+                @SuppressWarnings("DataFlowIssue")
+                String name = ComponentUtil.asPlainText(meta.displayName());
                 if (ChestConfig.SHOP_PRODUCT_DENIED_NAMES.stream().anyMatch(name::contains)) {
                     return false;
                 }
             }
             List<Component> lore = meta.lore();
             if (lore != null) {
-                return lore.stream().map(StringUtil::asPlainText).noneMatch(line -> SHOP_PRODUCT_DENIED_LORES.stream().anyMatch(line::contains));
+                return lore.stream().map(ComponentUtil::asPlainText).noneMatch(line -> SHOP_PRODUCT_DENIED_LORES.stream().anyMatch(line::contains));
             }
         }
         return true;

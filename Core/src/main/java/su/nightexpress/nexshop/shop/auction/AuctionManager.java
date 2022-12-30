@@ -10,10 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.data.StorageType;
-import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.NumberUtil;
-import su.nexmedia.engine.utils.PlayerUtil;
-import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.*;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.Perms;
 import su.nightexpress.nexshop.api.currency.ICurrency;
@@ -30,6 +27,7 @@ import su.nightexpress.nexshop.shop.auction.listing.AbstractAuctionItem;
 import su.nightexpress.nexshop.shop.auction.listing.AuctionCompletedListing;
 import su.nightexpress.nexshop.shop.auction.listing.AuctionListing;
 import su.nightexpress.nexshop.shop.auction.menu.*;
+import su.nightexpress.nexshop.shop.auction.task.AuctionMenuUpdateTask;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,12 +48,14 @@ public class AuctionManager extends ShopModule {
     private AuctionMainMenu                 mainMenu;
     private AuctionPurchaseConfirmationMenu purchaseConfirmationMenu;
     private AuctionExpiredMenu              expiredMenu;
-    private AuctionHistoryMenu   historyMenu;
-    private AuctionUnclaimedMenu        unclaimedMenu;
-    private AuctionSellingMenu          sellingMenu;
-    private AuctionCategoryFilterMenu   categoryFilterMenu;
-    private AuctionCurrencyFilterMenu   currencyFilterMenu;
-    private AuctionCurrencySelectorMenu currencySelectorMenu;
+    private AuctionHistoryMenu              historyMenu;
+    private AuctionUnclaimedMenu            unclaimedMenu;
+    private AuctionSellingMenu              sellingMenu;
+    private AuctionCategoryFilterMenu       categoryFilterMenu;
+    private AuctionCurrencyFilterMenu       currencyFilterMenu;
+    private AuctionCurrencySelectorMenu     currencySelectorMenu;
+
+    private AuctionMenuUpdateTask menuUpdateTask;
 
     public AuctionManager(@NotNull ExcellentShop plugin) {
         super(plugin, ModuleId.AUCTION);
@@ -72,7 +72,7 @@ public class AuctionManager extends ShopModule {
         }
 
         this.plugin.getLangManager().loadMissing(AuctionLang.class);
-        this.plugin.getConfigManager().extract(this.getPath() + "/menu/");
+        this.plugin.getConfigManager().extractResources(this.getPath() + "/menu/");
 
         this.dataHandler = AuctionDataHandler.getInstance(this);
         this.dataHandler.setup();
@@ -88,10 +88,17 @@ public class AuctionManager extends ShopModule {
         this.addListener(new AuctionListener(this));
 
         //AuctionUtils.fillDummy(this);
+        this.menuUpdateTask = new AuctionMenuUpdateTask(this);
+        this.menuUpdateTask.start();
     }
 
     @Override
     protected void onShutdown() {
+        if (this.menuUpdateTask != null) {
+            this.menuUpdateTask.stop();
+            this.menuUpdateTask = null;
+        }
+
         super.onShutdown();
 
         if (this.categoryFilterMenu != null) {
@@ -130,8 +137,10 @@ public class AuctionManager extends ShopModule {
             this.unclaimedMenu.clear();
             this.unclaimedMenu = null;
         }
-
-        this.dataHandler.shutdown();
+        if (this.dataHandler != null) {
+            this.dataHandler.shutdown();
+            this.dataHandler = null;
+        }
         this.clearListings();
     }
 
@@ -183,14 +192,15 @@ public class AuctionManager extends ShopModule {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return true;
 
-        String metaName = StringUtil.asPlainText(Objects.requireNonNull(meta.displayName()));
+        @SuppressWarnings("DataFlowIssue")
+        String metaName = ComponentUtil.asPlainText(meta.displayName());
         if (AuctionConfig.LISTINGS_DISABLED_NAMES.stream().anyMatch(metaName::contains)) {
             return false;
         }
 
         List<Component> metaLore = meta.lore();
         if (metaLore == null) return true;
-        if (metaLore.stream().map(StringUtil::asPlainText).anyMatch(line -> AuctionConfig.LISTINGS_DISABLED_LORES.stream().anyMatch(line::contains))) {
+        if (metaLore.stream().map(ComponentUtil::asPlainText).anyMatch(line -> AuctionConfig.LISTINGS_DISABLED_LORES.stream().anyMatch(line::contains))) {
             return false;
         }
 

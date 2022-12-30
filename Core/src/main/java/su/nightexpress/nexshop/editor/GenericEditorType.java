@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.editor.EditorButtonType;
-import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.ComponentUtil;
 import su.nightexpress.nexshop.Placeholders;
 
 import java.util.ArrayList;
@@ -88,8 +88,8 @@ public enum GenericEditorType implements EditorButtonType {
 
     GenericEditorType(@NotNull Material material, @NotNull String name, @NotNull String... lore) {
         this.material = material;
-        this.setName(StringUtil.asComponent(name));
-        this.setLore(StringUtil.asComponent(EditorButtonType.fineLore(lore)));
+        this.setName(ComponentUtil.asComponent(name));
+        this.setLore(ComponentUtil.asComponent(EditorButtonType.fineLore(lore)));
     }
 
     @NotNull

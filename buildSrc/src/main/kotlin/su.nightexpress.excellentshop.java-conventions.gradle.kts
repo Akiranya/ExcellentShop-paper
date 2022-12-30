@@ -50,12 +50,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly("su.nexmedia:NexEngine:2.2.7")
+    compileOnly("su.nexmedia:NexEngine:2.2.8")
     implementation("org.jetbrains:annotations:23.1.0")
 }
 
 group = "su.nightexpress.excellentshop"
-version = "4.3.1"
+version = "4.3.2"
 
 java {
     toolchain {

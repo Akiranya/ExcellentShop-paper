@@ -4,14 +4,14 @@ import com.gmail.justisroot.broker.Broker;
 import com.gmail.justisroot.broker.BrokerAPI;
 import com.gmail.justisroot.broker.record.PurchaseRecord;
 import com.gmail.justisroot.broker.record.SaleRecord;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.hook.AbstractHook;
+import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.StringUtil;
-import su.nightexpress.nexshop.ExcellentShop;
+import su.nightexpress.nexshop.ShopAPI;
 import su.nightexpress.nexshop.api.shop.PreparedProduct;
 import su.nightexpress.nexshop.api.shop.Product;
 import su.nightexpress.nexshop.api.type.TradeType;
@@ -20,36 +20,28 @@ import su.nightexpress.nexshop.shop.virtual.VirtualShopModule;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class BrokerHook extends AbstractHook<ExcellentShop> {
+public class BrokerHook {
 
-    private VirtualShopBroker virtualShopBroker;
+    private static VirtualShopBroker virtualShopBroker;
 
-    public BrokerHook(@NotNull ExcellentShop plugin, @NotNull String pluginName) {
-        super(plugin, pluginName);
-    }
-
-    @Override
-    public boolean setup() {
-        VirtualShopModule virtualShop = plugin.getVirtualShop();
+    public static void setup() {
+        VirtualShopModule virtualShop = ShopAPI.getVirtualShop();
         if (virtualShop != null) {
-            this.virtualShopBroker = new VirtualShopBroker(virtualShop);
-            plugin.getServer().getScheduler().runTaskLater(plugin, c -> {
-                BrokerAPI.current().register(this.virtualShopBroker);
+            virtualShopBroker = new VirtualShopBroker(virtualShop);
+            Bukkit.getServer().getScheduler().runTaskLater(ShopAPI.PLUGIN, c -> {
+                BrokerAPI.current().register(virtualShopBroker);
             }, 2L);
         }
-
-        return true;
     }
 
-    @Override
-    public void shutdown() {
-        if (this.virtualShopBroker != null) {
-            BrokerAPI.current().unregister(this.virtualShopBroker);
-            this.virtualShopBroker = null;
+    public static void shutdown() {
+        if (virtualShopBroker != null) {
+            BrokerAPI.current().unregister(virtualShopBroker);
+            virtualShopBroker = null;
         }
     }
 
-    class VirtualShopBroker implements Broker<ItemStack> {
+    static class VirtualShopBroker implements Broker<ItemStack> {
 
         private final VirtualShopModule virtualShop;
 
@@ -61,12 +53,12 @@ public class BrokerHook extends AbstractHook<ExcellentShop> {
 
         @Override
         public String getId() {
-            return plugin.getNameRaw() + "_broker_virtual";
+            return "excellentshop_broker_virtual";
         }
 
         @Override
         public String getProvider() {
-            return plugin.getName();
+            return ShopAPI.PLUGIN.getName();
         }
 
         @Override
@@ -109,7 +101,7 @@ public class BrokerHook extends AbstractHook<ExcellentShop> {
 
         @Override
         public Optional<BigDecimal> getBuyPrice(Optional<UUID> playerId, Optional<UUID> worldId, ItemStack itemStack, int amount) {
-            Player player = playerId.isEmpty() ? null : plugin.getServer().getPlayer(playerId.get());
+            Player player = playerId.isEmpty() ? null : Bukkit.getServer().getPlayer(playerId.get());
             if (player == null) return Optional.empty();
 
             Product<?, ?, ?> product = this.getBestProduct(player, TradeType.BUY, itemStack, amount);
@@ -118,7 +110,7 @@ public class BrokerHook extends AbstractHook<ExcellentShop> {
 
         @Override
         public Optional<BigDecimal> getSellPrice(Optional<UUID> playerId, Optional<UUID> worldId, ItemStack itemStack, int amount) {
-            Player player = playerId.isEmpty() ? null : plugin.getServer().getPlayer(playerId.get());
+            Player player = playerId.isEmpty() ? null : Bukkit.getServer().getPlayer(playerId.get());
             if (player == null) return Optional.empty();
 
             Product<?, ?, ?> product = this.getBestProduct(player, TradeType.SELL, itemStack, amount);
@@ -130,7 +122,7 @@ public class BrokerHook extends AbstractHook<ExcellentShop> {
             PurchaseRecord.PurchaseRecordBuilder<ItemStack> builder = PurchaseRecord.start(this, itemStack, playerId, worldId).setVolume(amount);
             if (!canBeBought(playerId, worldId, itemStack)) return builder.buildFailure(NO_PRODUCT);
 
-            Player player = playerId.isEmpty() ? null : plugin.getServer().getPlayer(playerId.get());
+            Player player = playerId.isEmpty() ? null : Bukkit.getServer().getPlayer(playerId.get());
             Optional<BigDecimal> value = getBuyPrice(playerId, worldId, itemStack, amount);
             if (player == null || value.isEmpty()) return builder.buildFailure(NO_PRODUCT);
 
@@ -148,7 +140,7 @@ public class BrokerHook extends AbstractHook<ExcellentShop> {
             SaleRecord.SaleRecordBuilder<ItemStack> builder = SaleRecord.start(this, itemStack, playerId, worldId).setVolume(amount);
             if (!canBeSold(playerId, worldId, itemStack)) return builder.buildFailure(NO_PRODUCT);
 
-            Player player = playerId.isEmpty() ? null : plugin.getServer().getPlayer(playerId.get());
+            Player player = playerId.isEmpty() ? null : Bukkit.getServer().getPlayer(playerId.get());
             Optional<BigDecimal> value = getSellPrice(playerId, worldId, itemStack, amount);
             if (player == null || value.isEmpty()) return builder.buildFailure(NO_PRODUCT);
 
@@ -163,7 +155,7 @@ public class BrokerHook extends AbstractHook<ExcellentShop> {
 
         @Override
         public String getDisplayName(Optional<UUID> playerId, Optional<UUID> worldId, ItemStack itemStack) {
-            return StringUtil.asPlainText(ItemUtil.getItemName(itemStack));
+            return ComponentUtil.asPlainText(ItemUtil.getItemName(itemStack));
         }
 
         @Override

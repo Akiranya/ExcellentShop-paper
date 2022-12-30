@@ -3,7 +3,7 @@ package su.nightexpress.nexshop.shop.auction.listing;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.TimeUtil;
 import su.nightexpress.nexshop.Perms;
 import su.nightexpress.nexshop.api.currency.ICurrency;
@@ -16,25 +16,26 @@ import java.util.function.UnaryOperator;
 
 public class AuctionCompletedListing extends AbstractAuctionItem {
 
-    private final String buyerName;
-    private boolean      isRewarded;
-    private final long   buyDate;
+    private final String  buyerName;
+    private       boolean isRewarded;
+    private final long    buyDate;
 
     public AuctionCompletedListing(@NotNull AuctionListing listing, @NotNull Player buyer) {
         this(
-                UUID.randomUUID(),
-                listing.getOwner(),
-                listing.getOwnerName(),
-                StringUtil.asMiniMessage(buyer.displayName()),
-                listing.getItemStack(),
-                listing.getCurrency(),
-                listing.getPrice(),
-                listing.getDateCreation(),
-                false,
-                System.currentTimeMillis()
+            UUID.randomUUID(),
+            listing.getOwner(),
+            listing.getOwnerName(),
+            ComponentUtil.asMiniMessage(buyer.displayName()),
+            listing.getItemStack(),
+            listing.getCurrency(),
+            listing.getPrice(),
+            listing.getDateCreation(),
+            false,
+            System.currentTimeMillis()
         );
 
-        double tax = buyer.hasPermission(Perms.AUCTION_BYPASS_LISTING_TAX) ? 0D : AuctionConfig.LISTINGS_TAX_ON_LISTING_PURCHASE;
+        double tax =
+            buyer.hasPermission(Perms.AUCTION_BYPASS_LISTING_TAX) ? 0D : AuctionConfig.LISTINGS_TAX_ON_LISTING_PURCHASE;
         if (tax > 0D) {
             this.price -= Math.max(0D, AuctionUtils.calculateTax(this.getPrice(), tax));
         }
@@ -47,7 +48,7 @@ public class AuctionCompletedListing extends AbstractAuctionItem {
         @NotNull String buyerName,
         @NotNull ItemStack itemStack,
         @NotNull ICurrency currency,
-            double price,
+        double price,
         long dateCreation,
         boolean isRewarded,
         long buyDate
@@ -62,8 +63,8 @@ public class AuctionCompletedListing extends AbstractAuctionItem {
     @NotNull
     public UnaryOperator<String> replacePlaceholders() {
         return str -> super.replacePlaceholders().apply(str
-                .replace(Placeholders.LISTING_BUYER, this.getBuyerName())
-                .replace(Placeholders.LISTING_BUY_DATE, AuctionConfig.DATE_FORMAT.format(TimeUtil.getLocalDateTimeOf(this.getBuyDate())))
+            .replace(Placeholders.LISTING_BUYER, this.getBuyerName())
+            .replace(Placeholders.LISTING_BUY_DATE, AuctionConfig.DATE_FORMAT.format(TimeUtil.getLocalDateTimeOf(this.getBuyDate())))
         );
     }
 

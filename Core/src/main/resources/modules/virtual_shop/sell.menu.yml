@@ -1,0 +1,26 @@
+Title: Sell GUI
+Size: 54
+
+Content:
+  sell:
+    Item:
+      Material: EMERALD
+      Name: '<!em><green><b>SELL ALL'
+      Lore:
+        - '<!em><gray>Click to sell items.'
+        - ''
+        - '<!em><red><b>NOTE:'
+        - '<!em><gray>You can''t sell items that'
+        - '<!em><gray>are <dark_gray>out of stock</dark_gray> or <dark_gray>on cooldown</dark_gray>.'
+    Type: SELL
+    Slots: 49
+    Priority: 5
+
+Item:
+  Name: '<!em>%item_name%'
+  Lore:
+    - '%item_lore%'
+    - ''
+    - '<!em><gray>Can be sold for <green>%price%</green>'
+    - '<!em><gray>Found in: <white>%shop_name%</white> shop.'
+  Slots: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44

@@ -3,14 +3,16 @@ package su.nightexpress.nexshop.shop.auction.menu;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.menu.*;
+import su.nexmedia.engine.api.menu.AbstractMenuAuto;
+import su.nexmedia.engine.api.menu.MenuClick;
+import su.nexmedia.engine.api.menu.MenuItem;
+import su.nexmedia.engine.api.menu.MenuItemType;
+import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.api.currency.ICurrency;
 import su.nightexpress.nexshop.shop.auction.AuctionManager;
@@ -31,12 +33,12 @@ public class AuctionCurrencyFilterMenu extends AbstractMenuAuto<ExcellentShop, I
     public AuctionCurrencyFilterMenu(@NotNull AuctionManager auctionManager, @NotNull JYML cfg) {
         super(auctionManager.plugin(), cfg, "");
         this.auctionManager = auctionManager;
-        this.itemName = cfg.getComponent("Items.Name", StringUtil.asComponent(Placeholders.CURRENCY_NAME));
+        this.itemName = cfg.getComponent("Items.Name", ComponentUtil.asComponent(Placeholders.CURRENCY_NAME));
         this.itemLore = cfg.getComponentList("Items.Lore");
         this.objectSlots = cfg.getIntArray("Items.Slots");
         this.selectedIcon = cfg.getItem("Selected");
 
-        IMenuClick click = (player, type, e) -> {
+        MenuClick click = (player, type, e) -> {
 
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.RETURN || type2 == MenuItemType.CONFIRMATION_DECLINE) {
@@ -48,10 +50,10 @@ public class AuctionCurrencyFilterMenu extends AbstractMenuAuto<ExcellentShop, I
         };
 
         for (String sId : cfg.getSection("Content")) {
-            IMenuItem menuItem = cfg.getMenuItem("Content." + sId, MenuItemType.class);
+            MenuItem menuItem = cfg.getMenuItem("Content." + sId, MenuItemType.class);
 
             if (menuItem.getType() != null) {
-                menuItem.setClick(click);
+                menuItem.setClickHandler(click);
             }
             this.addItem(menuItem);
         }
@@ -88,7 +90,7 @@ public class AuctionCurrencyFilterMenu extends AbstractMenuAuto<ExcellentShop, I
 
     @Override
     @NotNull
-    protected IMenuClick getObjectClick(@NotNull Player player, @NotNull ICurrency currency) {
+    protected MenuClick getObjectClick(@NotNull Player player, @NotNull ICurrency currency) {
         return (player2, type, e) -> {
             ItemStack clicked = e.getCurrentItem();
             if (clicked == null || clicked.getType().isAir()) return;
@@ -101,12 +103,7 @@ public class AuctionCurrencyFilterMenu extends AbstractMenuAuto<ExcellentShop, I
     }
 
     @Override
-    public boolean cancelClick(@NotNull InventoryClickEvent inventoryClickEvent, @NotNull IMenu.SlotType slotType) {
+    public boolean cancelClick(@NotNull InventoryClickEvent inventoryClickEvent, @NotNull SlotType slotType) {
         return true;
-    }
-
-    @Override
-    public void onReady(@NotNull Player player, @NotNull Inventory inventory) {
-
     }
 }

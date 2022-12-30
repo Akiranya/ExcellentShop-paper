@@ -21,8 +21,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractListener;
+import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.MessageUtil;
-import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.Perms;
 import su.nightexpress.nexshop.api.event.ChestShopPurchaseEvent;
@@ -97,7 +97,7 @@ public class ChestShopListener extends AbstractListener<ExcellentShop> {
                 .send(player);
 
             if (owner != null && !shop.isAdminShop()) plugin.getMessage(ChestLang.SHOP_TRADE_BUY_INFO_OWNER)
-                .replace("%player%", StringUtil.asMiniMessage(player.displayName()))
+                .replace("%player%", ComponentUtil.asMiniMessage(player.displayName()))
                 .replace(prepared.replacePlaceholders())
                 .replace(shop.replacePlaceholders())
                 .send(owner);
@@ -109,7 +109,7 @@ public class ChestShopListener extends AbstractListener<ExcellentShop> {
                 .send(player);
 
             if (owner != null && !shop.isAdminShop()) plugin.getMessage(ChestLang.SHOP_TRADE_SELL_INFO_OWNER)
-                .replace("%player%", StringUtil.asMiniMessage(player.displayName()))
+                .replace("%player%", ComponentUtil.asMiniMessage(player.displayName()))
                 .replace(prepared.replacePlaceholders())
                 .replace(shop.replacePlaceholders())
                 .send(owner);

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.ICleanable;
 import su.nexmedia.engine.lang.LangManager;
+import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.Perms;
@@ -92,11 +93,11 @@ public final class VirtualShop extends Shop<VirtualShop, VirtualProduct> impleme
             .replace(Placeholders.SHOP_VIRTUAL_DESCRIPTION, this.getDescription())
             .replace(Placeholders.SHOP_VIRTUAL_PERMISSION_NODE, Perms.PREFIX_VIRTUAL_SHOP + this.getId())
             .replace(Placeholders.SHOP_VIRTUAL_PERMISSION_REQUIRED, LangManager.getBoolean(this.isPermissionRequired()))
-            .replace(Placeholders.SHOP_VIRTUAL_ICON_NAME, StringUtil.asMiniMessage(ItemUtil.getItemName(this.getIcon())))
+            .replace(Placeholders.SHOP_VIRTUAL_ICON_NAME, ComponentUtil.asMiniMessage(ItemUtil.getItemName(this.getIcon())))
             .replace(Placeholders.SHOP_VIRTUAL_ICON_TYPE, this.getIcon().getType().name())
             .replace(Placeholders.SHOP_VIRTUAL_PAGES, String.valueOf(this.getPages()))
             .replace(Placeholders.SHOP_VIRTUAL_VIEW_SIZE, String.valueOf(this.getView().getSize()))
-            .replace(Placeholders.SHOP_VIRTUAL_VIEW_TITLE, StringUtil.asMiniMessage(this.getView().getTitle()))
+            .replace(Placeholders.SHOP_VIRTUAL_VIEW_TITLE, ComponentUtil.asMiniMessage(this.getView().getTitle()))
             .replace(Placeholders.SHOP_VIRTUAL_NPC_IDS, String.join(", ", IntStream.of(this.getCitizensIds()).boxed().map(String::valueOf).toList()))
         );
     }

@@ -3,6 +3,7 @@ package su.nightexpress.nexshop.api.shop;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.manager.IPlaceholder;
+import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.Placeholders;
@@ -27,7 +28,7 @@ public abstract class PreparedProduct<P extends Product<P, ?, ?>> implements IPl
     @NotNull
     public UnaryOperator<String> replacePlaceholders() {
         return str -> str
-            .replace(Placeholders.GENERIC_ITEM, StringUtil.asMiniMessage(ItemUtil.getItemName(this.getProduct().getPreview())))
+            .replace(Placeholders.GENERIC_ITEM, ComponentUtil.asMiniMessage(ItemUtil.getItemName(this.getProduct().getPreview())))
             .replace(Placeholders.GENERIC_AMOUNT, String.valueOf(this.getAmount()))
             .replace(Placeholders.GENERIC_TYPE, this.getShop().plugin().getLangManager().getEnum(this.getTradeType()))
             .replace(Placeholders.GENERIC_PRICE, this.getProduct().getCurrency().format(this.getPrice()))

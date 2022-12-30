@@ -4,8 +4,8 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.manager.IPlaceholder;
+import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.StringUtil;
 
 import java.util.Set;
 import java.util.function.UnaryOperator;
@@ -34,8 +34,8 @@ public class AuctionCategory implements IPlaceholder {
         return str -> str
             .replace(Placeholders.CATEGORY_ID, this.getId())
             .replace(Placeholders.CATEGORY_NAME, this.getName())
-            .replace(Placeholders.CATEGORY_ICON_NAME, StringUtil.asMiniMessage(ItemUtil.getItemName(this.getIcon())))
-            .replace(Placeholders.CATEGORY_ICON_LORE, String.join("\n", StringUtil.asMiniMessage(ItemUtil.getLore(this.getIcon()))))
+            .replace(Placeholders.CATEGORY_ICON_NAME, ComponentUtil.asMiniMessage(ItemUtil.getItemName(this.getIcon())))
+            .replace(Placeholders.CATEGORY_ICON_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getIcon()))))
             ;
     }
 

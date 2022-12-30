@@ -7,10 +7,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.menu.IMenuClick;
-import su.nexmedia.engine.api.menu.IMenuItem;
+import su.nexmedia.engine.api.menu.MenuClick;
 import su.nexmedia.engine.api.menu.MenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
+import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.api.shop.ShopView;
 import su.nightexpress.nexshop.api.type.ShopClickType;
@@ -28,7 +28,7 @@ public class VirtualShopView extends ShopView<VirtualShop> {
     public VirtualShopView(@NotNull VirtualShop shop, @NotNull JYML cfg) {
         super(shop, cfg);
 
-        IMenuClick click = (p, type, e) -> {
+        MenuClick click = (p, type, e) -> {
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.RETURN) {
                     VirtualShopModule module = plugin.getVirtualShop();
@@ -42,10 +42,10 @@ public class VirtualShopView extends ShopView<VirtualShop> {
         };
 
         for (String sId : cfg.getSection("Content")) {
-            IMenuItem menuItem = cfg.getMenuItem("Content." + sId, MenuItemType.class);
+            MenuItem menuItem = cfg.getMenuItem("Content." + sId, MenuItemType.class);
 
             if (menuItem.getType() != null) {
-                menuItem.setClick(click);
+                menuItem.setClickHandler(click);
             }
             this.addItem(menuItem);
         }
@@ -79,7 +79,7 @@ public class VirtualShopView extends ShopView<VirtualShop> {
                 }
                 else if (lineFormat.equalsIgnoreCase("%discount%")) {
                     if (this.getShop().hasDiscount(product)) {
-                        lore.addAll(StringUtil.asComponent(VirtualConfig.PRODUCT_FORMAT_LORE_DISCOUNT.get()));
+                        lore.addAll(ComponentUtil.asComponent(VirtualConfig.PRODUCT_FORMAT_LORE_DISCOUNT.get()));
                     }
                     continue;
                 }
@@ -87,23 +87,26 @@ public class VirtualShopView extends ShopView<VirtualShop> {
                     for (TradeType tradeType : TradeType.values()) {
                         if (lineFormat.equalsIgnoreCase("%stock_" + stockType.name() + "_" + tradeType.name() + "%")) {
                             if (!product.getStock().isUnlimited(stockType, tradeType)) {
-                                lore.addAll(StringUtil.asComponent(VirtualConfig.PRODUCT_FORMAT_LORE_STOCK.get().getOrDefault(stockType, Collections.emptyMap()).getOrDefault(tradeType, Collections.emptyList())));
+                                lore.addAll(ComponentUtil.asComponent(VirtualConfig.PRODUCT_FORMAT_LORE_STOCK.get().getOrDefault(stockType, Collections.emptyMap()).getOrDefault(tradeType, Collections.emptyList())));
                             }
                             continue Label_Format;
                         }
                     }
                 }
-                lore.add(StringUtil.asComponent(lineFormat));
+                lore.add(ComponentUtil.asComponent(lineFormat));
             }
 
-            lore = StringUtil.applyStringReplacer(product.replacePlaceholders(player), lore);
-            lore = StringUtil.applyStringReplacer(product.getCurrency().replacePlaceholders(), lore);
+            lore.replaceAll(line -> {
+                line = ComponentUtil.replace(line, product.replacePlaceholders(player));
+                return ComponentUtil.replace(line, product.getCurrency().replacePlaceholders());
+            });
+
             meta.lore(lore);
             preview.setItemMeta(meta);
 
-            IMenuItem menuItem = new MenuItem(preview);
-            menuItem.setSlots(product.getSlot());
-            menuItem.setClick((player1, type, e) -> {
+            MenuItem menuItem = new MenuItem(preview);
+            menuItem.setSlots(new int[]{product.getSlot()});
+            menuItem.setClickHandler((player1, type, e) -> {
                 ShopClickType clickType = ShopClickType.getByDefault(e.getClick());
                 if (clickType == null) return;
 

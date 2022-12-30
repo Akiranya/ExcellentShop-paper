@@ -5,17 +5,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.config.JWriter;
 import su.nexmedia.engine.api.item.PluginItem;
+import su.nexmedia.engine.api.config.JOption;
 import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.api.manager.ICleanable;
 import su.nexmedia.engine.api.manager.IEditable;
 import su.nexmedia.engine.api.manager.IPlaceholder;
 import su.nexmedia.engine.lang.LangManager;
-import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.NumberUtil;
-import su.nexmedia.engine.utils.PlayerUtil;
-import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.*;
 import su.nightexpress.nexshop.Placeholders;
 import su.nightexpress.nexshop.api.currency.ICurrency;
 import su.nightexpress.nexshop.api.type.ShopClickType;
@@ -30,7 +27,7 @@ import java.util.function.UnaryOperator;
 public abstract class Product<
     P extends Product<P, S, T>,
     S extends Shop<S, P>,
-    T extends ProductStock<P>> implements ICleanable, IEditable, IPlaceholder, JWriter {
+    T extends ProductStock<P>> implements ICleanable, IEditable, IPlaceholder, JOption.Writer {
 
     protected final String id;
 
@@ -58,7 +55,7 @@ public abstract class Product<
     @NotNull
     public UnaryOperator<String> replacePlaceholders() {
         ItemStack buyItem = this.getItem();
-        String itemName = !buyItem.getType().isAir() ? StringUtil.asMiniMessage(ItemUtil.getItemName(buyItem)) : "null";
+        String itemName = !buyItem.getType().isAir() ? ComponentUtil.asMiniMessage(ItemUtil.getItemName(buyItem)) : "null";
 
         return str -> {
             str = this.replacePlaceholdersView().apply(str);
@@ -68,9 +65,9 @@ public abstract class Product<
                 .replace(Placeholders.PRODUCT_DISCOUNT_ALLOWED, LangManager.getBoolean(this.isDiscountAllowed()))
                 .replace(Placeholders.PRODUCT_ITEM_META_ENABLED, LangManager.getBoolean(this.isItemMetaEnabled()))
                 .replace(Placeholders.PRODUCT_ITEM_NAME, itemName)
-                .replace(Placeholders.PRODUCT_ITEM_LORE, String.join("\n", StringUtil.asMiniMessage(ItemUtil.getLore(buyItem))))
-                .replace(Placeholders.PRODUCT_PREVIEW_NAME, StringUtil.asMiniMessage(ItemUtil.getItemName(this.getPreview())))
-                .replace(Placeholders.PRODUCT_PREVIEW_LORE, String.join("\n", StringUtil.asMiniMessage(ItemUtil.getLore(this.getPreview()))))
+                .replace(Placeholders.PRODUCT_ITEM_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(buyItem))))
+                .replace(Placeholders.PRODUCT_PREVIEW_NAME, ComponentUtil.asMiniMessage(ItemUtil.getItemName(this.getPreview())))
+                .replace(Placeholders.PRODUCT_PREVIEW_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getPreview()))))
                 ;
         };
     }
@@ -82,12 +79,14 @@ public abstract class Product<
         double priceSell = this.getPricer().getPriceSell();
 
         return str -> this.getStock().replacePlaceholders().apply(str)
-            .replace(Placeholders.PRODUCT_DISCOUNT_AMOUNT, NumberUtil.format(this.getShop().getDiscountPlain(this)))
-            .replace(Placeholders.PRODUCT_CURRENCY, this.getCurrency().getConfig().getName())
-            .replace(Placeholders.PRODUCT_PRICE_BUY, NumberUtil.format(priceBuy))
-            .replace(Placeholders.PRODUCT_PRICE_BUY_FORMATTED, priceBuy >= 0 ? currency.format(priceBuy) : "-")
-            .replace(Placeholders.PRODUCT_PRICE_SELL, NumberUtil.format(priceSell))
-            .replace(Placeholders.PRODUCT_PRICE_SELL_FORMATTED, priceSell >= 0 ? currency.format(priceSell) : "-")
+                          .replace(Placeholders.PRODUCT_DISCOUNT_AMOUNT, NumberUtil.format(this.getShop().getDiscountPlain(this)))
+                          .replace(Placeholders.PRODUCT_CURRENCY, this.getCurrency().getConfig().getName())
+                          .replace(Placeholders.PRODUCT_PRICE_BUY, NumberUtil.format(priceBuy))
+                          .replace(Placeholders.PRODUCT_PRICE_BUY_FORMATTED,
+                              priceBuy >= 0 ? currency.format(priceBuy) : "-")
+                          .replace(Placeholders.PRODUCT_PRICE_SELL, NumberUtil.format(priceSell))
+                          .replace(Placeholders.PRODUCT_PRICE_SELL_FORMATTED,
+                              priceSell >= 0 ? currency.format(priceSell) : "-")
             ;
     }
 
@@ -102,7 +101,8 @@ public abstract class Product<
             str = this.getStock().replacePlaceholders(player).apply(str);
             return str
                 .replace(Placeholders.PRODUCT_PRICE_SELL_ALL, NumberUtil.format(priceSellAll))
-                .replace(Placeholders.PRODUCT_PRICE_SELL_ALL_FORMATTED, priceSell >= 0 ? currency.format(priceSellAll) : "-")
+                .replace(Placeholders.PRODUCT_PRICE_SELL_ALL_FORMATTED,
+                    priceSell >= 0 ? currency.format(priceSellAll) : "-")
                 ;
         };
     }
@@ -125,8 +125,7 @@ public abstract class Product<
                     return;
                 }
             }
-        }
-        else if (tradeType == TradeType.SELL) {
+        } else if (tradeType == TradeType.SELL) {
             if (!this.isSellable()) {
                 shop.plugin().getMessage(Lang.SHOP_PRODUCT_ERROR_UNSELLABLE).send(player);
                 return;
@@ -140,12 +139,10 @@ public abstract class Product<
             LangMessage msgStock;
             if (tradeType == TradeType.BUY) {
                 msgStock = shop.plugin().getMessage(Lang.SHOP_PRODUCT_ERROR_OUT_OF_STOCK);
-            }
-            else {
+            } else {
                 if (shop instanceof ChestShop shopChest) {
                     msgStock = shop.plugin().getMessage(Lang.SHOP_PRODUCT_ERROR_OUT_OF_SPACE);
-                }
-                else msgStock = shop.plugin().getMessage(Lang.SHOP_PRODUCT_ERROR_FULL_STOCK);
+                } else msgStock = shop.plugin().getMessage(Lang.SHOP_PRODUCT_ERROR_FULL_STOCK);
             }
             msgStock.send(player);
             return;

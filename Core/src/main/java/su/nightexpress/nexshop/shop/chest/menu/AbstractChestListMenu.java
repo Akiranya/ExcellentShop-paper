@@ -3,15 +3,14 @@ package su.nightexpress.nexshop.shop.chest.menu;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.menu.AbstractMenuAuto;
-import su.nexmedia.engine.api.menu.IMenuClick;
-import su.nexmedia.engine.api.menu.IMenuItem;
+import su.nexmedia.engine.api.menu.MenuClick;
+import su.nexmedia.engine.api.menu.MenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.ItemUtil;
@@ -38,7 +37,7 @@ public abstract class AbstractChestListMenu extends AbstractMenuAuto<ExcellentSh
         this.shopName = cfg.getComponent("Shop_Icon.Name", Component.empty());
         this.shopLore = cfg.getComponentList("Shop_Icon.Lore");
 
-        IMenuClick click = (player, type, e) -> {
+        MenuClick click = (player, type, e) -> {
 
             if (type instanceof MenuItemType type2) {
                 this.onItemClickDefault(player, type2);
@@ -60,19 +59,19 @@ public abstract class AbstractChestListMenu extends AbstractMenuAuto<ExcellentSh
         };
 
         for (String sId : cfg.getSection("Content")) {
-            IMenuItem menuItem = cfg.getMenuItem("Content." + sId, MenuItemType.class);
+            MenuItem menuItem = cfg.getMenuItem("Content." + sId, MenuItemType.class);
 
             if (menuItem.getType() != null) {
-                menuItem.setClick(click);
+                menuItem.setClickHandler(click);
             }
             this.addItem(menuItem);
         }
 
         for (String sId : cfg.getSection("Special")) {
-            IMenuItem menuItem = cfg.getMenuItem("Special." + sId, ItemType.class);
+            MenuItem menuItem = cfg.getMenuItem("Special." + sId, ItemType.class);
 
             if (menuItem.getType() != null) {
-                menuItem.setClick(click);
+                menuItem.setClickHandler(click);
             }
             this.addItem(menuItem);
         }
@@ -101,11 +100,6 @@ public abstract class AbstractChestListMenu extends AbstractMenuAuto<ExcellentSh
 
         ItemUtil.replace(item, shop.replacePlaceholders());
         return item;
-    }
-
-    @Override
-    public void onReady(@NotNull Player player, @NotNull Inventory inventory) {
-
     }
 
     @Override
