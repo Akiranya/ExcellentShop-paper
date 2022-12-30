@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.module.AbstractModule;
 import su.nexmedia.engine.command.list.HelpSubCommand;
-import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.ComponentUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.api.event.ShopPurchaseEvent;
 import su.nightexpress.nexshop.api.shop.PreparedProduct;
@@ -101,6 +101,7 @@ public abstract class ShopModule extends AbstractModule<ExcellentShop> {
             String format = this.format.replace("%player%", player.getName());
             format = prepared.replacePlaceholders().apply(format);
             format = shop.replacePlaceholders().apply(format);
+            format = ComponentUtil.stripTags(format);
 
             this.print(format);
         }
@@ -111,7 +112,7 @@ public abstract class ShopModule extends AbstractModule<ExcellentShop> {
             }
             if (this.outFile) {
                 String date = LocalDateTime.now().format(this.dateFormat);
-                String outFile = "[" + date + "] " + StringUtil.asPlainText(text);
+                String outFile = "[" + date + "] " + text;
 
                 BufferedWriter output;
                 try {
