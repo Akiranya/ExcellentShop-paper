@@ -47,7 +47,7 @@ public class VirtualShopModule extends ShopModule {
 
     private Map<String, VirtualShop> shops;
     private ShopMainMenu             mainMenu;
-    private ShopSellMenu sellMenu;
+    private ShopSellMenu             sellMenu;
     private EditorShopList           editor;
 
     public VirtualShopModule(@NotNull ExcellentShop plugin) {
@@ -126,8 +126,7 @@ public class VirtualShopModule extends ShopModule {
                 this.getShopsMap().put(shop.getId(), shop);
                 ProductStockManager.loadData(shop).thenRun(() -> shop.getProducts().forEach(product -> product.getStock().unlock()));
                 ProductPriceManager.loadData(shop).thenRun(() -> shop.getProducts().forEach(product -> product.getPricer().update()));
-            }
-            else {
+            } else {
                 this.error("Shop not loaded: " + shop.getFile().getName());
             }
         }
@@ -189,8 +188,8 @@ public class VirtualShopModule extends ShopModule {
 
         if (VirtualConfig.GEN_DISABLED_GAMEMODES.get().contains(player.getGameMode().name())) {
             if (notify) plugin.getMessage(VirtualLang.OPEN_ERROR_BAD_GAMEMODE)
-                .replace(Placeholders.GENERIC_TYPE, plugin.getLangManager().getEnum(player.getGameMode()))
-                .send(player);
+                              .replace(Placeholders.GENERIC_TYPE, plugin.getLangManager().getEnum(player.getGameMode()))
+                              .send(player);
             return false;
         }
 
@@ -251,22 +250,24 @@ public class VirtualShopModule extends ShopModule {
     }
 
     @Nullable
-    public VirtualProduct getBestProductFor(@NotNull Player player, @NotNull ItemStack item, int amount, @NotNull TradeType tradeType) {
-        Set<VirtualProduct> products = new HashSet<>();
-        this.getShops().stream()
-            .filter(shop -> shop.hasPermission(player) && shop.isTransactionEnabled(tradeType)).forEach(shop -> {
-            products.addAll(shop.getProducts().stream().filter(product -> {
-                if (!product.isItemMatches(item)) return false;
-                if (tradeType == TradeType.BUY && !product.isBuyable()) return false;
-                if (tradeType == TradeType.SELL && !product.isSellable()) return false;
-                //if (tradeType == TradeType.SELL && product.countItem(player) < amount) return false;
-                //if (product.getStock().getPossibleAmount(tradeType, player) < amount) return false;
-                return true;
-            }).toList());
-        });
+    public VirtualProduct searchForBestProduct(@NotNull Player player, @NotNull ItemStack item, @NotNull TradeType tradeType, @Nullable VirtualShop shop) {
+        if (shop == null) return null;
+        if (!(shop.hasPermission(player) && shop.isTransactionEnabled(tradeType))) return null;
 
-        Comparator<Product<?, ?, ?>> comp = (p1, p2) -> (int) (p1.getPricer().getPrice(tradeType) - p2.getPricer().getPrice(tradeType));
+        Set<VirtualProduct> productSet = new HashSet<>();
+        for (VirtualProduct product : shop.getProducts()) {
+            if (!product.isItemMatches(item)) continue;
+            if (tradeType == TradeType.BUY && !product.isBuyable()) continue;
+            if (tradeType == TradeType.SELL && !product.isSellable()) continue;
+            productSet.add(product);
+        }
 
-        return (tradeType == TradeType.BUY ? products.stream().min(comp) : products.stream().max(comp)).orElse(null);
+        Comparator<Product<?, ?, ?>> comparator = (p1, p2) ->
+            (int) (p1.getPricer().getPrice(tradeType) - p2.getPricer().getPrice(tradeType));
+
+        return (tradeType == TradeType.BUY
+                ? productSet.stream().min(comparator)
+                : productSet.stream().max(comparator))
+            .orElse(null);
     }
 }

@@ -21,6 +21,7 @@ import su.nightexpress.nexshop.shop.virtual.VirtualShopModule;
 import su.nightexpress.nexshop.shop.virtual.config.VirtualLang;
 import su.nightexpress.nexshop.shop.virtual.impl.VirtualPreparedProduct;
 import su.nightexpress.nexshop.shop.virtual.impl.VirtualProduct;
+import su.nightexpress.nexshop.shop.virtual.impl.VirtualShop;
 
 import java.util.*;
 import java.util.List;
@@ -33,6 +34,7 @@ public class ShopSellMenu extends AbstractMenu<ExcellentShop> {
     private final int[]             itemSlots;
 
     private static final Map<Player, List<Pair<ItemStack, VirtualProduct>>> USER_ITEMS = new WeakHashMap<>();
+    private static final Map<Player, VirtualShop>                           USER_SHOP  = new WeakHashMap<>();
 
     public ShopSellMenu(@NotNull VirtualShopModule module, @NotNull JYML cfg) {
         super(module.plugin(), cfg, "");
@@ -62,8 +64,8 @@ public class ShopSellMenu extends AbstractMenu<ExcellentShop> {
             }
         };
 
-        for (String sId : cfg.getSection("Content")) {
-            MenuItem menuItem = cfg.getMenuItem("Content." + sId, ItemType.class);
+        for (String id : cfg.getSection("Content")) {
+            MenuItem menuItem = cfg.getMenuItem("Content." + id, ItemType.class);
             if (menuItem.getType() != null) {
                 menuItem.setClickHandler(click);
             }
@@ -83,16 +85,20 @@ public class ShopSellMenu extends AbstractMenu<ExcellentShop> {
         if (item == null || item.getType().isAir()) return true;
 
         if (slotType == SlotType.PLAYER) {
-            VirtualProduct product = this.module.getBestProductFor(player, item, item.getAmount(), TradeType.SELL);
+
+            VirtualShop shop = USER_SHOP.get(player);
+            VirtualProduct product = this.module.searchForBestProduct(player, item, TradeType.SELL, shop);
             if (product == null) return true;
 
-            int firstSlot = Arrays.stream(this.itemSlots)
-                                  .filter(slot -> { // Idea tells me there is possible NPE for a single line :/
-                                      ItemStack has = inventory.getItem(slot);
-                                      return has == null || has.getType().isAir();
-                                  })
-                                  .findFirst()
-                                  .orElse(-1);
+            int firstSlot = -1;
+            for (int slot : this.itemSlots) {
+                int firstEmpty = inventory.firstEmpty();
+                if (firstEmpty == -1) break;
+                if (firstEmpty == slot) {
+                    firstSlot = firstEmpty;
+                    break;
+                }
+            }
             if (firstSlot < 0) return true;
 
             //int toSell = product.getStock().getPossibleAmount(TradeType.SELL, player);
@@ -103,7 +109,7 @@ public class ShopSellMenu extends AbstractMenu<ExcellentShop> {
             ItemMeta meta = icon.getItemMeta();
             if (meta == null) return true;
 
-            double price = product.getPricer().getPriceSell() * item.getAmount();// toSell;
+            double price = product.getPricer().getPriceSell() * item.getAmount(); // toSell;
 
             List<Component> lore = new ArrayList<>(this.itemLore);
             lore.replaceAll(line -> {
@@ -126,12 +132,22 @@ public class ShopSellMenu extends AbstractMenu<ExcellentShop> {
         return true;
     }
 
+    public void open(Player player, int page, VirtualShop shop) {
+        USER_SHOP.put(player, shop); // Add backend shop for the player
+        super.open(player, page);
+    }
+
     @Override
     public void onClose(@NotNull Player player, @NotNull InventoryCloseEvent e) {
         super.onClose(player, e);
+
+        // Return remaining items to the player
         List<Pair<ItemStack, VirtualProduct>> userItems = USER_ITEMS.remove(player);
         if (userItems != null) {
             userItems.forEach(pair -> PlayerUtil.addItem(player, pair.getFirst()));
         }
+
+        // Clear the backend shop for the player
+        USER_SHOP.remove(player);
     }
 }

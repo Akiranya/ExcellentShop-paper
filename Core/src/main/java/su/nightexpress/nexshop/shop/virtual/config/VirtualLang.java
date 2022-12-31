@@ -9,7 +9,7 @@ public class VirtualLang {
     public static final LangKey COMMAND_OPEN_USAGE = LangKey.of("VirtualShop.Command.Open.Usage", "[shop] [player]");
 
     public static final LangKey COMMAND_SELL_MENU_DESC = LangKey.of("VirtualShop.Command.SellMenu.Desc", "Open Sell GUI.");
-    public static final LangKey COMMAND_SELL_MENU_USAGE = LangKey.of("VirtualShop.Command.SellMenu.Usage", "");
+    public static final LangKey COMMAND_SELL_MENU_USAGE = LangKey.of("VirtualShop.Command.SellMenu.Usage", "<shop> [player]");
 
     public static final LangKey MAIN_MENU_ERROR_DISABLED = LangKey.of("VirtualShop.MainMenu.Error.Disabled", "<red>Main shop menu is disabled!");
     public static final LangKey OPEN_ERROR_BAD_WORLD     = LangKey.of("VirtualShop.Open.Error.BadWorld", "<red>Shop is disabled in this world!");
