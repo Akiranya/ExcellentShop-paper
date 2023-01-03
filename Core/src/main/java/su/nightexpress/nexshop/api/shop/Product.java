@@ -81,12 +81,9 @@ public abstract class Product<
                           .replace(Placeholders.PRODUCT_DISCOUNT_AMOUNT, NumberUtil.format(this.getShop().getDiscountPlain(this)))
                           .replace(Placeholders.PRODUCT_CURRENCY, this.getCurrency().getConfig().getName())
                           .replace(Placeholders.PRODUCT_PRICE_BUY, NumberUtil.format(priceBuy))
-                          .replace(Placeholders.PRODUCT_PRICE_BUY_FORMATTED,
-                              priceBuy >= 0 ? currency.format(priceBuy) : "-")
+                          .replace(Placeholders.PRODUCT_PRICE_BUY_FORMATTED, priceBuy >= 0 ? currency.format(priceBuy) : "-")
                           .replace(Placeholders.PRODUCT_PRICE_SELL, NumberUtil.format(priceSell))
-                          .replace(Placeholders.PRODUCT_PRICE_SELL_FORMATTED,
-                              priceSell >= 0 ? currency.format(priceSell) : "-")
-            ;
+                          .replace(Placeholders.PRODUCT_PRICE_SELL_FORMATTED, priceSell >= 0 ? currency.format(priceSell) : "-");
     }
 
     @NotNull
