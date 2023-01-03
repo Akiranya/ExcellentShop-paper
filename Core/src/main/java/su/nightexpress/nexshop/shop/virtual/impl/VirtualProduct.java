@@ -26,9 +26,9 @@ import java.util.function.UnaryOperator;
 
 public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, VirtualProductStock> {
 
-    private       int                   shopSlot;
-    private       int                   shopPage;
-    private       List<String>          commands;
+    private int          shopSlot;
+    private int          shopPage;
+    private List<String> commands;
 
     private EditorShopProduct editor;
 
@@ -160,9 +160,16 @@ public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, V
     @Override
     @NotNull
     public UnaryOperator<String> replacePlaceholders() {
-        return str -> super.replacePlaceholders().apply(str
-            .replace(Placeholders.PRODUCT_VIRTUAL_COMMANDS, String.join(DELIMITER_DEFAULT, this.getCommands()))
-        );
+        return str -> {
+            str = super.replacePlaceholders().apply(str);
+            String commands = this
+                .getCommands()
+                .stream()
+                .map(cmd -> cmd.substring(0, 14) + (cmd.length() > 15 ? " ..." : ""))
+                .reduce((cmd1, cmd2) -> cmd1 + " | " + cmd2)
+                .orElse("");
+            return str.replace(Placeholders.PRODUCT_VIRTUAL_COMMANDS, commands);
+        };
     }
 
     @Override
