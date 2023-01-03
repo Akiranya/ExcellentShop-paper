@@ -67,8 +67,7 @@ public abstract class Product<
                 .replace(Placeholders.PRODUCT_ITEM_NAME, itemName)
                 .replace(Placeholders.PRODUCT_ITEM_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(buyItem))))
                 .replace(Placeholders.PRODUCT_PREVIEW_NAME, ComponentUtil.asMiniMessage(ItemUtil.getItemName(this.getPreview())))
-                .replace(Placeholders.PRODUCT_PREVIEW_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getPreview()))))
-                ;
+                .replace(Placeholders.PRODUCT_PREVIEW_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getPreview()))));
         };
     }
 
