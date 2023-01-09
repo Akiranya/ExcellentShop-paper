@@ -1,0 +1,123 @@
+Title: 'Shop Settings'
+Size: 9
+
+Content:
+
+  SHOP_CHANGE_NAME:
+    Item:
+      Material: NAME_TAG
+      Name: '<yellow><b>Shop Name'
+      Lore:
+        - '<aqua><b>[?] Current:'
+        - '<green>%shop_name%'
+        - ' '
+        - '<gold><b>[?] Description:'
+        - '<gray>Sets the shop display name. This'
+        - '<gray>name is displayed above the shop.'
+        - ' '
+        - '<#55e136><b>[>] Actions:'
+        - '<#86de2a>Left-Click to <white>Change'
+    Type: SHOP_CHANGE_NAME
+    Slots: 0
+
+  SHOP_CHANGE_TYPE:
+    Item:
+      Material: REDSTONE
+      Name: '<yellow><b>Shop Type'
+      Lore:
+        - '<aqua><b>[?] Current:'
+        - '<green>%shop_type%'
+        - ' '
+        - '<gold><b>[?] Description:'
+        - '<gray>Sets the shop type.'
+        - ' '
+        - '<yellow><b>[!] Note:'
+        - '<#ffc300>Admin shops have unlimited funds and'
+        - '<#ffc300>items.'
+        - ' '
+        - '<yellow><b>[!] Note:'
+        - '<#ffc300>Player shop have to be restocked'
+        - '<#ffc300>with items and funds.'
+        - ' '
+        - '<#55e136><b>[>] Actions:'
+        - '<#86de2a>Left-Click to <white>Toggle'
+    Type: SHOP_CHANGE_TYPE
+    Slots: 1
+
+  SHOP_CHANGE_TRANSACTIONS:
+    Item:
+      Material: WRITABLE_BOOK
+      Name: '<yellow><b>Enabled Transactions'
+      Lore:
+        - '<aqua><b>[?] Current:'
+        - '<green>Buying Enabled: <white>%shop_buy_allowed%'
+        - '<green>Selling Enabled: <white>%shop_sell_allowed%'
+        - ' '
+        - '<gold><b>[?] Description:'
+        - '<gray>Enables or disables Buying and Selling'
+        - '<gray>in the shop.'
+        - ' '
+        - '<#55e136><b>[>] Actions:'
+        - '<#86de2a>Left-Click to <white>Toggle Buying'
+        - '<#86de2a>Right-Click to <white>Toggle Selling'
+    Type: SHOP_CHANGE_TRANSACTIONS
+    Slots: 2
+
+  SHOP_CHANGE_PRODUCTS:
+    Item:
+      Material: CHEST
+      Name: '<yellow><b>Shop Products'
+      Lore:
+        - '<gold><b>[?] Description:'
+        - '<gray>Here you can manage your products'
+        - '<gray>and add new ones.'
+        - ' '
+        - '<#55e136><b>[>] Actions:'
+        - '<#86de2a>Left-Click to <white>Navigate'
+    Type: SHOP_CHANGE_PRODUCTS
+    Slots: 3
+
+  SHOP_BANK:
+    Item:
+      Material: EMERALD
+      Name: '<yellow><b>Shop Bank'
+      Lore:
+        - '<aqua><b>[?] Current:'
+        - '<green>Balance:'
+        - '<green>%shop_bank_balance%'
+        - ' '
+        - '<gold><b>[?] Description:'
+        - '<gray>Bank is where you deposit funds'
+        - '<gray>for the shop to be able'
+        - '<gray>to purchase items from players. And'
+        - '<gray>where all incoming funds from sales'
+        - '<gray>are stored for you to withdraw'
+        - '<gray>them later.'
+        - ' '
+        - '<red><b>[!] Warning:'
+        - '<#c70039>If shop don''t have enough funds,'
+        - '<#c70039>players won''t be able to sell'
+        - '<#c70039>into it'
+        - ' '
+        - '<#55e136><b>[>] Actions:'
+        - '<#86de2a>Left-Click to <white>Deposit'
+        - '<#86de2a>Right-Click to <white>Withdraw'
+    Type: SHOP_BANK
+    Slots: 4
+
+  SHOP_DELETE:
+    Item:
+      Material: BARRIER
+      Name: '<yellow><b>Delete Shop'
+      Lore:
+        - '<gold><b>[?] Description:'
+        - '<gray>Permanently deletes this shop.'
+        - ' '
+        - '<red><b>[!] Warning:'
+        - '<#c70039>You have to remove all product'
+        - '<#c70039>items from the container first.'
+        - ' '
+        - '<#55e136><b>[>] Actions:'
+        - '<#86de2a>Shift-Left to <white>Delete'
+    Type: SHOP_DELETE
+    Slots: 8
