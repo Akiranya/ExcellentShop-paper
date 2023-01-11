@@ -11,8 +11,8 @@ import su.nexmedia.engine.api.config.JOption;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.utils.ComponentUtil;
-import su.nexmedia.engine.utils.Placeholders;
 import su.nightexpress.nexshop.ExcellentShop;
+import su.nightexpress.nexshop.Placeholders;
 import su.nightexpress.nexshop.api.currency.ICurrency;
 import su.nightexpress.nexshop.currency.CurrencyId;
 import su.nightexpress.nexshop.shop.chest.ChestShopModule;
@@ -24,9 +24,7 @@ import java.util.stream.Collectors;
 public class ChestConfig {
 
     public static final JOption<Map<String, ItemStack>> DISPLAY_SHOWCASE = new JOption<Map<String, ItemStack>>("Display.Showcase",
-        (cfg, path, def) -> {
-            return cfg.getSection(path).stream().collect(Collectors.toMap(k -> k, v -> cfg.getItem(path + "." + v)));
-        },
+        (cfg, path, def) -> cfg.getSection(path).stream().collect(Collectors.toMap(k -> k, v -> cfg.getItem(path + "." + v))),
         () -> Map.of(Placeholders.DEFAULT, new ItemStack(Material.GLASS), Material.CHEST.name(), new ItemStack(Material.WHITE_STAINED_GLASS)),
         "Sets an item that will be used as a shop showcase.",
         "You can provide different showcases for different shop types you set in 'Allowed_Containers' option.",
