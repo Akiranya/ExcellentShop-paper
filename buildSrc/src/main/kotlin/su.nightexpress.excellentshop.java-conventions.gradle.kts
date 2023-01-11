@@ -55,7 +55,7 @@ dependencies {
 }
 
 group = "su.nightexpress.excellentshop"
-version = "4.3.3"
+version = "4.3.4"
 
 java {
     toolchain {
