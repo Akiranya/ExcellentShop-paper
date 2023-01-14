@@ -41,8 +41,8 @@ public class VirtualShopView extends ShopView<VirtualShop> {
             }
         };
 
-        for (String sId : cfg.getSection("Content")) {
-            MenuItem menuItem = cfg.getMenuItem("Content." + sId, MenuItemType.class);
+        for (String id : cfg.getSection("Content")) {
+            MenuItem menuItem = cfg.getMenuItem("Content." + id, MenuItemType.class);
 
             if (menuItem.getType() != null) {
                 menuItem.setClickHandler(click);
@@ -96,10 +96,9 @@ public class VirtualShopView extends ShopView<VirtualShop> {
                 lore.add(ComponentUtil.asComponent(lineFormat));
             }
 
-            lore.replaceAll(line -> {
-                line = ComponentUtil.replace(line, product.replacePlaceholders(player));
-                return ComponentUtil.replace(line, product.getCurrency().replacePlaceholders());
-            });
+            lore.replaceAll(line -> ComponentUtil.replace(line,
+                product.replacePlaceholders(player), product.getCurrency().replacePlaceholders()
+            ));
 
             meta.lore(lore);
             preview.setItemMeta(meta);

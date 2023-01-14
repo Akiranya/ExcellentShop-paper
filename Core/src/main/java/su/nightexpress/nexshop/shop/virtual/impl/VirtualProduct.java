@@ -6,7 +6,6 @@ import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.item.PluginItem;
 import su.nexmedia.engine.api.item.PluginItemRegistry;
-import su.nightexpress.nexshop.Placeholders;
 import su.nightexpress.nexshop.ShopAPI;
 import su.nightexpress.nexshop.api.IScheduled;
 import su.nightexpress.nexshop.api.currency.ICurrency;
@@ -162,16 +161,7 @@ public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, V
     @Override
     @NotNull
     public UnaryOperator<String> replacePlaceholders() {
-        return str -> {
-            str = super.replacePlaceholders().apply(str);
-            String commands = this
-                .getCommands()
-                .stream()
-                .map(cmd -> cmd.substring(0, 14) + (cmd.length() > 15 ? " ..." : ""))
-                .reduce((cmd1, cmd2) -> cmd1 + " | " + cmd2)
-                .orElse("");
-            return str.replace(Placeholders.PRODUCT_VIRTUAL_COMMANDS, commands);
-        };
+        return super.replacePlaceholders();
     }
 
     @Override

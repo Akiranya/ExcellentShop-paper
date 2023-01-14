@@ -1,5 +1,7 @@
 package su.nightexpress.nexshop.shop.virtual.editor.menu;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -14,6 +16,7 @@ import su.nexmedia.engine.api.menu.MenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.editor.AbstractEditorMenu;
 import su.nexmedia.engine.editor.EditorManager;
+import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nexmedia.engine.utils.StringUtil;
@@ -29,6 +32,7 @@ import su.nightexpress.nexshop.shop.virtual.editor.VirtualEditorType;
 import su.nightexpress.nexshop.shop.virtual.impl.VirtualProduct;
 import su.nightexpress.nexshop.shop.virtual.impl.VirtualShop;
 
+import java.util.List;
 import java.util.Map;
 
 public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, VirtualProduct> {
@@ -50,7 +54,6 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
                         EditorManager.error(player, plugin.getMessage(Lang.EDITOR_GENERIC_ERROR_CURRENCY).getLocalized());
                         return false;
                     }
-
                     product2.setCurrency(currency);
                 }
                 case PRODUCT_CHANGE_STOCK_GLOBAL_BUY_INITIAL_AMOUNT -> {
@@ -91,14 +94,13 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
             product2.getShop().save();
             return true;
         };
-        
+
         MenuClick click = (player, type, e) -> {
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.RETURN) {
                     shop.getEditor().getEditorProducts().open(player, this.object.getPage());
                 }
-            }
-            else if (type instanceof VirtualEditorType type2) {
+            } else if (type instanceof VirtualEditorType type2) {
                 switch (type2) {
                     case PRODUCT_CHANGE_PRICE -> {
                         if (e.getClick() == ClickType.DROP) {
@@ -136,8 +138,7 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
                             // End
                             product.setItem(cursor);
                             e.getView().setCursor(null);
-                        }
-                        else if (e.isRightClick()) {
+                        } else if (e.isRightClick()) {
                             product.setItem(new ItemStack(Material.AIR));
                             product.setPluginItem(null);
                         }
@@ -173,18 +174,15 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
                             if (e.isLeftClick()) {
                                 type3 = VirtualEditorType.PRODUCT_CHANGE_STOCK_GLOBAL_SELL_INITIAL_AMOUNT;
                                 EditorManager.tip(player, plugin.getMessage(VirtualLang.EDITOR_ENTER_AMOUNT).getLocalized());
-                            }
-                            else {
+                            } else {
                                 type3 = VirtualEditorType.PRODUCT_CHANGE_STOCK_GLOBAL_SELL_RESTOCK_TIME;
                                 EditorManager.tip(player, plugin.getMessage(Lang.EDITOR_GENERIC_ENTER_SECONDS).getLocalized());
                             }
-                        }
-                        else {
+                        } else {
                             if (e.isLeftClick()) {
                                 type3 = VirtualEditorType.PRODUCT_CHANGE_STOCK_GLOBAL_BUY_INITIAL_AMOUNT;
                                 EditorManager.tip(player, plugin.getMessage(VirtualLang.EDITOR_ENTER_AMOUNT).getLocalized());
-                            }
-                            else {
+                            } else {
                                 type3 = VirtualEditorType.PRODUCT_CHANGE_STOCK_GLOBAL_BUY_RESTOCK_TIME;
                                 EditorManager.tip(player, plugin.getMessage(Lang.EDITOR_GENERIC_ENTER_SECONDS).getLocalized());
                             }
@@ -200,18 +198,15 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
                             if (e.isLeftClick()) {
                                 type3 = VirtualEditorType.PRODUCT_CHANGE_STOCK_PLAYER_SELL_INITIAL_AMOUNT;
                                 EditorManager.tip(player, plugin.getMessage(VirtualLang.EDITOR_ENTER_AMOUNT).getLocalized());
-                            }
-                            else {
+                            } else {
                                 type3 = VirtualEditorType.PRODUCT_CHANGE_STOCK_PLAYER_SELL_RESTOCK_TIME;
                                 EditorManager.tip(player, plugin.getMessage(Lang.EDITOR_GENERIC_ENTER_SECONDS).getLocalized());
                             }
-                        }
-                        else {
+                        } else {
                             if (e.isLeftClick()) {
                                 type3 = VirtualEditorType.PRODUCT_CHANGE_STOCK_PLAYER_BUY_INITIAL_AMOUNT;
                                 EditorManager.tip(player, plugin.getMessage(VirtualLang.EDITOR_ENTER_AMOUNT).getLocalized());
-                            }
-                            else {
+                            } else {
                                 type3 = VirtualEditorType.PRODUCT_CHANGE_STOCK_PLAYER_BUY_RESTOCK_TIME;
                                 EditorManager.tip(player, plugin.getMessage(Lang.EDITOR_GENERIC_ENTER_SECONDS).getLocalized());
                             }
@@ -221,7 +216,7 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
                         player.closeInventory();
                         return;
                     }
-                    default -> { return; }
+                    default -> {return;}
                 }
 
                 shop.save();
@@ -274,15 +269,20 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
         if (type != null) {
             if (type == VirtualEditorType.PRODUCT_CHANGE_ITEM_META) {
                 item.setType(object.isItemMetaEnabled() ? Material.WRITABLE_BOOK : Material.BOOK);
-            }
-            else if (type == VirtualEditorType.PRODUCT_CHANGE_PREVIEW) {
+            } else if (type == VirtualEditorType.PRODUCT_CHANGE_PREVIEW) {
                 item.setType(this.object.getPreview().getType());
-            }
-            else if (type == VirtualEditorType.PRODUCT_CHANGE_ITEM) {
+            } else if (type == VirtualEditorType.PRODUCT_CHANGE_ITEM) {
                 ItemStack buyItem = object.getItem();
                 if (!buyItem.getType().isAir()) {
                     item.setType(buyItem.getType());
                 }
+            } else if (type == VirtualEditorType.PRODUCT_CHANGE_COMMANDS) {
+                item.editMeta(meta -> {
+                    List<Component> dst = meta.lore();
+                    List<Component> src = object.getCommands().stream().map(cmd -> Component.text(cmd).color(NamedTextColor.GREEN).asComponent()).toList();
+                    List<Component> lore = ComponentUtil.replacePlaceholderList(Placeholders.PRODUCT_VIRTUAL_COMMANDS, dst, src);
+                    meta.lore(lore);
+                });
             }
         }
 
@@ -290,7 +290,7 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
     }
 
     @Override
-    public boolean cancelClick(@NotNull InventoryClickEvent e,  @NotNull SlotType slotType) {
+    public boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
         return slotType != SlotType.PLAYER && slotType != SlotType.EMPTY_PLAYER;
     }
 }

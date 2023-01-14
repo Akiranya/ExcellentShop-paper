@@ -113,8 +113,7 @@ public class ShopSellMenu extends AbstractMenu<ExcellentShop> {
 
             List<Component> lore = new ArrayList<>(this.itemLore);
             lore.replaceAll(line -> {
-                line = ComponentUtil.replace(line, product.getShop().replacePlaceholders());
-                line = ComponentUtil.replace(line, product.replacePlaceholders());
+                line = ComponentUtil.replace(line, product.getShop().replacePlaceholders(), product.replacePlaceholders());
                 return ComponentUtil.replace(line, Placeholders.GENERIC_PRICE, product.getCurrency().format(price));
             });
             lore = ComponentUtil.replace(lore, "%item_lore%", false, ItemUtil.getLore(item));

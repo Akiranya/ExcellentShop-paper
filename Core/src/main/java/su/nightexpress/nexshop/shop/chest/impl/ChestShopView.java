@@ -79,10 +79,9 @@ public class ChestShopView extends ShopView<ChestShop> {
                     lore.add(ComponentUtil.asComponent(lineFormat));
                 }
 
-                lore.replaceAll(line -> {
-                    line = ComponentUtil.replace(line, product.replacePlaceholders(player));
-                    return ComponentUtil.replace(line, product.getCurrency().replacePlaceholders());
-                });
+                lore.replaceAll(line -> ComponentUtil.replace(line,
+                    product.replacePlaceholders(player), product.getCurrency().replacePlaceholders()
+                ));
 
                 meta.lore(lore);
                 preview.setItemMeta(meta);

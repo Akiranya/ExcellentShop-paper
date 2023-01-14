@@ -50,9 +50,10 @@ public abstract class AbstractAuctionItem implements IPlaceholder {
             .replace(Placeholders.LISTING_DATE_CREATION, AuctionConfig.DATE_FORMAT.format(TimeUtil.getLocalDateTimeOf(this.getDateCreation())))
             .replace(Placeholders.LISTING_ITEM_AMOUNT, String.valueOf(this.getItemStack().getAmount()))
             .replace(Placeholders.LISTING_ITEM_NAME, ComponentUtil.asMiniMessage(ItemUtil.getName(this.getItemStack())))
-            .replace(Placeholders.LISTING_ITEM_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getItemStack()))))
+            // .replace(Placeholders.LISTING_ITEM_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getItemStack()))))
             .replace(Placeholders.LISTING_ITEM_VALUE, String.valueOf(ItemUtil.toBase64(this.getItemStack())))
-            .replace(Placeholders.LISTING_DELETES_IN, TimeUtil.formatTimeLeft(this.getDeleteDate()));
+            .replace(Placeholders.LISTING_DELETES_IN, TimeUtil.formatTimeLeft(this.getDeleteDate()))
+            ;
     }
 
     @NotNull

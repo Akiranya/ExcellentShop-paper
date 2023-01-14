@@ -1,5 +1,6 @@
 package su.nightexpress.nexshop.shop.auction.menu;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.menu.AbstractMenuAuto;
 import su.nexmedia.engine.utils.ComponentUtil;
+import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.Perms;
@@ -67,17 +69,20 @@ public abstract class AbstractAuctionMenu<A extends AbstractAuctionItem> extends
     @NotNull
     protected ItemStack getObjectStack(@NotNull Player player, @NotNull A aucItem) {
         ItemStack aucItemStack = new ItemStack(aucItem.getItemStack());
+        UnaryOperator<String> replacer = aucItem.replacePlaceholders();
         aucItemStack.editMeta(meta -> {
-            UnaryOperator<String> replacer = aucItem.replacePlaceholders();
             // Prepare name
-            String name = replacer.apply(this.itemName);
+            String rawName = replacer.apply(this.itemName);
+            Component name = ComponentUtil.asComponent(rawName);
+            meta.displayName(name);
             // Prepare lore
-            List<String> lore;
-            lore = StringUtil.replace(this.itemLore, PLACEHOLDER_LORE_FORMAT, false, this.getLoreFormat(player, aucItem));
-            lore = StringUtil.replace(true, lore, replacer); // the replacer output contains '\n'
-            // Apply name and lore
-            meta.displayName(ComponentUtil.asComponent(name));
-            meta.lore(ComponentUtil.asComponent(lore));
+            List<String> rawLore;
+            rawLore = StringUtil.replace(this.itemLore, PLACEHOLDER_LORE_FORMAT, false, this.getLoreFormat(player, aucItem));
+            rawLore = StringUtil.replace(rawLore, replacer);
+            List<Component> lore;
+            lore = ComponentUtil.asComponent(rawLore);
+            lore = ComponentUtil.replacePlaceholderList(Placeholders.LISTING_ITEM_LORE, lore, ItemUtil.getLore(aucItemStack));
+            meta.lore(lore);
         });
         return aucItemStack;
     }

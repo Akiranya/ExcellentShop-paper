@@ -35,7 +35,7 @@ public class AuctionCategory implements IPlaceholder {
             .replace(Placeholders.CATEGORY_ID, this.getId())
             .replace(Placeholders.CATEGORY_NAME, this.getName())
             .replace(Placeholders.CATEGORY_ICON_NAME, ComponentUtil.asMiniMessage(ItemUtil.getName(this.getIcon())))
-            .replace(Placeholders.CATEGORY_ICON_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getIcon()))))
+            // .replace(Placeholders.CATEGORY_ICON_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getIcon()))))
             ;
     }
 

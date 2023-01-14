@@ -65,9 +65,10 @@ public abstract class Product<
                 .replace(Placeholders.PRODUCT_DISCOUNT_ALLOWED, LangManager.getBoolean(this.isDiscountAllowed()))
                 .replace(Placeholders.PRODUCT_ITEM_META_ENABLED, LangManager.getBoolean(this.isItemMetaEnabled()))
                 .replace(Placeholders.PRODUCT_ITEM_NAME, itemName)
-                .replace(Placeholders.PRODUCT_ITEM_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(buyItem))))
+                // .replace(Placeholders.PRODUCT_ITEM_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(buyItem))))
                 .replace(Placeholders.PRODUCT_PREVIEW_NAME, ComponentUtil.asMiniMessage(ItemUtil.getName(this.getPreview())))
-                .replace(Placeholders.PRODUCT_PREVIEW_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getPreview()))));
+                // .replace(Placeholders.PRODUCT_PREVIEW_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getPreview()))))
+                ;
         };
     }
 
@@ -90,16 +91,13 @@ public abstract class Product<
     public UnaryOperator<String> replacePlaceholders(@NotNull Player player) {
         double priceSell = this.getPricer().getPriceSell();
         double priceSellAll = this.getPricer().getPriceSellAll(player);
-
         ICurrency currency = this.getCurrency();
         return str -> {
             str = this.replacePlaceholdersView().apply(str);
             str = this.getStock().replacePlaceholders(player).apply(str);
             return str
                 .replace(Placeholders.PRODUCT_PRICE_SELL_ALL, NumberUtil.format(priceSellAll))
-                .replace(Placeholders.PRODUCT_PRICE_SELL_ALL_FORMATTED,
-                    priceSell >= 0 ? currency.format(priceSellAll) : "-")
-                ;
+                .replace(Placeholders.PRODUCT_PRICE_SELL_ALL_FORMATTED, priceSell >= 0 ? currency.format(priceSellAll) : "-");
         };
     }
 
