@@ -27,12 +27,18 @@ dependencies {
 
     // 3rd party plugins
     compileOnly("su.nightexpress.gamepoints:GamePoints:1.3.4")
-    compileOnly("com.github.Ghost-chu:GemsEconomy:74073694a3")
+    compileOnly("com.github.Ghost-chu:GemsEconomy:74073694a3") {
+        isTransitive = false
+    }
     compileOnly("com.github.TechFortress:GriefPrevention:16.17.1")
     compileOnly("com.github.angeschossen:LandsAPI:6.20.0")
     compileOnly("org.black_ixx:playerpoints:3.0.0")
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.6")
-    compileOnly("net.citizensnpcs:citizensapi:2.0.29-SNAPSHOT")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.6") {
+        exclude("org.bukkit")
+    }
+    compileOnly("net.citizensnpcs:citizensapi:2.0.29-SNAPSHOT") {
+        exclude("ch.ethz.globis.phtree")
+    }
 }
 
 description = "Core"
