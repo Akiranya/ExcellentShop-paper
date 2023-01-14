@@ -23,7 +23,7 @@ dependencies {
     compileOnly("com.github.justisr:BrokerAPI:master-SNAPSHOT")
 
     // The server API
-    compileOnly("io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
 
     // 3rd party plugins
     compileOnly("su.nightexpress.gamepoints:GamePoints:1.3.4")
@@ -83,7 +83,6 @@ tasks {
 
     // Copy the output jar to the dev server
     register("deployToServer") {
-        dependsOn(build)
         doLast {
             exec {
                 commandLine("rsync", "${shadowJar.get().archiveFile.path}", "dev:data/dev/jar")
