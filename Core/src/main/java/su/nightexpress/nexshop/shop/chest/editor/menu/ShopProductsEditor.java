@@ -4,9 +4,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.menu.MenuItem;
+import su.nexmedia.engine.api.menu.MenuItemImpl;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.nexshop.api.shop.Product;
@@ -35,16 +35,14 @@ public class ShopProductsEditor extends EditorProductList<ChestShop> {
             if (productCount >= maxProducts || productCount >= inventory.getSize()) break;
 
             ItemStack productIcon = new ItemStack(shopProduct.getPreview());
-            ItemMeta productMeta = productIcon.getItemMeta();
-            if (productMeta == null) continue;
+            productIcon.editMeta(meta -> {
+                ItemStack editorIcon = ChestEditorType.PRODUCT_OBJECT.getItem();
+                meta.displayName(ItemUtil.getName(editorIcon));
+                meta.lore(ItemUtil.getLore(editorIcon));
+                ItemUtil.replaceNameAndLore(meta, shopProduct.replacePlaceholders());
+            });
 
-            ItemStack editorIcon = ChestEditorType.PRODUCT_OBJECT.getItem();
-            productMeta.displayName(ItemUtil.getItemName(editorIcon));
-            productMeta.lore(ItemUtil.getLore(editorIcon));
-            productIcon.setItemMeta(productMeta);
-            ItemUtil.replace(productIcon, shopProduct.replacePlaceholders());
-
-            MenuItem item = new MenuItem(productIcon);
+            MenuItem item = new MenuItemImpl(productIcon);
             item.setSlots(productCount++);
             item.setClickHandler((p, type, e) -> {
                 if (e.isLeftClick()) {
@@ -66,7 +64,7 @@ public class ShopProductsEditor extends EditorProductList<ChestShop> {
             this.addItem(player, item);
         }
 
-        MenuItem free = new MenuItem(GenericEditorType.PRODUCT_FREE_SLOT.getItem());
+        MenuItem free = new MenuItemImpl(GenericEditorType.PRODUCT_FREE_SLOT.getItem());
         int[] freeSlots = new int[maxProducts - productCount];
         int count2 = 0;
         for (int slot = productCount; slot < maxProducts; slot++) {

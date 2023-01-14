@@ -5,13 +5,11 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.menu.*;
 import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.shop.virtual.VirtualShopModule;
 import su.nightexpress.nexshop.shop.virtual.config.VirtualConfig;
@@ -59,20 +57,15 @@ public class ShopMainMenu extends AbstractMenu<ExcellentShop> {
             }
 
             ItemStack icon = shop.getIcon();
-            ItemMeta meta = icon.getItemMeta();
-            if (meta == null) return;
-
-            meta.displayName(ComponentUtil.asComponent(VirtualConfig.SHOP_FORMAT_NAME.get()));
-            meta.lore(ComponentUtil.asComponent(VirtualConfig.SHOP_FORMAT_LORE.get()));
-            meta.addItemFlags(ItemFlag.values());
-            icon.setItemMeta(meta);
-            ItemUtil.replace(icon, shop.replacePlaceholders());
-
-            MenuItem menuItem = new MenuItem(shop.getId(), icon, slot);
-
-            menuItem.setClickHandler((player2, type, e) -> {
-                shop.open(player2, 1);
+            icon.editMeta(meta -> {
+                meta.displayName(ComponentUtil.asComponent(VirtualConfig.SHOP_FORMAT_NAME.get()));
+                meta.lore(ComponentUtil.asComponent(VirtualConfig.SHOP_FORMAT_LORE.get()));
+                meta.addItemFlags(ItemFlag.values());
+                ItemUtil.replaceNameAndLore(meta, shop.replacePlaceholders());
             });
+
+            MenuItem menuItem = new MenuItemImpl(shop.getId(), icon, slot);
+            menuItem.setClickHandler((player2, type, e) -> shop.open(player2, 1));
 
             this.addItem(player, menuItem);
         });

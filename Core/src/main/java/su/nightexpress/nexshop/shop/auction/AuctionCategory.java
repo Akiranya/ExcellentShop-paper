@@ -13,19 +13,19 @@ import java.util.stream.Collectors;
 
 public class AuctionCategory implements IPlaceholder {
 
-    private final String      id;
-    private final String      name;
-    private final ItemStack  icon;
+    private final String id;
+    private final String name;
+    private final ItemStack icon;
     private final Set<String> materials;
 
     public AuctionCategory(@NotNull String id, @NotNull String name, @NotNull ItemStack icon,
-                           @NotNull Set<String> materials) {
+        @NotNull Set<String> materials) {
         this.id = id.toLowerCase().replace(" ", "_");
         this.name = name;
         this.icon = new ItemStack(icon);
         this.materials = materials.stream().map(String::toLowerCase).collect(Collectors.toSet());
 
-        ItemUtil.replace(this.icon, this.replacePlaceholders());
+        this.icon.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, this.replacePlaceholders()));
     }
 
     @Override
@@ -34,7 +34,7 @@ public class AuctionCategory implements IPlaceholder {
         return str -> str
             .replace(Placeholders.CATEGORY_ID, this.getId())
             .replace(Placeholders.CATEGORY_NAME, this.getName())
-            .replace(Placeholders.CATEGORY_ICON_NAME, ComponentUtil.asMiniMessage(ItemUtil.getItemName(this.getIcon())))
+            .replace(Placeholders.CATEGORY_ICON_NAME, ComponentUtil.asMiniMessage(ItemUtil.getName(this.getIcon())))
             .replace(Placeholders.CATEGORY_ICON_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getIcon()))))
             ;
     }

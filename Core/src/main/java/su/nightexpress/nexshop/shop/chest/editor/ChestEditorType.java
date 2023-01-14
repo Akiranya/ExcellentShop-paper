@@ -1,13 +1,10 @@
 package su.nightexpress.nexshop.shop.chest.editor;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.editor.EditorButtonType;
-import su.nexmedia.engine.utils.ComponentUtil;
 import su.nightexpress.nexshop.Placeholders;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public enum ChestEditorType implements EditorButtonType {
@@ -24,9 +21,9 @@ public enum ChestEditorType implements EditorButtonType {
         EditorButtonType.click("Left-Click to <white>Navigate</white>\n[Q] Key to <white>Refresh</white>")),
     ;
 
-    private final Material        material;
-    private       Component       name;
-    private       List<Component> lore;
+    private final Material material;
+    private String name;
+    private List<String> lore;
 
     ChestEditorType() {
         this(Material.AIR, "", "");
@@ -34,8 +31,8 @@ public enum ChestEditorType implements EditorButtonType {
 
     ChestEditorType(@NotNull Material material, @NotNull String name, @NotNull String... lore) {
         this.material = material;
-        this.setName(ComponentUtil.asComponent(name));
-        this.setLore(ComponentUtil.asComponent(EditorButtonType.fineLore(lore)));
+        this.setName(name);
+        this.setLore(EditorButtonType.fineLore(lore));
     }
 
     @NotNull
@@ -45,20 +42,20 @@ public enum ChestEditorType implements EditorButtonType {
     }
 
     @NotNull
-    public Component getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(@NotNull Component name) {
+    public void setName(@NotNull String name) {
         this.name = name;
     }
 
     @NotNull
-    public List<Component> getLore() {
+    public List<String> getLore() {
         return lore;
     }
 
-    public void setLore(@NotNull List<Component> lore) {
-        this.lore = new ArrayList<>(lore);
+    public void setLore(@NotNull List<String> lore) {
+        this.lore = lore;
     }
 }

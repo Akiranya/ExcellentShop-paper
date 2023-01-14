@@ -30,14 +30,14 @@ public final class VirtualShop extends Shop<VirtualShop, VirtualProduct> impleme
     private final JYML configView;
 
     private final Set<VirtualDiscount> discountConfigs;
-    private       String               description;
-    private       int                  pages;
-    private       boolean              isPermissionRequired;
-    private       ItemStack            icon;
-    private       int[]                citizensIds = new int[0];
+    private String description;
+    private int pages;
+    private boolean isPermissionRequired;
+    private ItemStack icon;
+    private int[] citizensIds = new int[0];
 
     private ShopView<VirtualShop> view;
-    private EditorShopMain        editor;
+    private EditorShopMain editor;
 
     public VirtualShop(@NotNull VirtualShopModule module, @NotNull JYML cfg, @NotNull String id) {
         super(module.plugin(), cfg, id);
@@ -93,7 +93,7 @@ public final class VirtualShop extends Shop<VirtualShop, VirtualProduct> impleme
             .replace(Placeholders.SHOP_VIRTUAL_DESCRIPTION, this.getDescription())
             .replace(Placeholders.SHOP_VIRTUAL_PERMISSION_NODE, Perms.PREFIX_VIRTUAL_SHOP + this.getId())
             .replace(Placeholders.SHOP_VIRTUAL_PERMISSION_REQUIRED, LangManager.getBoolean(this.isPermissionRequired()))
-            .replace(Placeholders.SHOP_VIRTUAL_ICON_NAME, ComponentUtil.asMiniMessage(ItemUtil.getItemName(this.getIcon())))
+            .replace(Placeholders.SHOP_VIRTUAL_ICON_NAME, ComponentUtil.asMiniMessage(ItemUtil.getName(this.getIcon())))
             .replace(Placeholders.SHOP_VIRTUAL_ICON_TYPE, this.getIcon().getType().name())
             .replace(Placeholders.SHOP_VIRTUAL_PAGES, String.valueOf(this.getPages()))
             .replace(Placeholders.SHOP_VIRTUAL_VIEW_SIZE, String.valueOf(this.getView().getSize()))

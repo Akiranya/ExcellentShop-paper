@@ -68,19 +68,18 @@ public class BrokerHook {
 
         @Nullable
         private Product<?, ?, ?> getBestProduct(@NotNull Player player, @NotNull TradeType tradeType,
-                                                @NotNull ItemStack item, int amount) {
+            @NotNull ItemStack item, int amount) {
             Set<Product<?, ?, ?>> products = new HashSet<>();
             this.virtualShop.getShops().stream()
-                    .filter(shop -> shop.hasPermission(player) && shop.isTransactionEnabled(tradeType)).forEach(shop -> {
-                products.addAll(shop.getProducts().stream().filter(product -> {
+                .filter(shop -> shop.hasPermission(player) && shop.isTransactionEnabled(tradeType))
+                .forEach(shop -> products.addAll(shop.getProducts().stream().filter(product -> {
                     if (!product.isItemMatches(item)) return false;
                     if (tradeType == TradeType.BUY && !product.isBuyable()) return false;
                     if (tradeType == TradeType.SELL && !product.isSellable()) return false;
                     if (tradeType == TradeType.SELL && product.countItem(player) < amount) return false;
                     if (product.getStock().getPossibleAmount(tradeType, player) < amount) return false;
                     return true;
-                }).toList());
-            });
+                }).toList()));
 
             Comparator<Product<?, ?, ?>> comp = (p1, p2) -> {
                 return (int) (p1.getPricer().getPrice(tradeType) - p2.getPricer().getPrice(tradeType));
@@ -155,7 +154,7 @@ public class BrokerHook {
 
         @Override
         public String getDisplayName(Optional<UUID> playerId, Optional<UUID> worldId, ItemStack itemStack) {
-            return ComponentUtil.asPlainText(ItemUtil.getItemName(itemStack));
+            return ComponentUtil.asPlainText(ItemUtil.getName(itemStack));
         }
 
         @Override

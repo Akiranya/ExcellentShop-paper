@@ -20,7 +20,6 @@ import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.PDCUtil;
-import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.editor.GenericEditorType;
 import su.nightexpress.nexshop.shop.virtual.impl.VirtualProduct;
@@ -152,19 +151,17 @@ public class EditorShopViewDesign extends AbstractMenu<ExcellentShop> {
         JYML cfg = shop.getConfigView();
         cfg.set("Content", null);
 
-        items.forEach((type, map) -> {
-            map.forEach((item2, slots) -> {
-                this.removeTypeLore(item2);
+        items.forEach((type, map) -> map.forEach((item2, slots) -> {
+            this.removeTypeLore(item2);
 
-                String id = UUID.randomUUID().toString();
-                String path = "Content." + id + ".";
-                String typeRaw = this.getType(item2).name();
+            String id = UUID.randomUUID().toString();
+            String path = "Content." + id + ".";
+            String typeRaw = this.getType(item2).name();
 
-                cfg.setItem(path + "Item.", item2);
-                cfg.setIntArray(path + "Slots", slots.stream().mapToInt(i -> i).toArray());
-                cfg.set(path + "Type", typeRaw);
-            });
-        });
+            cfg.setItem(path + "Item.", item2);
+            cfg.setIntArray(path + "Slots", slots.stream().mapToInt(i -> i).toArray());
+            cfg.set(path + "Type", typeRaw);
+        }));
 
         cfg.saveChanges();
         shop.setupView();

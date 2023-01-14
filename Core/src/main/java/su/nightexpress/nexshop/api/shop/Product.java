@@ -31,16 +31,16 @@ public abstract class Product<
 
     protected final String id;
 
-    protected S             shop;
-    protected ItemStack     itemPreview;
+    protected S shop;
+    protected ItemStack itemPreview;
     protected PluginItem<?> itemPreviewAsPluginItem;
-    protected ItemStack     itemReal;
+    protected ItemStack itemReal;
     protected PluginItem<?> itemRealAsPluginItem;
-    protected ICurrency     currency;
+    protected ICurrency currency;
     protected ProductPricer pricer;
-    protected T             stock;
-    protected boolean       isDiscountAllowed;
-    protected boolean       isItemMetaEnabled;
+    protected T stock;
+    protected boolean isDiscountAllowed;
+    protected boolean isItemMetaEnabled;
 
     public Product(@NotNull String id, @NotNull ItemStack itemPreview, @NotNull ICurrency currency) {
         this.id = id.toLowerCase();
@@ -55,7 +55,7 @@ public abstract class Product<
     @NotNull
     public UnaryOperator<String> replacePlaceholders() {
         ItemStack buyItem = this.getItem();
-        String itemName = !buyItem.getType().isAir() ? ComponentUtil.asMiniMessage(ItemUtil.getItemName(buyItem)) : "null";
+        String itemName = !buyItem.getType().isAir() ? ComponentUtil.asMiniMessage(ItemUtil.getName(buyItem)) : "null";
 
         return str -> {
             str = this.replacePlaceholdersView().apply(str);
@@ -66,7 +66,7 @@ public abstract class Product<
                 .replace(Placeholders.PRODUCT_ITEM_META_ENABLED, LangManager.getBoolean(this.isItemMetaEnabled()))
                 .replace(Placeholders.PRODUCT_ITEM_NAME, itemName)
                 .replace(Placeholders.PRODUCT_ITEM_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(buyItem))))
-                .replace(Placeholders.PRODUCT_PREVIEW_NAME, ComponentUtil.asMiniMessage(ItemUtil.getItemName(this.getPreview())))
+                .replace(Placeholders.PRODUCT_PREVIEW_NAME, ComponentUtil.asMiniMessage(ItemUtil.getName(this.getPreview())))
                 .replace(Placeholders.PRODUCT_PREVIEW_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getPreview()))));
         };
     }
@@ -78,12 +78,12 @@ public abstract class Product<
         double priceSell = this.getPricer().getPriceSell();
 
         return str -> this.getStock().replacePlaceholders().apply(str)
-                          .replace(Placeholders.PRODUCT_DISCOUNT_AMOUNT, NumberUtil.format(this.getShop().getDiscountPlain(this)))
-                          .replace(Placeholders.PRODUCT_CURRENCY, this.getCurrency().getConfig().getName())
-                          .replace(Placeholders.PRODUCT_PRICE_BUY, NumberUtil.format(priceBuy))
-                          .replace(Placeholders.PRODUCT_PRICE_BUY_FORMATTED, priceBuy >= 0 ? currency.format(priceBuy) : "-")
-                          .replace(Placeholders.PRODUCT_PRICE_SELL, NumberUtil.format(priceSell))
-                          .replace(Placeholders.PRODUCT_PRICE_SELL_FORMATTED, priceSell >= 0 ? currency.format(priceSell) : "-");
+            .replace(Placeholders.PRODUCT_DISCOUNT_AMOUNT, NumberUtil.format(this.getShop().getDiscountPlain(this)))
+            .replace(Placeholders.PRODUCT_CURRENCY, this.getCurrency().getConfig().getName())
+            .replace(Placeholders.PRODUCT_PRICE_BUY, NumberUtil.format(priceBuy))
+            .replace(Placeholders.PRODUCT_PRICE_BUY_FORMATTED, priceBuy >= 0 ? currency.format(priceBuy) : "-")
+            .replace(Placeholders.PRODUCT_PRICE_SELL, NumberUtil.format(priceSell))
+            .replace(Placeholders.PRODUCT_PRICE_SELL_FORMATTED, priceSell >= 0 ? currency.format(priceSell) : "-");
     }
 
     @NotNull

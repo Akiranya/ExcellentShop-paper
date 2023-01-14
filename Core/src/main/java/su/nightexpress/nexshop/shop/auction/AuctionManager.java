@@ -224,7 +224,7 @@ public class AuctionManager extends ShopModule {
 
         if (!this.isAllowedItem(item)) {
             plugin.getMessage(AuctionLang.LISTING_ADD_ERROR_BAD_ITEM)
-                .replace(Placeholders.GENERIC_ITEM, ItemUtil.getItemName(item))
+                .replace(Placeholders.GENERIC_ITEM, ItemUtil.getName(item))
                 .send(player);
             return false;
         }

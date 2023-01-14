@@ -2,6 +2,7 @@ package su.nightexpress.nexshop.shop.virtual.impl;
 
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.item.PluginItem;
 import su.nexmedia.engine.api.item.PluginItemRegistry;
@@ -26,8 +27,8 @@ import java.util.function.UnaryOperator;
 
 public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, VirtualProductStock> {
 
-    private int          shopSlot;
-    private int          shopPage;
+    private int shopSlot;
+    private int shopPage;
     private List<String> commands;
 
     private EditorShopProduct editor;
@@ -93,9 +94,10 @@ public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, V
 
         ItemStack preview = cfg.getItemEncoded(path + ".Shop_View.Preview");
         // Start - Integrations with custom items from external plugins
+        PluginItemRegistry itemRegistry = NexEngine.get().getPluginItemRegistry();
         String reference1 = cfg.getString(path + ".Shop_View.PluginItem");
-        if (PluginItemRegistry.isPluginItemId(reference1)) {
-            pluginItemPreview = PluginItemRegistry.fromReference(reference1);
+        if (itemRegistry.isPluginItemId(reference1)) {
+            pluginItemPreview = itemRegistry.fromReference(reference1);
             ItemStack pluginItemStack = pluginItemPreview.createItemStack();
             if (pluginItemStack != null) preview = pluginItemStack;
         }
@@ -118,8 +120,8 @@ public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, V
         ItemStack real = cfg.getItemEncoded(path + ".Reward.Item");
         // Start - integrations with custom items from external plugins
         String reference2 = cfg.getString(path + ".Reward.PluginItem");
-        if (PluginItemRegistry.isPluginItemId(reference2)) {
-            pluginItemReal = PluginItemRegistry.fromReference(reference2);
+        if (itemRegistry.isPluginItemId(reference2)) {
+            pluginItemReal = itemRegistry.fromReference(reference2);
             ItemStack pluginItemStack = pluginItemReal.createItemStack();
             if (pluginItemStack != null) real = pluginItemStack;
         }

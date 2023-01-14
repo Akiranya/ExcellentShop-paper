@@ -1,10 +1,8 @@
 package su.nightexpress.nexshop.editor;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.editor.EditorButtonType;
-import su.nexmedia.engine.utils.ComponentUtil;
 import su.nightexpress.nexshop.Placeholders;
 
 import java.util.ArrayList;
@@ -78,9 +76,9 @@ public enum GenericEditorType implements EditorButtonType {
     PRODUCT_CHANGE_PRICE_DYNAMIC_STEP_SELL,
     PRODUCT_CHANGE_PRICE_DYNAMIC_STEP_BUY;
 
-    private final Material        material;
-    private       Component       name;
-    private       List<Component> lore;
+    private final Material material;
+    private String name;
+    private List<String> lore;
 
     GenericEditorType() {
         this(Material.AIR, "", "");
@@ -88,8 +86,8 @@ public enum GenericEditorType implements EditorButtonType {
 
     GenericEditorType(@NotNull Material material, @NotNull String name, @NotNull String... lore) {
         this.material = material;
-        this.setName(ComponentUtil.asComponent(name));
-        this.setLore(ComponentUtil.asComponent(EditorButtonType.fineLore(lore)));
+        this.setName(name);
+        this.setLore(EditorButtonType.fineLore(lore));
     }
 
     @NotNull
@@ -99,20 +97,20 @@ public enum GenericEditorType implements EditorButtonType {
     }
 
     @NotNull
-    public Component getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(@NotNull Component name) {
+    public void setName(@NotNull String name) {
         this.name = name;
     }
 
     @NotNull
-    public List<Component> getLore() {
+    public List<String> getLore() {
         return lore;
     }
 
-    public void setLore(@NotNull List<Component> lore) {
+    public void setLore(@NotNull List<String> lore) {
         this.lore = new ArrayList<>(lore);
     }
 }

@@ -4,7 +4,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.menu.*;
+import su.nexmedia.engine.api.menu.MenuClick;
+import su.nexmedia.engine.api.menu.MenuItem;
+import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.utils.*;
 import su.nightexpress.nexshop.Perms;
 import su.nightexpress.nexshop.api.currency.ICurrency;
@@ -146,7 +148,7 @@ public class AuctionMainMenu extends AbstractAuctionMenu<AuctionListing> {
         String category = getCategories(player).stream().map(AuctionCategory::getName).collect(Collectors.joining(", "));
         String currency = getCurrencies(player).stream().map(c -> c.getConfig().getName()).collect(Collectors.joining(", "));
 
-        ItemUtil.replace(item, line -> line
+        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, line -> line
             .replace("%tax%", NumberUtil.format(AuctionConfig.LISTINGS_TAX_ON_LISTING_ADD))
             .replace("%expire%", TimeUtil.formatTime(AuctionConfig.LISTINGS_EXPIRE_IN))
             .replace(PLACEHOLDER_LISTING_ORDER, plugin.getLangManager().getEnum(getListingOrder(player)))
@@ -154,7 +156,7 @@ public class AuctionMainMenu extends AbstractAuctionMenu<AuctionListing> {
             .replace(PLACEHOLDER_CURRENCIES, currency)
             .replace(PLACEHOLDER_EXPIRED_AMOUNT, String.valueOf(auctionManager.getExpiredListings(player).size()))
             .replace(PLACEHOLDER_UNCLAIMED_AMOUNT, String.valueOf(auctionManager.getUnclaimedListings(player).size()))
-        );
+        ));
     }
 
     private enum AuctionItemType {
@@ -170,8 +172,8 @@ public class AuctionMainMenu extends AbstractAuctionMenu<AuctionListing> {
     public enum AuctionSortType {
 
         NAME((l1, l2) -> {
-            String name1 = ComponentUtil.asPlainText(ItemUtil.getItemName(l1.getItemStack()));
-            String name2 = ComponentUtil.asPlainText(ItemUtil.getItemName(l2.getItemStack()));
+            String name1 = ComponentUtil.asPlainText(ItemUtil.getName(l1.getItemStack()));
+            String name2 = ComponentUtil.asPlainText(ItemUtil.getName(l2.getItemStack()));
             return name1.compareTo(name2);
         }),
         MATERIAL((l1, l2) -> {

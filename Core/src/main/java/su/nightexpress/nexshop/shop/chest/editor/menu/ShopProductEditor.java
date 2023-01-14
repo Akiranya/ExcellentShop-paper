@@ -54,15 +54,13 @@ public class ShopProductEditor extends AbstractEditorMenu<ExcellentShop, ChestPr
             product2.getShop().save();
             return true;
         };
-        
+
         MenuClick click = (player, type, e) -> {
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.RETURN) {
                     product.getShop().getEditor().getProductsEditor().open(player, 1);
-                }
-                else this.onItemClickDefault(player, type2);
-            }
-            else if (type instanceof ChestEditorType type2) {
+                } else this.onItemClickDefault(player, type2);
+            } else if (type instanceof ChestEditorType type2) {
                 switch (type2) {
                     case PRODUCT_CHANGE_PRICE -> {
                         if (e.getClick() == ClickType.DROP) {
@@ -78,8 +76,7 @@ public class ShopProductEditor extends AbstractEditorMenu<ExcellentShop, ChestPr
                                 for (ICurrency currency : ChestConfig.ALLOWED_CURRENCIES) {
                                     MessageUtil.sendMessage(player, currency.replacePlaceholders().apply(line));
                                 }
-                            }
-                            else MessageUtil.sendMessage(player, line);
+                            } else MessageUtil.sendMessage(player, line);
                         });
                         EditorManager.startEdit(player, product, type2, input);
                         player.closeInventory();
@@ -120,8 +117,9 @@ public class ShopProductEditor extends AbstractEditorMenu<ExcellentShop, ChestPr
     public void onItemPrepare(@NotNull Player player, @NotNull MenuItem menuItem, @NotNull ItemStack item) {
         super.onItemPrepare(player, menuItem, item);
 
-        ItemUtil.replace(item, this.object.replacePlaceholders());
-        ItemUtil.replace(item, this.object.getCurrency().replacePlaceholders());
+        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta,
+            this.object.replacePlaceholders(), this.object.getCurrency().replacePlaceholders()
+        ));
     }
 
     @Override

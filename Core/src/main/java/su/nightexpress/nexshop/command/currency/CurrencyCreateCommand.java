@@ -74,7 +74,7 @@ public class CurrencyCreateCommand extends AbstractCommand<ExcellentShop> {
             plugin.getCurrencyManager().registerCurrency(currency);
             plugin.getMessage(Lang.COMMAND_CURRENCY_CREATE_DONE_NEW)
                 .replace(currency.replacePlaceholders())
-                .replace(Placeholders.GENERIC_ITEM, ItemUtil.getItemName(item))
+                .replace(Placeholders.GENERIC_ITEM, ItemUtil.getName(item))
                 .send(sender);
         }
         else {
@@ -90,7 +90,7 @@ public class CurrencyCreateCommand extends AbstractCommand<ExcellentShop> {
 
             plugin.getMessage(Lang.COMMAND_CURRENCY_CREATE_DONE_REPLACE)
                 .replace(itemCurrency.replacePlaceholders())
-                .replace(Placeholders.GENERIC_ITEM, ItemUtil.getItemName(item))
+                .replace(Placeholders.GENERIC_ITEM, ItemUtil.getName(item))
                 .send(sender);
         }
     }

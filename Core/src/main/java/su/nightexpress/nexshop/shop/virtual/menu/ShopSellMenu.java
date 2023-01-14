@@ -29,12 +29,12 @@ import java.util.List;
 public class ShopSellMenu extends AbstractMenu<ExcellentShop> {
 
     private final VirtualShopModule module;
-    private final Component         itemName;
-    private final List<Component>   itemLore;
-    private final int[]             itemSlots;
+    private final Component itemName;
+    private final List<Component> itemLore;
+    private final int[] itemSlots;
 
     private static final Map<Player, List<Pair<ItemStack, VirtualProduct>>> USER_ITEMS = new WeakHashMap<>();
-    private static final Map<Player, VirtualShop>                           USER_SHOP  = new WeakHashMap<>();
+    private static final Map<Player, VirtualShop> USER_SHOP = new WeakHashMap<>();
 
     public ShopSellMenu(@NotNull VirtualShopModule module, @NotNull JYML cfg) {
         super(module.plugin(), cfg, "");
@@ -101,9 +101,9 @@ public class ShopSellMenu extends AbstractMenu<ExcellentShop> {
             }
             if (firstSlot < 0) return true;
 
-            //int toSell = product.getStock().getPossibleAmount(TradeType.SELL, player);
-            //if (toSell == 0) return true;
-            //if (toSell > 0) toSell = item.getAmount();
+            // int toSell = product.getStock().getPossibleAmount(TradeType.SELL, player);
+            // if (toSell == 0) return true;
+            // if (toSell > 0) toSell = item.getAmount();
 
             ItemStack icon = new ItemStack(item);
             ItemMeta meta = icon.getItemMeta();
@@ -120,7 +120,7 @@ public class ShopSellMenu extends AbstractMenu<ExcellentShop> {
             lore = ComponentUtil.replace(lore, "%item_lore%", false, ItemUtil.getLore(item));
             lore = ComponentUtil.stripEmpty(lore);
 
-            meta.displayName(ComponentUtil.replace(this.itemName, "%item_name%", ItemUtil.getItemName(item)));
+            meta.displayName(ComponentUtil.replace(this.itemName, "%item_name%", ItemUtil.getName(item)));
             meta.lore(lore);
 
             icon.setItemMeta(meta);

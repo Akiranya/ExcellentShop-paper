@@ -29,10 +29,8 @@ public class EditorShopDiscounts extends AbstractEditorMenuAuto<ExcellentShop, V
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.RETURN) {
                     shop.getEditor().open(player, 1);
-                }
-                else this.onItemClickDefault(player, type2);
-            }
-            else if (type instanceof VirtualEditorType type2) {
+                } else this.onItemClickDefault(player, type2);
+            } else if (type instanceof VirtualEditorType type2) {
                 if (type2 == VirtualEditorType.DISCOUNT_CREATE) {
                     this.parent.addDiscountConfig(new VirtualDiscount());
                     this.parent.save();
@@ -67,7 +65,7 @@ public class EditorShopDiscounts extends AbstractEditorMenuAuto<ExcellentShop, V
     @NotNull
     protected ItemStack getObjectStack(@NotNull Player player, @NotNull VirtualDiscount discount) {
         ItemStack item = VirtualEditorType.DISCOUNT_OBJECT.getItem();
-        ItemUtil.replace(item, discount.replacePlaceholders());
+        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, discount.replacePlaceholders()));
         return item;
     }
 
@@ -81,8 +79,7 @@ public class EditorShopDiscounts extends AbstractEditorMenuAuto<ExcellentShop, V
                     this.parent.save();
                     this.open(player1, this.getPage(player1));
                 }
-            }
-            else {
+            } else {
                 discount.getEditor().open(player1, 1);
             }
         };

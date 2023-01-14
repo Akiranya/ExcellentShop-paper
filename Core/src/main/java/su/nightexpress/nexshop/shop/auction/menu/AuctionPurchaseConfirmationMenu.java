@@ -21,7 +21,7 @@ import java.util.WeakHashMap;
 public class AuctionPurchaseConfirmationMenu extends AbstractMenu<ExcellentShop> {
 
     private final AuctionManager auctionManager;
-    private final int            itemSlot;
+    private final int itemSlot;
 
     private final Map<Player, AuctionListing> cache;
 
@@ -41,8 +41,7 @@ public class AuctionPurchaseConfirmationMenu extends AbstractMenu<ExcellentShop>
                     }
 
                     player.closeInventory();
-                }
-                else if (type2 == MenuItemType.CONFIRMATION_DECLINE) {
+                } else if (type2 == MenuItemType.CONFIRMATION_DECLINE) {
                     this.auctionManager.getMainMenu().open(player, 1);
                 }
             }
@@ -73,7 +72,7 @@ public class AuctionPurchaseConfirmationMenu extends AbstractMenu<ExcellentShop>
         AuctionListing listing = this.cache.get(player);
         if (listing == null) return;
 
-        ItemUtil.replace(item, listing.replacePlaceholders());
+        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, listing.replacePlaceholders()));
     }
 
     @Override

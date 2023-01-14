@@ -32,8 +32,8 @@ import java.util.stream.IntStream;
 
 public class EditorShopMain extends AbstractEditorMenu<ExcellentShop, VirtualShop> {
 
-    private EditorShopDiscounts   editorDiscounts;
-    private EditorShopViewDesign  editorViewDesign;
+    private EditorShopDiscounts editorDiscounts;
+    private EditorShopViewDesign editorViewDesign;
     private EditorShopProductList editorProductList;
 
     public EditorShopMain(@NotNull ExcellentShop plugin, @NotNull VirtualShop shop) {
@@ -74,8 +74,7 @@ public class EditorShopMain extends AbstractEditorMenu<ExcellentShop, VirtualSho
                 if (type2 == MenuItemType.RETURN) {
                     virtualShop.getEditor().open(player, 1);
                 }
-            }
-            else if (type instanceof VirtualEditorType type2) {
+            } else if (type instanceof VirtualEditorType type2) {
                 switch (type2) {
                     case SHOP_CHANGE_NAME -> {
                         EditorManager.tip(player, plugin.getMessage(VirtualLang.EDITOR_ENTER_NAME).getLocalized());
@@ -108,8 +107,7 @@ public class EditorShopMain extends AbstractEditorMenu<ExcellentShop, VirtualSho
                             EditorManager.tip(player, plugin.getMessage(VirtualLang.EDITOR_ENTER_NPC_ID).getLocalized());
                             player.closeInventory();
                             return;
-                        }
-                        else if (e.isRightClick()) {
+                        } else if (e.isRightClick()) {
                             shop.setCitizensIds(new int[]{});
                         }
                     }
@@ -144,8 +142,7 @@ public class EditorShopMain extends AbstractEditorMenu<ExcellentShop, VirtualSho
                     case SHOP_CHANGE_PAGES -> {
                         if (e.isLeftClick()) {
                             shop.setPages(shop.getPages() + 1);
-                        }
-                        else if (e.isRightClick()) {
+                        } else if (e.isRightClick()) {
                             shop.setPages(Math.max(1, shop.getPages() - 1));
                         }
                         shop.save();
@@ -156,8 +153,7 @@ public class EditorShopMain extends AbstractEditorMenu<ExcellentShop, VirtualSho
                     case SHOP_CHANGE_TRANSACTIONS -> {
                         if (e.isLeftClick()) {
                             shop.setTransactionEnabled(TradeType.BUY, !shop.isTransactionEnabled(TradeType.BUY));
-                        }
-                        else if (e.isRightClick()) {
+                        } else if (e.isRightClick()) {
                             shop.setTransactionEnabled(TradeType.SELL, !shop.isTransactionEnabled(TradeType.SELL));
                         }
                     }
@@ -237,12 +233,11 @@ public class EditorShopMain extends AbstractEditorMenu<ExcellentShop, VirtualSho
         if (menuItem.getType() instanceof VirtualEditorType type) {
             if (type == VirtualEditorType.SHOP_CHANGE_PERMISSION) {
                 item.setType(this.object.isPermissionRequired() ? Material.REDSTONE : Material.GUNPOWDER);
-            }
-            else if (type == VirtualEditorType.SHOP_CHANGE_ICON) {
+            } else if (type == VirtualEditorType.SHOP_CHANGE_ICON) {
                 item.setType(this.object.getIcon().getType());
             }
         }
-        ItemUtil.replace(item, this.object.replacePlaceholders());
+        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, this.object.replacePlaceholders()));
     }
 
     @Override

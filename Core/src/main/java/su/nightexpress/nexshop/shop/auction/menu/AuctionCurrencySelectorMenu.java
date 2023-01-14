@@ -1,11 +1,9 @@
 package su.nightexpress.nexshop.shop.auction.menu;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
@@ -13,7 +11,10 @@ import su.nexmedia.engine.api.menu.AbstractMenuAuto;
 import su.nexmedia.engine.api.menu.MenuClick;
 import su.nexmedia.engine.api.menu.MenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
-import su.nexmedia.engine.utils.*;
+import su.nexmedia.engine.utils.ComponentUtil;
+import su.nexmedia.engine.utils.Pair;
+import su.nexmedia.engine.utils.PlayerUtil;
+import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.api.currency.ICurrency;
 import su.nightexpress.nexshop.shop.auction.AuctionManager;
@@ -25,21 +26,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.function.UnaryOperator;
 
 public class AuctionCurrencySelectorMenu extends AbstractMenuAuto<ExcellentShop, ICurrency> {
 
-    private final AuctionManager  auctionManager;
-    private final int[]           objectSlots;
-    private final Component       itemName;
-    private final List<Component> itemLore;
+    private final AuctionManager auctionManager;
+    private final int[] objectSlots;
+    private final String itemName;
+    private final List<String> itemLore;
 
     private static final Map<Player, Pair<ItemStack, Double>> PREPARED_ITEM = new WeakHashMap<>();
 
     public AuctionCurrencySelectorMenu(@NotNull AuctionManager auctionManager, @NotNull JYML cfg) {
         super(auctionManager.plugin(), cfg, "");
         this.auctionManager = auctionManager;
-        this.itemName = cfg.getComponent("Items.Name", ComponentUtil.asComponent(Placeholders.LISTING_ITEM_NAME));
-        this.itemLore = cfg.getComponentList("Items.Lore");
+        this.itemName = cfg.getString("Items.Name", Placeholders.LISTING_ITEM_NAME);
+        this.itemLore = cfg.getStringList("Items.Lore");
         this.objectSlots = cfg.getIntArray("Items.Slots");
 
         MenuClick click = (player, type, e) -> {
@@ -83,8 +85,6 @@ public class AuctionCurrencySelectorMenu extends AbstractMenuAuto<ExcellentShop,
     @NotNull
     protected ItemStack getObjectStack(@NotNull Player player, @NotNull ICurrency currency) {
         ItemStack item = currency.getIcon();
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return item;
 
         Pair<ItemStack, Double> prepared = this.getPrepared(player);
         if (prepared == null) return item;
@@ -92,15 +92,18 @@ public class AuctionCurrencySelectorMenu extends AbstractMenuAuto<ExcellentShop,
         double price = prepared.getSecond();
         double tax = AuctionUtils.calculateTax(price, AuctionConfig.LISTINGS_TAX_ON_LISTING_ADD);
 
-        meta.displayName(this.itemName);
-        meta.lore(this.itemLore);
-        item.setItemMeta(meta);
-
-        ItemUtil.replace(item, currency.replacePlaceholders());
-        ItemUtil.replace(item, str -> str
+        // Prepare name and lore
+        UnaryOperator<String> replacer1 = currency.replacePlaceholders();
+        UnaryOperator<String> replacer2 = str -> str
             .replace(Placeholders.GENERIC_PRICE, currency.format(price))
-            .replace(Placeholders.GENERIC_TAX, currency.format(tax))
-        );
+            .replace(Placeholders.GENERIC_TAX, currency.format(tax));
+        String name = StringUtil.replace(this.itemName, replacer1, replacer2);
+        List<String> lore = StringUtil.replace(true, new ArrayList<>(this.itemLore), replacer1, replacer2); // the replacer output contains '\n'
+        // Apply
+        item.editMeta(meta -> {
+            meta.displayName(ComponentUtil.asComponent(name));
+            meta.lore(ComponentUtil.asComponent(lore));
+        });
         return item;
     }
 

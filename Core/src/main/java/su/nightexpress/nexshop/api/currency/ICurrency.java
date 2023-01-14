@@ -15,8 +15,7 @@ public interface ICurrency extends IPlaceholder {
     default UnaryOperator<String> replacePlaceholders() {
         return str -> str
             .replace(Placeholders.CURRENCY_NAME, this.getConfig().getName())
-            .replace(Placeholders.CURRENCY_ID, this.getConfig().getId())
-            ;
+            .replace(Placeholders.CURRENCY_ID, this.getConfig().getId());
     }
 
     @NotNull ICurrencyConfig getConfig();
@@ -39,7 +38,7 @@ public interface ICurrency extends IPlaceholder {
     @NotNull
     default ItemStack getIcon() {
         ItemStack icon = this.getConfig().getIcon();
-        ItemUtil.replace(icon, this.replacePlaceholders());
+        icon.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, this.replacePlaceholders()));
         return icon;
     }
 

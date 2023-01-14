@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.manager.IPlaceholder;
 import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.StringUtil;
 import su.nexmedia.engine.utils.TimeUtil;
 import su.nightexpress.nexshop.api.currency.ICurrency;
 import su.nightexpress.nexshop.shop.auction.config.AuctionConfig;
@@ -17,22 +16,22 @@ import java.util.function.UnaryOperator;
 
 public abstract class AbstractAuctionItem implements IPlaceholder {
 
-    protected final UUID      id;
-    protected       UUID      owner;
-    protected       String    ownerName;
-    protected       ItemStack itemStack;
-    protected       double    price;
+    protected final UUID id;
+    protected UUID owner;
+    protected String ownerName;
+    protected ItemStack itemStack;
+    protected double price;
     protected final ICurrency currency;
     protected final long dateCreation;
 
     public AbstractAuctionItem(
-            @NotNull UUID id,
-            @NotNull UUID owner,
-            @NotNull String ownerName,
-            @NotNull ItemStack itemStack,
-            ICurrency currency,
-            double price,
-            long dateCreation
+        @NotNull UUID id,
+        @NotNull UUID owner,
+        @NotNull String ownerName,
+        @NotNull ItemStack itemStack,
+        ICurrency currency,
+        double price,
+        long dateCreation
     ) {
         this.id = id;
         this.owner = owner;
@@ -50,11 +49,10 @@ public abstract class AbstractAuctionItem implements IPlaceholder {
             .replace(Placeholders.LISTING_PRICE, this.getCurrency().format(this.getPrice()))
             .replace(Placeholders.LISTING_DATE_CREATION, AuctionConfig.DATE_FORMAT.format(TimeUtil.getLocalDateTimeOf(this.getDateCreation())))
             .replace(Placeholders.LISTING_ITEM_AMOUNT, String.valueOf(this.getItemStack().getAmount()))
-            .replace(Placeholders.LISTING_ITEM_NAME, ComponentUtil.asMiniMessage(ItemUtil.getItemName(this.getItemStack())))
+            .replace(Placeholders.LISTING_ITEM_NAME, ComponentUtil.asMiniMessage(ItemUtil.getName(this.getItemStack())))
             .replace(Placeholders.LISTING_ITEM_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getItemStack()))))
             .replace(Placeholders.LISTING_ITEM_VALUE, String.valueOf(ItemUtil.toBase64(this.getItemStack())))
-            .replace(Placeholders.LISTING_DELETES_IN, TimeUtil.formatTimeLeft(this.getDeleteDate()))
-            ;
+            .replace(Placeholders.LISTING_DELETES_IN, TimeUtil.formatTimeLeft(this.getDeleteDate()));
     }
 
     @NotNull

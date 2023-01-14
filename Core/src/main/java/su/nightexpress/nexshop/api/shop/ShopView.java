@@ -41,6 +41,6 @@ public abstract class ShopView<S extends Shop<S, ?>> extends AbstractMenu<Excell
     @Override
     public void onItemPrepare(@NotNull Player player, @NotNull MenuItem menuItem, @NotNull ItemStack item) {
         super.onItemPrepare(player, menuItem, item);
-        ItemUtil.replace(item, this.shop.replacePlaceholders());
+        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, this.shop.replacePlaceholders()));
     }
 }

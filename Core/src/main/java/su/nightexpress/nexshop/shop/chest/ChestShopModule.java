@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.Version;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.hooks.Hooks;
-import su.nexmedia.engine.hooks.external.VaultHook;
+import su.nexmedia.engine.hooks.misc.VaultHook;
 import su.nexmedia.engine.utils.Pair;
 import su.nexmedia.engine.utils.Reflex;
 import su.nightexpress.nexshop.ExcellentShop;
@@ -45,12 +45,12 @@ import java.util.stream.Stream;
 
 public class ChestShopModule extends ShopModule {
 
-    private ChestNMS  chestNMS;
+    private ChestNMS chestNMS;
 
     private Map<Location, ChestShop> shops;
-    private Set<ClaimHook>           claimHooks;
+    private Set<ClaimHook> claimHooks;
 
-    private ChestListOwnMenu    listOwnMenu;
+    private ChestListOwnMenu listOwnMenu;
     private ChestListGlobalMenu listGlobalMenu;
     private ChestListSearchMenu listSearchMenu;
     private ChestDisplayHandler displayHandler;
@@ -79,8 +79,7 @@ public class ChestShopModule extends ShopModule {
                 this.chestNMS = (ChestNMS) nmsClazz.getConstructor().newInstance();
                 this.displayHandler = new ChestDisplayHandler(this);
                 this.displayHandler.setup();
-            }
-            catch (ReflectiveOperationException ex) {
+            } catch (ReflectiveOperationException ex) {
                 this.error("Could not setup internal NMS handler! Shop display will be disabled.");
                 ex.printStackTrace();
             }
@@ -261,7 +260,7 @@ public class ChestShopModule extends ShopModule {
             plugin.getMessage(ChestLang.SHOP_CREATION_ERROR_NOT_ENOUGH_FUNDS).send(player);
             return false;
         }
-        
+
         for (ICurrency currency : ChestConfig.ALLOWED_CURRENCIES) {
             this.withdrawFromShop(player, shop, currency, -1);
         }
@@ -287,7 +286,7 @@ public class ChestShopModule extends ShopModule {
         Pair<Container, Container> sides = shop.getSides();
         this.getShopsMap().remove(sides.getFirst().getLocation());
         this.getShopsMap().remove(sides.getSecond().getLocation());
-        //shop.getChestSides().stream().map(BlockState::getLocation).forEach(this.shops::remove);
+        // shop.getChestSides().stream().map(BlockState::getLocation).forEach(this.shops::remove);
     }
 
     public boolean depositToShop(@NotNull Player player, @NotNull ChestShop shop, @NotNull ICurrency currency, double amount) {
@@ -392,14 +391,13 @@ public class ChestShopModule extends ShopModule {
         BlockFace[] faces;
         if (face == BlockFace.NORTH || face == BlockFace.SOUTH) {
             faces = new BlockFace[]{BlockFace.EAST, BlockFace.WEST};
-        }
-        else {
+        } else {
             faces = new BlockFace[]{BlockFace.NORTH, BlockFace.SOUTH};
         }
 
         return Stream.of(faces).map(block::getRelative).filter(near -> {
-            return near.getBlockData() instanceof Directional nearDir && nearDir.getFacing() == face;
-        })
+                return near.getBlockData() instanceof Directional nearDir && nearDir.getFacing() == face;
+            })
             .map(this::getShop)
             .filter(shop -> shop != null && !shop.isDoubleChest()).findFirst().orElse(null);
     }
@@ -434,7 +432,8 @@ public class ChestShopModule extends ShopModule {
 
     public boolean isAllowedHereClaim(@NotNull Player player, @NotNull Block block) {
         // TODO Permission
-        if (player.hasPermission(Perms.ADMIN) || !ChestConfig.SHOP_CREATION_CLAIM_ONLY || this.claimHooks.isEmpty()) return true;
+        if (player.hasPermission(Perms.ADMIN) || !ChestConfig.SHOP_CREATION_CLAIM_ONLY || this.claimHooks.isEmpty())
+            return true;
 
         return this.claimHooks.stream().anyMatch(claim -> claim.isInOwnClaim(player, block));
     }

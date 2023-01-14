@@ -1,16 +1,14 @@
 package su.nightexpress.nexshop.shop.auction.menu;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.menu.AbstractMenuAuto;
 import su.nexmedia.engine.utils.ComponentUtil;
-import su.nexmedia.engine.utils.ItemUtil;
+import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.Perms;
 import su.nightexpress.nexshop.shop.auction.AuctionManager;
@@ -18,18 +16,20 @@ import su.nightexpress.nexshop.shop.auction.Placeholders;
 import su.nightexpress.nexshop.shop.auction.listing.AbstractAuctionItem;
 
 import java.util.*;
-import java.util.List;
+import java.util.function.UnaryOperator;
 
 public abstract class AbstractAuctionMenu<A extends AbstractAuctionItem> extends AbstractMenuAuto<ExcellentShop, A> {
 
     protected AuctionManager auctionManager;
 
-    protected int[]           objectSlots;
-    protected Component       itemName;
-    protected List<Component> itemLore;
+    protected int[] objectSlots;
+
+    // display name and lore are stored as MiniMessage representation
+    protected String itemName;
+    protected List<String> itemLore;
 
     protected Map<FormatType, List<String>> loreFormat;
-    protected Map<Player, UUID>             seeOthers;
+    protected Map<Player, UUID> seeOthers;
 
     private static final String PLACEHOLDER_LORE_FORMAT = "%lore_format%";
 
@@ -39,8 +39,8 @@ public abstract class AbstractAuctionMenu<A extends AbstractAuctionItem> extends
         this.seeOthers = new WeakHashMap<>();
         this.loreFormat = new HashMap<>();
 
-        this.itemName = cfg.getComponent("Items.Name", ComponentUtil.asComponent(Placeholders.LISTING_ITEM_NAME));
-        this.itemLore = cfg.getComponentList("Items.Lore");
+        this.itemName = cfg.getString("Items.Name", Placeholders.LISTING_ITEM_NAME);
+        this.itemLore = cfg.getStringList("Items.Lore");
         this.objectSlots = cfg.getIntArray("Items.Slots");
         for (FormatType formatType : FormatType.values()) {
             this.loreFormat.put(formatType, cfg.getStringList("Lore_Format." + formatType.name()));
@@ -66,17 +66,20 @@ public abstract class AbstractAuctionMenu<A extends AbstractAuctionItem> extends
     @Override
     @NotNull
     protected ItemStack getObjectStack(@NotNull Player player, @NotNull A aucItem) {
-        ItemStack item = new ItemStack(aucItem.getItemStack());
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return item;
-
-        meta.displayName(this.itemName);
-        meta.lore(this.itemLore);
-        item.setItemMeta(meta);
-
-        ItemUtil.replaceLore(item, PLACEHOLDER_LORE_FORMAT, this.getLoreFormat(player, aucItem));
-        ItemUtil.replace(item, aucItem.replacePlaceholders());
-        return item;
+        ItemStack aucItemStack = new ItemStack(aucItem.getItemStack());
+        aucItemStack.editMeta(meta -> {
+            UnaryOperator<String> replacer = aucItem.replacePlaceholders();
+            // Prepare name
+            String name = replacer.apply(this.itemName);
+            // Prepare lore
+            List<String> lore;
+            lore = StringUtil.replace(this.itemLore, PLACEHOLDER_LORE_FORMAT, false, this.getLoreFormat(player, aucItem));
+            lore = StringUtil.replace(true, lore, replacer); // the replacer output contains '\n'
+            // Apply name and lore
+            meta.displayName(ComponentUtil.asComponent(name));
+            meta.lore(ComponentUtil.asComponent(lore));
+        });
+        return aucItemStack;
     }
 
     @NotNull

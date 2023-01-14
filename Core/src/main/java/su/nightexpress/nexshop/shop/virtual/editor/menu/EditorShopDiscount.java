@@ -62,8 +62,7 @@ public class EditorShopDiscount extends AbstractEditorMenu<ExcellentShop, Virtua
                         discount2.getTimes().add(LocalTime.parse(msg, IScheduled.TIME_FORMATTER));
                         discount2.stopScheduler();
                         discount2.startScheduler();
-                    }
-                    catch (DateTimeParseException ex) {
+                    } catch (DateTimeParseException ex) {
                         return false;
                     }
                 }
@@ -77,10 +76,8 @@ public class EditorShopDiscount extends AbstractEditorMenu<ExcellentShop, Virtua
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.RETURN) {
                     this.shop.getEditor().getEditorDiscounts().open(player1, 1);
-                }
-                else this.onItemClickDefault(player1, type2);
-            }
-            else if (type instanceof VirtualEditorType type2) {
+                } else this.onItemClickDefault(player1, type2);
+            } else if (type instanceof VirtualEditorType type2) {
                 switch (type2) {
                     case DISCOUNT_CHANGE_DISCOUNT -> {
                         EditorManager.tip(player1, plugin.getMessage(VirtualLang.EDITOR_ENTER_AMOUNT).getLocalized());
@@ -101,8 +98,7 @@ public class EditorShopDiscount extends AbstractEditorMenu<ExcellentShop, Virtua
                             EditorManager.suggestValues(player1, CollectionsUtil.getEnumsList(DayOfWeek.class), true);
                             player1.closeInventory();
                             return;
-                        }
-                        else if (e.isRightClick()) {
+                        } else if (e.isRightClick()) {
                             discount.getDays().clear();
                         }
                     }
@@ -112,8 +108,7 @@ public class EditorShopDiscount extends AbstractEditorMenu<ExcellentShop, Virtua
                             EditorManager.startEdit(player1, discount, type2, input);
                             player1.closeInventory();
                             return;
-                        }
-                        else if (e.isRightClick()) {
+                        } else if (e.isRightClick()) {
                             discount.getTimes().clear();
                         }
                     }
@@ -138,7 +133,7 @@ public class EditorShopDiscount extends AbstractEditorMenu<ExcellentShop, Virtua
     @Override
     public void onItemPrepare(@NotNull Player player, @NotNull MenuItem menuItem, @NotNull ItemStack item) {
         super.onItemPrepare(player, menuItem, item);
-        ItemUtil.replace(item, this.object.replacePlaceholders());
+        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, this.object.replacePlaceholders()));
     }
 
     @Override

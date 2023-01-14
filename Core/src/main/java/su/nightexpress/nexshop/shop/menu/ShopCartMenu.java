@@ -31,7 +31,7 @@ public class ShopCartMenu extends AbstractMenu<ExcellentShop> {
     private final int[] productSlots;
 
     private final Map<Player, PreparedProduct<?>> products;
-    private final Map<Player, Double>             balance;
+    private final Map<Player, Double> balance;
 
     enum ButtonType {
         ADD, SET, TAKE
@@ -85,7 +85,7 @@ public class ShopCartMenu extends AbstractMenu<ExcellentShop> {
 
                         int capacitySpace = Integer.MAX_VALUE;
                         int capacityCart = this.getMaxPossibleAmount(prepared);
-                        int capacityProduct = product.getStock().getPossibleAmount(prepared.getTradeType(), player);//product.getStockAmountLeft(player, prepared.getTradeType());
+                        int capacityProduct = product.getStock().getPossibleAmount(prepared.getTradeType(), player);// product.getStockAmountLeft(player, prepared.getTradeType());
                         double shopBalance = shop.getBank().getBalance(product.getCurrency());
                         double userBalance = product.getCurrency().getBalance(player);
 
@@ -94,13 +94,12 @@ public class ShopCartMenu extends AbstractMenu<ExcellentShop> {
                             if (tradeType == TradeType.BUY) {
                                 // Allow to buy no more than player can carry.
                                 capacitySpace = PlayerUtil.countItemSpace(player, item);
-                            }
-                            else {
+                            } else {
                                 // Allow to sell no more than chest shop can carry.
                                 if (shop instanceof ChestShop shopChest) {
                                     int chestSpace = product.getStock().getLeftAmount(TradeType.SELL);
                                     if (chestSpace >= 0) capacitySpace = chestSpace;
-                                    //shopBalance = shopChest.getBank().getBalance(product.getCurrency());
+                                    // shopBalance = shopChest.getBank().getBalance(product.getCurrency());
                                 }
                                 // Allow to sell no more than player have in inventory.
                                 if (tradeType == TradeType.SELL) {
@@ -226,11 +225,11 @@ public class ShopCartMenu extends AbstractMenu<ExcellentShop> {
         int stacks = (int) ((double) amount / (double) preview.getType().getMaxStackSize());
         double balance = this.balance.computeIfAbsent(player, k -> currency.getBalance(player));
 
-        ItemUtil.replace(item, line -> currency.replacePlaceholders().apply(line)
-                .replace(Placeholders.GENERIC_AMOUNT, NumberUtil.format(amount))
-                .replace("%amount_stacks%", String.valueOf(stacks))
-                .replace(Placeholders.GENERIC_PRICE, currency.format(prepared.getPrice()))
-                .replace(Placeholders.GENERIC_BALANCE, currency.format(balance))
-        );
+        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, line -> currency.replacePlaceholders().apply(line)
+            .replace(Placeholders.GENERIC_AMOUNT, NumberUtil.format(amount))
+            .replace("%amount_stacks%", String.valueOf(stacks))
+            .replace(Placeholders.GENERIC_PRICE, currency.format(prepared.getPrice()))
+            .replace(Placeholders.GENERIC_BALANCE, currency.format(balance))
+        ));
     }
 }

@@ -49,8 +49,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                     double price = StringUtil.getDouble(StringUtil.asPlainText(msg), -1D, true);
                     if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLAT_BUY) {
                         product2.getPricer().setPrice(TradeType.BUY, price);
-                    }
-                    else {
+                    } else {
                         product2.getPricer().setPrice(TradeType.SELL, price);
                     }
                 }
@@ -59,14 +58,11 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                     double price = StringUtil.getDouble(StringUtil.asPlainText(msg), -1D, true);
                     if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_BUY_MIN) {
                         pricer.setPriceMin(TradeType.BUY, price);
-                    }
-                    else if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_BUY_MAX) {
+                    } else if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_BUY_MAX) {
                         pricer.setPriceMax(TradeType.BUY, price);
-                    }
-                    else if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_SELL_MIN) {
+                    } else if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_SELL_MIN) {
                         pricer.setPriceMin(TradeType.SELL, price);
-                    }
-                    else {
+                    } else {
                         pricer.setPriceMax(TradeType.SELL, price);
                     }
                 }
@@ -87,8 +83,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                         pricer.getTimes().add(LocalTime.parse(msg, IScheduled.TIME_FORMATTER));
                         pricer.stopScheduler();
                         pricer.startScheduler();
-                    }
-                    catch (DateTimeParseException ex) {
+                    } catch (DateTimeParseException ex) {
                         return false;
                     }
                 }
@@ -97,14 +92,11 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                     double price = StringUtil.getDouble(StringUtil.asPlainText(msg), 0D);
                     if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_BUY_MIN) {
                         pricer.setPriceMin(TradeType.BUY, price);
-                    }
-                    else if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_BUY_MAX) {
+                    } else if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_BUY_MAX) {
                         pricer.setPriceMax(TradeType.BUY, price);
-                    }
-                    else if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_SELL_MIN) {
+                    } else if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_SELL_MIN) {
                         pricer.setPriceMin(TradeType.SELL, price);
-                    }
-                    else {
+                    } else {
                         pricer.setPriceMax(TradeType.SELL, price);
                     }
                 }
@@ -113,8 +105,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                     double price = StringUtil.getDouble(StringUtil.asPlainText(msg), 0D);
                     if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_INITIAL_BUY) {
                         pricer.setInitial(TradeType.BUY, price);
-                    }
-                    else {
+                    } else {
                         pricer.setInitial(TradeType.SELL, price);
                     }
                 }
@@ -123,8 +114,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                     double price = StringUtil.getDouble(StringUtil.asPlainText(msg), 0D);
                     if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_STEP_BUY) {
                         pricer.setStep(TradeType.BUY, price);
-                    }
-                    else {
+                    } else {
                         pricer.setStep(TradeType.SELL, price);
                     }
                 }
@@ -138,8 +128,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                 if (type2 == MenuItemType.RETURN) {
                     this.object.getEditor().open(player, 1);
                 }
-            }
-            else if (type instanceof GenericEditorType type2) {
+            } else if (type instanceof GenericEditorType type2) {
                 switch (type2) {
                     case PRODUCT_CHANGE_PRICE_TYPE -> {
                         PriceType priceType = CollectionsUtil.switchEnum(product.getPricer().getType());
@@ -153,8 +142,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                         if (product instanceof VirtualProduct virtualProduct) {
                             String path = "List." + product.getId() + ".Price";// + priceType.name();
                             product.setPricer(ProductPricer.read(priceType, virtualProduct.getShop().getConfigProducts(), path));
-                        }
-                        else if (product instanceof ChestProduct chestProduct) {
+                        } else if (product instanceof ChestProduct chestProduct) {
                             String path = "Products." + product.getId() + ".Price";
                             product.setPricer(ProductPricer.read(priceType, chestProduct.getShop().getConfig(), path));
                         }
@@ -183,8 +171,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                         GenericEditorType type3;
                         if (e.isLeftClick()) {
                             type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_BUY_MIN;
-                        }
-                        else type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_BUY_MAX;
+                        } else type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_BUY_MAX;
 
                         EditorManager.tip(player, plugin.getMessage(Lang.EDITOR_PRODUCT_ENTER_PRICE).getLocalized());
                         EditorManager.startEdit(player, product, type3, input);
@@ -195,8 +182,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                         GenericEditorType type3;
                         if (e.isLeftClick()) {
                             type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_SELL_MIN;
-                        }
-                        else type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_SELL_MAX;
+                        } else type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_SELL_MAX;
 
                         EditorManager.tip(player, plugin.getMessage(Lang.EDITOR_PRODUCT_ENTER_PRICE).getLocalized());
                         EditorManager.startEdit(player, product, type3, input);
@@ -208,8 +194,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                         if (e.isShiftClick()) {
                             if (e.isLeftClick()) {
                                 pricer.getDays().clear();
-                            }
-                            else pricer.getTimes().clear();
+                            } else pricer.getTimes().clear();
                             break;
                         }
 
@@ -218,8 +203,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                             type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_REFRESH_DAYS;
                             EditorManager.tip(player, plugin.getMessage(Lang.EDITOR_GENERIC_ENTER_DAY).getLocalized());
                             EditorManager.suggestValues(player, CollectionsUtil.getEnumsList(DayOfWeek.class), true);
-                        }
-                        else {
+                        } else {
                             type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_REFRESH_TIMES;
                             EditorManager.tip(player, plugin.getMessage(Lang.EDITOR_GENERIC_ENTER_TIME).getLocalized());
                         }
@@ -231,8 +215,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                         GenericEditorType type3;
                         if (e.isLeftClick()) {
                             type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_BUY_MIN;
-                        }
-                        else type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_BUY_MAX;
+                        } else type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_BUY_MAX;
 
                         EditorManager.tip(player, plugin.getMessage(Lang.EDITOR_PRODUCT_ENTER_PRICE).getLocalized());
                         EditorManager.startEdit(player, product, type3, input);
@@ -243,8 +226,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                         GenericEditorType type3;
                         if (e.isLeftClick()) {
                             type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_SELL_MIN;
-                        }
-                        else type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_SELL_MAX;
+                        } else type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_SELL_MAX;
 
                         EditorManager.tip(player, plugin.getMessage(Lang.EDITOR_PRODUCT_ENTER_PRICE).getLocalized());
                         EditorManager.startEdit(player, product, type3, input);
@@ -255,8 +237,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                         GenericEditorType type3;
                         if (e.isLeftClick()) {
                             type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_INITIAL_BUY;
-                        }
-                        else type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_INITIAL_SELL;
+                        } else type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_INITIAL_SELL;
 
                         EditorManager.tip(player, plugin.getMessage(Lang.EDITOR_PRODUCT_ENTER_PRICE).getLocalized());
                         EditorManager.startEdit(player, product, type3, input);
@@ -267,8 +248,7 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                         GenericEditorType type3;
                         if (e.isLeftClick()) {
                             type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_STEP_BUY;
-                        }
-                        else type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_STEP_SELL;
+                        } else type3 = GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_STEP_SELL;
 
                         EditorManager.tip(player, plugin.getMessage(Lang.EDITOR_PRODUCT_ENTER_PRICE).getLocalized());
                         EditorManager.startEdit(player, product, type3, input);
@@ -313,29 +293,25 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
             if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLAT_BUY || type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLAT_SELL) {
                 if (priceType != PriceType.FLAT) {
                     item.setType(Material.AIR);
-                    menuItem.setSlots(new int[0]);
-                }
-                else menuItem.setSlots(IntStream.of(map.get(type)).toArray());
-            }
-            else if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_BUY || type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_SELL
-            || type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_REFRESH) {
+                    menuItem.setSlots();
+                } else menuItem.setSlots(IntStream.of(map.get(type)).toArray());
+            } else if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_BUY || type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_SELL
+                       || type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_REFRESH) {
                 if (priceType != PriceType.FLOAT) {
                     item.setType(Material.AIR);
-                    menuItem.setSlots(new int[0]);
-                }
-                else menuItem.setSlots(IntStream.of(map.get(type)).toArray());
-            }
-            else if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_BUY || type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_SELL
-            || type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_INITIAL || type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_STEP) {
+                    menuItem.setSlots();
+                } else menuItem.setSlots(IntStream.of(map.get(type)).toArray());
+            } else if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_BUY || type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_SELL
+                       || type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_INITIAL || type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_STEP) {
                 if (priceType != PriceType.DYNAMIC) {
                     item.setType(Material.AIR);
-                    menuItem.setSlots(new int[0]);
-                }
-                else menuItem.setSlots(IntStream.of(map.get(type)).toArray());
+                    menuItem.setSlots();
+                } else menuItem.setSlots(IntStream.of(map.get(type)).toArray());
             }
         }
         super.onItemPrepare(player, menuItem, item);
-        ItemUtil.replace(item, this.object.replacePlaceholders());
+
+        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, this.object.replacePlaceholders()));
     }
 
     @Override

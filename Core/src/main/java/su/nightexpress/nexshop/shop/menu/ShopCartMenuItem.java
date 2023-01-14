@@ -2,8 +2,9 @@ package su.nightexpress.nexshop.shop.menu;
 
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.menu.MenuItem;
+import su.nexmedia.engine.api.menu.MenuItemImpl;
 
-public class ShopCartMenuItem extends MenuItem {
+public class ShopCartMenuItem extends MenuItemImpl {
 
     private int productAmount;
 

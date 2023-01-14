@@ -4,13 +4,13 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.menu.MenuClick;
+import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.api.item.PluginItem;
-import su.nexmedia.engine.api.item.PluginItemRegistry;
+import su.nexmedia.engine.api.menu.MenuClick;
 import su.nexmedia.engine.api.menu.MenuItem;
+import su.nexmedia.engine.api.menu.MenuItemImpl;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PDCUtil;
@@ -78,7 +78,7 @@ public class EditorShopProductList extends EditorProductList<VirtualShop> {
 
         Set<Integer> contentSlots = new HashSet<>();
         for (MenuItem item : this.shop.getView().getItemsMap().values()) {
-            MenuItem clone = new MenuItem(item);
+            MenuItem clone = new MenuItemImpl(item);
             clone.setClickHandler(click);
             this.addItem(player, clone);
             contentSlots.addAll(IntStream.of(clone.getSlots()).boxed().toList());
@@ -88,17 +88,15 @@ public class EditorShopProductList extends EditorProductList<VirtualShop> {
             if (shopProduct.getPage() != page) continue;
 
             ItemStack productIcon = new ItemStack(shopProduct.getPreview());
-            ItemMeta productMeta = productIcon.getItemMeta();
-            if (productMeta == null) continue;
+            productIcon.editMeta(meta -> {
+                ItemStack editorIcon = VirtualEditorType.PRODUCT_OBJECT.getItem();
+                meta.displayName(ItemUtil.getName(editorIcon));
+                meta.lore(ItemUtil.getLore(editorIcon));
+                ItemUtil.replaceNameAndLore(meta, shopProduct.replacePlaceholders());
+            });
 
-            ItemStack editorIcon = VirtualEditorType.PRODUCT_OBJECT.getItem();
-            productMeta.displayName(ItemUtil.getItemName(editorIcon));
-            productMeta.lore(ItemUtil.getLore(editorIcon));
-            productIcon.setItemMeta(productMeta);
-            ItemUtil.replace(productIcon, shopProduct.replacePlaceholders());
-
-            MenuItem productMenuItem = new MenuItem(productIcon);
-            productMenuItem.setSlots(new int[]{shopProduct.getSlot()});
+            MenuItem productMenuItem = new MenuItemImpl(productIcon);
+            productMenuItem.setSlots(shopProduct.getSlot());
             productMenuItem.setClickHandler((player2, type, e) -> {
                 if (!e.isLeftClick() && !e.isRightClick()) return;
 
@@ -150,7 +148,7 @@ public class EditorShopProductList extends EditorProductList<VirtualShop> {
         }
 
 
-        MenuItem free = new MenuItem(GenericEditorType.PRODUCT_FREE_SLOT.getItem());
+        MenuItem free = new MenuItemImpl(GenericEditorType.PRODUCT_FREE_SLOT.getItem());
         int[] freeSlots = new int[this.getSize() - contentSlots.size()];
         int count = 0;
         for (int slot = 0; count < freeSlots.length; slot++) {
@@ -167,7 +165,7 @@ public class EditorShopProductList extends EditorProductList<VirtualShop> {
                 shopProduct = new VirtualProduct(VirtualShopModule.defaultCurrency, cursor);
                 shopProduct.setItem(cursor);
                 // Start - Integrations with custom items from external plugins
-                PluginItem<?> pluginItem = PluginItemRegistry.fromItemStackNullable(cursor);
+                PluginItem<?> pluginItem = NexEngine.get().getPluginItemRegistry().fromItemStackNullable(cursor);
                 shopProduct.setPluginItem(pluginItem);
                 shopProduct.setPreviewPluginItem(pluginItem);
                 // End

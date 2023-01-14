@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.menu.AbstractMenuAuto;
@@ -83,15 +82,11 @@ public class ChestListSearchMenu extends AbstractMenuAuto<ExcellentShop, ChestPr
     @NotNull
     protected ItemStack getObjectStack(@NotNull Player player, @NotNull ChestProduct product) {
         ItemStack item = new ItemStack(product.getItem());
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return item;
-
-        meta.displayName(this.productName);
-        meta.lore(this.productLore);
-        item.setItemMeta(meta);
-
-        ItemUtil.replace(item, product.replacePlaceholders());
-        ItemUtil.replace(item, product.getShop().replacePlaceholders());
+        item.editMeta(meta -> {
+            meta.displayName(this.productName);
+            meta.lore(this.productLore);
+            ItemUtil.replaceNameAndLore(meta, product.replacePlaceholders(), product.getShop().replacePlaceholders());
+        });
         return item;
     }
 

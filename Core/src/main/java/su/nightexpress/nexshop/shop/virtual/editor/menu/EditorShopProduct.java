@@ -6,11 +6,11 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.api.editor.EditorButtonType;
 import su.nexmedia.engine.api.editor.EditorInput;
 import su.nexmedia.engine.api.menu.MenuClick;
 import su.nexmedia.engine.api.menu.MenuItem;
-import su.nexmedia.engine.api.item.PluginItemRegistry;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.editor.AbstractEditorMenu;
 import su.nexmedia.engine.editor.EditorManager;
@@ -132,7 +132,7 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
                         ItemStack cursor = e.getCursor();
                         if (cursor != null && !cursor.getType().isAir()) {
                             // Start - integrations with custom items from external plugins
-                            product.setPluginItem(PluginItemRegistry.fromItemStackNullable(cursor));
+                            product.setPluginItem(NexEngine.get().getPluginItemRegistry().fromItemStackNullable(cursor));
                             // End
                             product.setItem(cursor);
                             e.getView().setCursor(null);
@@ -152,7 +152,7 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
                         ItemStack cursor = e.getCursor();
                         if (cursor != null && !cursor.getType().isAir()) {
                             // Start - integrations with custom items from external plugins
-                            product.setPreviewPluginItem(PluginItemRegistry.fromItemStackNullable(cursor));
+                            product.setPreviewPluginItem(NexEngine.get().getPluginItemRegistry().fromItemStackNullable(cursor));
                             // End
                             product.setPreview(cursor);
                             e.getView().setCursor(null);
@@ -286,7 +286,7 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
             }
         }
 
-        ItemUtil.replace(item, object.replacePlaceholders());
+        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, object.replacePlaceholders()));
     }
 
     @Override

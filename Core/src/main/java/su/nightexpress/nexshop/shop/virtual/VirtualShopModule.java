@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.hooks.Hooks;
-import su.nexmedia.engine.hooks.external.citizens.CitizensHook;
+import su.nexmedia.engine.hooks.npc.CitizensHook;
 import su.nexmedia.engine.utils.FileUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
@@ -46,9 +46,9 @@ public class VirtualShopModule extends ShopModule {
     public static ICurrency defaultCurrency;
 
     private Map<String, VirtualShop> shops;
-    private ShopMainMenu             mainMenu;
-    private ShopSellMenu             sellMenu;
-    private EditorShopList           editor;
+    private ShopMainMenu mainMenu;
+    private ShopSellMenu sellMenu;
+    private EditorShopList editor;
 
     public VirtualShopModule(@NotNull ExcellentShop plugin) {
         super(plugin, ModuleId.VIRTUAL_SHOP);
@@ -188,8 +188,8 @@ public class VirtualShopModule extends ShopModule {
 
         if (VirtualConfig.GEN_DISABLED_GAMEMODES.get().contains(player.getGameMode().name())) {
             if (notify) plugin.getMessage(VirtualLang.OPEN_ERROR_BAD_GAMEMODE)
-                              .replace(Placeholders.GENERIC_TYPE, plugin.getLangManager().getEnum(player.getGameMode()))
-                              .send(player);
+                .replace(Placeholders.GENERIC_TYPE, plugin.getLangManager().getEnum(player.getGameMode()))
+                .send(player);
             return false;
         }
 
@@ -267,7 +267,7 @@ public class VirtualShopModule extends ShopModule {
 
         return (tradeType == TradeType.BUY
                 ? productSet.stream().min(comparator)
-                : productSet.stream().max(comparator))
-            .orElse(null);
+                : productSet.stream().max(comparator)
+        ).orElse(null);
     }
 }

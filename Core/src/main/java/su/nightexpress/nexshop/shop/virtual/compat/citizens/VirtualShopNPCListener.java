@@ -5,7 +5,7 @@ import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.hooks.external.citizens.CitizensListener;
+import su.nexmedia.engine.hooks.npc.CitizensListener;
 import su.nexmedia.engine.utils.ArrayUtil;
 import su.nightexpress.nexshop.shop.virtual.VirtualShopModule;
 import su.nightexpress.nexshop.shop.virtual.impl.VirtualShop;

@@ -9,10 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.menu.MenuClick;
 import su.nexmedia.engine.api.menu.MenuItem;
+import su.nexmedia.engine.api.menu.MenuItemImpl;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.ComponentUtil;
-import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.Placeholders;
 import su.nightexpress.nexshop.ShopAPI;
 import su.nightexpress.nexshop.api.shop.ShopView;
@@ -88,8 +88,8 @@ public class ChestShopView extends ShopView<ChestShop> {
                 preview.setItemMeta(meta);
             }
 
-            MenuItem menuItem = new MenuItem(preview);
-            menuItem.setSlots(new int[]{PRODUCT_SLOTS[count++]});
+            MenuItem menuItem = new MenuItemImpl(preview);
+            menuItem.setSlots(PRODUCT_SLOTS[count++]);
             menuItem.setClickHandler((p2, type, e) -> {
                 ShopClickType clickType = ShopClickType.getByDefault(e.getClick());
                 if (clickType == null) return;

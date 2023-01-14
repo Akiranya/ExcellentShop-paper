@@ -28,8 +28,8 @@ import java.util.stream.Stream;
 
 public class ShopSettingsMenu extends AbstractMenu<ExcellentShop> {
 
-    private final ChestShop          shop;
-    private       ShopProductsEditor productsEditor;
+    private final ChestShop shop;
+    private ShopProductsEditor productsEditor;
 
     public ShopSettingsMenu(@NotNull ChestShop shop) {
         super(shop.plugin(), JYML.loadOrExtract(shop.plugin(), shop.getModule().getPath() + "menu/shop_settings.yml"), "");
@@ -63,26 +63,23 @@ public class ShopSettingsMenu extends AbstractMenu<ExcellentShop> {
 
                     if (type == ChestEditorType.SHOP_BANK_DEPOSIT) {
                         return shop.getModule().depositToShop(player, shop2, currency, amount);
-                    }
-                    else {
+                    } else {
                         return shop.getModule().withdrawFromShop(player, shop2, currency, amount);
                     }
                 }
-                default -> { }
+                default -> {}
             }
 
             shop2.save();
             return true;
         };
-        
+
         MenuClick click = (player, type, e) -> {
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.RETURN) {
                     shop.getModule().getListOwnMenu().open(player, 1);
-                }
-                else this.onItemClickDefault(player, type2);
-            }
-            else if (type instanceof ChestEditorType type2) {
+                } else this.onItemClickDefault(player, type2);
+            } else if (type instanceof ChestEditorType type2) {
                 switch (type2) {
                     case SHOP_CHANGE_NAME -> {
                         EditorManager.startEdit(player, shop, type2, input);
@@ -111,8 +108,7 @@ public class ShopSettingsMenu extends AbstractMenu<ExcellentShop> {
                                 for (ICurrency currency : ChestConfig.ALLOWED_CURRENCIES) {
                                     MessageUtil.sendMessage(player, currency.replacePlaceholders().apply(line));
                                 }
-                            }
-                            else MessageUtil.sendMessage(player, line);
+                            } else MessageUtil.sendMessage(player, line);
                         });
                         player.closeInventory();
                         return;
@@ -123,14 +119,11 @@ public class ShopSettingsMenu extends AbstractMenu<ExcellentShop> {
                             boolean isSell = shop.isTransactionEnabled(TradeType.SELL);
                             if (isBuy && isSell) {
                                 shop.setTransactionEnabled(TradeType.BUY, false);
-                            }
-                            else if (!isBuy && isSell) {
+                            } else if (!isBuy && isSell) {
                                 shop.setTransactionEnabled(TradeType.SELL, false);
-                            }
-                            else if (!isBuy) {
+                            } else if (!isBuy) {
                                 shop.setTransactionEnabled(TradeType.BUY, true);
-                            }
-                            else {
+                            } else {
                                 shop.setTransactionEnabled(TradeType.SELL, true);
                             }
                             break;
@@ -138,8 +131,7 @@ public class ShopSettingsMenu extends AbstractMenu<ExcellentShop> {
 
                         if (e.isLeftClick()) {
                             shop.setTransactionEnabled(TradeType.BUY, !shop.isTransactionEnabled(TradeType.BUY));
-                        }
-                        else if (e.isRightClick()) {
+                        } else if (e.isRightClick()) {
                             shop.setTransactionEnabled(TradeType.SELL, !shop.isTransactionEnabled(TradeType.SELL));
                         }
                     }
@@ -150,7 +142,7 @@ public class ShopSettingsMenu extends AbstractMenu<ExcellentShop> {
                     case SHOP_DELETE -> {
                         if (!e.isShiftClick() && !PlayerUtil.isBedrockPlayer(player)) return;
                         if (!player.hasPermission(Perms.CHEST_SHOP_REMOVE)
-                                || (!shop.isOwner(player) && !player.hasPermission(Perms.CHEST_SHOP_REMOVE_OTHERS))) {
+                            || (!shop.isOwner(player) && !player.hasPermission(Perms.CHEST_SHOP_REMOVE_OTHERS))) {
                             plugin.getMessage(Lang.ERROR_PERMISSION_DENY).send(player);
                             return;
                         }
@@ -197,7 +189,7 @@ public class ShopSettingsMenu extends AbstractMenu<ExcellentShop> {
     @Override
     public void onItemPrepare(@NotNull Player player, @NotNull MenuItem menuItem, @NotNull ItemStack item) {
         super.onItemPrepare(player, menuItem, item);
-        ItemUtil.replace(item, this.shop.replacePlaceholders());
+        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, this.shop.replacePlaceholders()));
     }
 
     @Override

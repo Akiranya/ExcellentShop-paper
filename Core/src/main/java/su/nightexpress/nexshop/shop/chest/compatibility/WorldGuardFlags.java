@@ -18,7 +18,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.hooks.Hooks;
-import su.nexmedia.engine.hooks.external.WorldGuardHook;
+import su.nexmedia.engine.hooks.protection.WorldGuardHook;
 
 public class WorldGuardFlags implements ClaimHook {
 

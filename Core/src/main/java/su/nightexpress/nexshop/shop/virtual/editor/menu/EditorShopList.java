@@ -44,8 +44,7 @@ public class EditorShopList extends AbstractEditorMenuAuto<ExcellentShop, Virtua
         MenuClick click = (player, type, e) -> {
             if (type instanceof MenuItemType type2) {
                 this.onItemClickDefault(player, type2);
-            }
-            else if (type instanceof VirtualEditorType type2) {
+            } else if (type instanceof VirtualEditorType type2) {
                 if (type2 == VirtualEditorType.SHOP_CREATE) {
                     EditorManager.startEdit(player, module, type2, input);
                     EditorManager.tip(player, plugin.getMessage(VirtualLang.EDITOR_ENTER_ID).getLocalized());
@@ -80,19 +79,15 @@ public class EditorShopList extends AbstractEditorMenuAuto<ExcellentShop, Virtua
     @NotNull
     protected ItemStack getObjectStack(@NotNull Player player, @NotNull VirtualShop shop) {
         ItemStack item = new ItemStack(shop.getIcon());
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return item;
-
         ItemStack editor = VirtualEditorType.SHOP_OBJECT.getItem();
-        ItemMeta meta2 = editor.getItemMeta();
-        if (meta2 == null) return item;
-
-        meta.displayName(meta2.displayName());
-        meta.lore(meta2.lore());
-        meta.addItemFlags(ItemFlag.values());
-        item.setItemMeta(meta);
-
-        ItemUtil.replace(item, shop.replacePlaceholders());
+        item.editMeta(meta -> {
+            ItemMeta meta2 = editor.getItemMeta();
+            if (meta2 == null) return;
+            meta.displayName(meta2.displayName());
+            meta.lore(meta2.lore());
+            meta.addItemFlags(ItemFlag.values());
+            ItemUtil.replaceNameAndLore(meta, shop.replacePlaceholders());
+        });
         return item;
     }
 
