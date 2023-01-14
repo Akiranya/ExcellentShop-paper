@@ -45,15 +45,15 @@ public class AuctionManager extends ShopModule {
 
     private AuctionDataHandler dataHandler;
 
-    private AuctionMainMenu                 mainMenu;
+    private AuctionMainMenu mainMenu;
     private AuctionPurchaseConfirmationMenu purchaseConfirmationMenu;
-    private AuctionExpiredMenu              expiredMenu;
-    private AuctionHistoryMenu              historyMenu;
-    private AuctionUnclaimedMenu            unclaimedMenu;
-    private AuctionSellingMenu              sellingMenu;
-    private AuctionCategoryFilterMenu       categoryFilterMenu;
-    private AuctionCurrencyFilterMenu       currencyFilterMenu;
-    private AuctionCurrencySelectorMenu     currencySelectorMenu;
+    private AuctionExpiredMenu expiredMenu;
+    private AuctionHistoryMenu historyMenu;
+    private AuctionUnclaimedMenu unclaimedMenu;
+    private AuctionSellingMenu sellingMenu;
+    private AuctionCategoryFilterMenu categoryFilterMenu;
+    private AuctionCurrencyFilterMenu currencyFilterMenu;
+    private AuctionCurrencySelectorMenu currencySelectorMenu;
 
     private AuctionMenuUpdateTask menuUpdateTask;
 
@@ -87,7 +87,7 @@ public class AuctionManager extends ShopModule {
 
         this.addListener(new AuctionListener(this));
 
-        //AuctionUtils.fillDummy(this);
+        // AuctionUtils.fillDummy(this);
         this.menuUpdateTask = new AuctionMenuUpdateTask(this);
         this.menuUpdateTask.start();
     }
@@ -154,22 +154,25 @@ public class AuctionManager extends ShopModule {
         try {
             this.getCurrencyDefault();
             return true;
-        }
-        catch (NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             return false;
         }
     }
 
     @NotNull
     public ICurrency getCurrencyDefault() {
-        return AuctionConfig.CURRENCIES.values().stream().filter(AuctionCurrencySetting::isDefault)
-            .map(AuctionCurrencySetting::getCurrency).findFirst().orElseThrow();
+        return AuctionConfig.CURRENCIES.values().stream()
+            .filter(AuctionCurrencySetting::isDefault)
+            .map(AuctionCurrencySetting::getCurrency)
+            .findFirst().orElseThrow();
     }
 
     @NotNull
     public Set<ICurrency> getCurrencies() {
-        return AuctionConfig.CURRENCIES.values().stream().filter(AuctionCurrencySetting::isEnabled)
-            .map(AuctionCurrencySetting::getCurrency).collect(Collectors.toSet());
+        return AuctionConfig.CURRENCIES.values().stream()
+            .filter(AuctionCurrencySetting::isEnabled)
+            .map(AuctionCurrencySetting::getCurrency)
+            .collect(Collectors.toSet());
     }
 
     @NotNull
@@ -177,7 +180,8 @@ public class AuctionManager extends ShopModule {
         return AuctionConfig.CURRENCIES.values().stream()
             .filter(AuctionCurrencySetting::isEnabled)
             .filter(setting -> setting.hasPermission(player) || setting.isDefault())
-            .map(AuctionCurrencySetting::getCurrency).collect(Collectors.toSet());
+            .map(AuctionCurrencySetting::getCurrency)
+            .collect(Collectors.toSet());
     }
 
     private boolean needEnsureListingExists() {
@@ -192,9 +196,10 @@ public class AuctionManager extends ShopModule {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return true;
 
-        @SuppressWarnings("DataFlowIssue")
-        String metaName = ComponentUtil.asPlainText(meta.displayName());
-        if (AuctionConfig.LISTINGS_DISABLED_NAMES.stream().anyMatch(metaName::contains)) {
+        Component metaName = meta.displayName();
+        if (metaName == null) return true;
+        String plainName = ComponentUtil.asPlainText(metaName);
+        if (AuctionConfig.LISTINGS_DISABLED_NAMES.stream().anyMatch(plainName::contains)) {
             return false;
         }
 
