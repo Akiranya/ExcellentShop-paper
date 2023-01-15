@@ -73,12 +73,14 @@ public class AuctionCategoryFilterMenu extends AbstractMenuAuto<ExcellentShop, A
         Set<AuctionCategory> categories = AuctionMainMenu.getCategories(player);
         boolean isSelected = categories.contains(category);
         ItemStack icon = category.getIcon();
-        ItemStack item = isSelected ? this.selectedIcon.clone() : icon;
+        ItemStack item = isSelected ? this.selectedIcon.clone() : category.getIcon();
         item.editMeta(meta -> {
-            meta.displayName(ComponentUtil.asComponent(this.itemName));
-            meta.lore(ComponentUtil.asComponent(this.itemLore));
+            if (!isSelected) {
+                meta.displayName(ComponentUtil.asComponent(this.itemName));
+                meta.lore(ComponentUtil.asComponent(this.itemLore));
+            }
             ItemUtil.replaceNameAndLore(meta, category.replacePlaceholders());
-            ItemUtil.replacePlaceholderListComponent(meta, Placeholders.CATEGORY_ICON_LORE, ItemUtil.getLore(icon));
+            ItemUtil.replacePlaceholderListComponent(meta, Placeholders.CATEGORY_ICON_LORE, ItemUtil.getLore(icon), true);
         });
         return item;
     }

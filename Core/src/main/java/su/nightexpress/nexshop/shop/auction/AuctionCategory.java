@@ -26,6 +26,7 @@ public class AuctionCategory implements IPlaceholder {
         this.id = id.toLowerCase().replace(" ", "_");
         this.name = name;
         this.icon = icon;
+        this.icon.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, this.replacePlaceholders())); // Add placeholder support for category icon config
         this.materials = materials.stream().map(String::toLowerCase).collect(Collectors.toSet());
     }
 
