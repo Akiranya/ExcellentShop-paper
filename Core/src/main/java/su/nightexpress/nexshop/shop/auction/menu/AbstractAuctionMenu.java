@@ -77,7 +77,7 @@ public abstract class AbstractAuctionMenu<A extends AbstractAuctionItem> extends
             meta.displayName(name);
             // Prepare lore
             List<String> rawLore;
-            rawLore = StringUtil.replace(this.itemLore, PLACEHOLDER_LORE_FORMAT, false, this.getLoreFormat(player, aucItem));
+            rawLore = StringUtil.replacePlaceholderList(PLACEHOLDER_LORE_FORMAT, this.itemLore, this.getLoreFormat(player, aucItem));
             rawLore = StringUtil.replace(rawLore, replacer);
             List<Component> lore;
             lore = ComponentUtil.asComponent(rawLore);
