@@ -97,8 +97,8 @@ public class AuctionCurrencySelectorMenu extends AbstractMenuAuto<ExcellentShop,
         UnaryOperator<String> replacer2 = str -> str
             .replace(Placeholders.GENERIC_PRICE, currency.format(price))
             .replace(Placeholders.GENERIC_TAX, currency.format(tax));
-        String name = StringUtil.replace(this.itemName, replacer1, replacer2);
-        List<String> lore = StringUtil.replace(true, new ArrayList<>(this.itemLore), replacer1, replacer2); // the replacer output contains '\n'
+        final String name = StringUtil.replace(this.itemName, replacer1, replacer2);
+        final List<String> lore = StringUtil.replace(this.itemLore, replacer1, replacer2);
         // Apply
         item.editMeta(meta -> {
             meta.displayName(ComponentUtil.asComponent(name));
