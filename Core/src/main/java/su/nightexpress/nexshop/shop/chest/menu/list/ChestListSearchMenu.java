@@ -87,7 +87,7 @@ public class ChestListSearchMenu extends AbstractMenuAuto<ExcellentShop, ChestPr
             meta.lore(this.productLore);
             ItemUtil.replaceNameAndLore(meta, product.replacePlaceholders(), product.getShop().replacePlaceholders());
             ItemUtil.replacePlaceholderListComponent(meta, Placeholders.PRODUCT_ITEM_LORE, ItemUtil.getLore(item));
-            ItemUtil.replacePlaceholderListComponent(meta, Placeholders.PRODUCT_PREVIEW_LORE, ItemUtil.getLore(preview));
+            ItemUtil.replacePlaceholderListComponent(meta, Placeholders.PRODUCT_PREVIEW_LORE, ItemUtil.getLore(preview), true);
         });
         return item;
     }
