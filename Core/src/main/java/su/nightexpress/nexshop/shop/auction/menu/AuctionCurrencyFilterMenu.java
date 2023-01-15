@@ -10,6 +10,7 @@ import su.nexmedia.engine.api.menu.MenuClick;
 import su.nexmedia.engine.api.menu.MenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.utils.ComponentUtil;
+import su.nexmedia.engine.utils.ItemUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.api.currency.ICurrency;
 import su.nightexpress.nexshop.shop.auction.AuctionManager;
@@ -75,6 +76,7 @@ public class AuctionCurrencyFilterMenu extends AbstractMenuAuto<ExcellentShop, I
         item.editMeta(meta -> {
             meta.displayName(ComponentUtil.asComponent(this.itemName));
             meta.lore(ComponentUtil.asComponent(this.itemLore));
+            ItemUtil.replaceNameAndLore(meta, currency.replacePlaceholders());
         });
         return item;
     }

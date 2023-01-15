@@ -10,6 +10,7 @@ import su.nexmedia.engine.api.menu.MenuClick;
 import su.nexmedia.engine.api.menu.MenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.utils.ComponentUtil;
+import su.nexmedia.engine.utils.ItemUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.shop.auction.AuctionCategory;
 import su.nightexpress.nexshop.shop.auction.AuctionManager;
@@ -31,7 +32,7 @@ public class AuctionCategoryFilterMenu extends AbstractMenuAuto<ExcellentShop, A
     public AuctionCategoryFilterMenu(@NotNull AuctionManager auctionManager, @NotNull JYML cfg) {
         super(auctionManager.plugin(), cfg, "");
         this.auctionManager = auctionManager;
-        this.itemName = cfg.getString("Items.Name", Placeholders.LISTING_ITEM_NAME);
+        this.itemName = cfg.getString("Items.Name", Placeholders.CATEGORY_NAME);
         this.itemLore = cfg.getStringList("Items.Lore");
         this.objectSlots = cfg.getIntArray("Items.Slots");
         this.selectedIcon = cfg.getItem("Selected");
@@ -71,11 +72,13 @@ public class AuctionCategoryFilterMenu extends AbstractMenuAuto<ExcellentShop, A
     protected ItemStack getObjectStack(@NotNull Player player, @NotNull AuctionCategory category) {
         Set<AuctionCategory> categories = AuctionMainMenu.getCategories(player);
         boolean isSelected = categories.contains(category);
-        ItemStack item = isSelected ? new ItemStack(this.selectedIcon) : category.getIcon();
-        if (!isSelected) item.editMeta(meta -> {
+        ItemStack icon = category.getIcon();
+        ItemStack item = isSelected ? this.selectedIcon.clone() : icon;
+        item.editMeta(meta -> {
             meta.displayName(ComponentUtil.asComponent(this.itemName));
             meta.lore(ComponentUtil.asComponent(this.itemLore));
-            item.setItemMeta(meta);
+            ItemUtil.replaceNameAndLore(meta, category.replacePlaceholders());
+            ItemUtil.replacePlaceholderListComponent(meta, Placeholders.CATEGORY_ICON_LORE, ItemUtil.getLore(icon));
         });
         return item;
     }

@@ -128,12 +128,12 @@ public class AuctionConfig {
         LISTINGS_TAX_ON_LISTING_PURCHASE = cfg.getDouble(path + "On_Listing_Purchase", 0D);
 
         CATEGORIES_MAP = new HashMap<>();
-        for (String sId : cfgCategories.getSection("")) {
-            String path2 = sId + ".";
-            String cName = cfgCategories.getString(path2 + "Name", sId);
-            ItemStack cIcon = cfgCategories.getItem(path2 + "Icon");
-            Set<String> cMaterials = cfgCategories.getStringSet(path2 + "Materials");
-            AuctionCategory category = new AuctionCategory(sId, cName, cIcon, cMaterials);
+        for (String id : cfgCategories.getSection("")) {
+            String path2 = id + ".";
+            String name = cfgCategories.getString(path2 + "Name", id);
+            ItemStack icon = cfgCategories.getItem(path2 + "Icon");
+            Set<String> materials = cfgCategories.getStringSet(path2 + "Materials");
+            AuctionCategory category = new AuctionCategory(id, name, icon, materials);
             CATEGORIES_MAP.put(category.getId(), category);
         }
 
