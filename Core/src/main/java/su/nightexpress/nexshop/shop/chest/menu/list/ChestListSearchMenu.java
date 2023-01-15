@@ -14,6 +14,7 @@ import su.nexmedia.engine.api.menu.MenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nightexpress.nexshop.ExcellentShop;
+import su.nightexpress.nexshop.Placeholders;
 import su.nightexpress.nexshop.shop.chest.ChestShopModule;
 import su.nightexpress.nexshop.shop.chest.impl.ChestProduct;
 
@@ -55,9 +56,7 @@ public class ChestListSearchMenu extends AbstractMenuAuto<ExcellentShop, ChestPr
 
     public void searchProduct(@NotNull Player player, @NotNull Material material) {
         Set<ChestProduct> products = new HashSet<>();
-        this.chestShop.getShops().forEach(shop -> {
-            products.addAll(shop.getProducts().stream().filter(product -> product.getItem().getType() == material).toList());
-        });
+        this.chestShop.getShops().forEach(shop -> products.addAll(shop.getProducts().stream().filter(product -> product.getItem().getType() == material).toList()));
         this.searchCache.put(player.getName(), products);
     }
 
@@ -82,10 +81,13 @@ public class ChestListSearchMenu extends AbstractMenuAuto<ExcellentShop, ChestPr
     @NotNull
     protected ItemStack getObjectStack(@NotNull Player player, @NotNull ChestProduct product) {
         ItemStack item = product.getItem();
+        ItemStack preview = product.getPreview();
         item.editMeta(meta -> {
             meta.displayName(this.productName);
             meta.lore(this.productLore);
             ItemUtil.replaceNameAndLore(meta, product.replacePlaceholders(), product.getShop().replacePlaceholders());
+            ItemUtil.replacePlaceholderListComponent(meta, Placeholders.PRODUCT_ITEM_LORE, ItemUtil.getLore(item));
+            ItemUtil.replacePlaceholderListComponent(meta, Placeholders.PRODUCT_PREVIEW_LORE, ItemUtil.getLore(preview));
         });
         return item;
     }
@@ -93,9 +95,7 @@ public class ChestListSearchMenu extends AbstractMenuAuto<ExcellentShop, ChestPr
     @Override
     @NotNull
     protected MenuClick getObjectClick(@NotNull Player player, @NotNull ChestProduct product) {
-        return (player1, type, e) -> {
-            product.getShop().teleport(player1);
-        };
+        return (player1, type, e) -> product.getShop().teleport(player1);
     }
 
     @Override
