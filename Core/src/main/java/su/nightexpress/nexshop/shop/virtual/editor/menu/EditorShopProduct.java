@@ -279,7 +279,7 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
             } else if (type == VirtualEditorType.PRODUCT_CHANGE_COMMANDS) {
                 item.editMeta(meta -> {
                     List<Component> dst = meta.lore();
-                    List<Component> src = object.getCommands().stream().map(cmd -> Component.text(cmd).color(NamedTextColor.GREEN).asComponent()).toList();
+                    List<Component> src = object.getCommands().stream().map(cmd -> Component.text(cmd).color(NamedTextColor.WHITE).asComponent()).toList();
                     List<Component> lore = ComponentUtil.replacePlaceholderList(Placeholders.PRODUCT_VIRTUAL_COMMANDS, dst, src);
                     meta.lore(lore);
                 });
