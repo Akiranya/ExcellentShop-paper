@@ -34,16 +34,13 @@ public class VirtualShopView extends ShopView<VirtualShop> {
                     VirtualShopModule module = plugin.getVirtualShop();
                     if (module != null && module.hasMainMenu()) {
                         module.openMainMenu(p);
-                    }
-                    else p.closeInventory();
-                }
-                else this.onItemClickDefault(p, type2);
+                    } else p.closeInventory();
+                } else this.onItemClickDefault(p, type2);
             }
         };
 
         for (String id : cfg.getSection("Content")) {
             MenuItem menuItem = cfg.getMenuItem("Content." + id, MenuItemType.class);
-
             if (menuItem.getType() != null) {
                 menuItem.setClickHandler(click);
             }
@@ -76,8 +73,7 @@ public class VirtualShopView extends ShopView<VirtualShop> {
                     List<Component> list2 = meta.lore();
                     if (list2 != null) lore.addAll(list2);
                     continue;
-                }
-                else if (lineFormat.equalsIgnoreCase("%discount%")) {
+                } else if (lineFormat.equalsIgnoreCase("%discount%")) {
                     if (this.getShop().hasDiscount(product)) {
                         lore.addAll(ComponentUtil.asComponent(VirtualConfig.PRODUCT_FORMAT_LORE_DISCOUNT.get()));
                     }

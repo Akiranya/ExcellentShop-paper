@@ -24,7 +24,7 @@ import java.util.List;
 
 public class ChestShopView extends ShopView<ChestShop> {
 
-    private static int[]        PRODUCT_SLOTS;
+    private static int[] PRODUCT_SLOTS;
     private static List<String> PRODUCT_FORMAT_LORE;
 
     public ChestShopView(@NotNull ChestShop shop) {
@@ -41,7 +41,6 @@ public class ChestShopView extends ShopView<ChestShop> {
 
         for (String id : cfg.getSection("Content")) {
             MenuItem menuItem = cfg.getMenuItem("Content." + id, MenuItemType.class);
-
             if (menuItem.getType() != null) {
                 menuItem.setClickHandler(click);
             }
@@ -92,7 +91,6 @@ public class ChestShopView extends ShopView<ChestShop> {
             menuItem.setClickHandler((p2, type, e) -> {
                 ShopClickType clickType = ShopClickType.getByDefault(e.getClick());
                 if (clickType == null) return;
-
                 product.prepareTrade(p2, clickType);
             });
             this.addItem(player, menuItem);
