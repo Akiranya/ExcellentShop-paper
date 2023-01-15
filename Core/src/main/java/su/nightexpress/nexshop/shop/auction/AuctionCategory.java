@@ -51,7 +51,7 @@ public class AuctionCategory implements IPlaceholder {
 
     @NotNull
     public ItemStack getIcon() {
-        return new ItemStack(this.icon);
+        return this.icon.clone();
     }
 
     @NotNull

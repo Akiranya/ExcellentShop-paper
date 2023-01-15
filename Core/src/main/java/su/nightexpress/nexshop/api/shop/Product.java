@@ -275,11 +275,11 @@ public abstract class Product<
 
     @NotNull
     public ItemStack getPreview() {
-        return new ItemStack(this.itemPreview);
+        return this.itemPreview.clone();
     }
 
     public void setPreview(@NotNull ItemStack preview) {
-        this.itemPreview = new ItemStack(preview);
+        this.itemPreview = preview.clone();
     }
 
     public @Nullable PluginItem<?> getPreviewPluginItemOrNull() {
@@ -292,11 +292,11 @@ public abstract class Product<
 
     @NotNull
     public ItemStack getItem() {
-        return new ItemStack(this.itemReal);
+        return this.itemReal.clone();
     }
 
     public void setItem(@Nullable ItemStack item) {
-        this.itemReal = item == null ? new ItemStack(Material.AIR) : new ItemStack(item);
+        this.itemReal = item == null ? new ItemStack(Material.AIR) : item.clone();
         this.itemReal.setAmount(1);
     }
 

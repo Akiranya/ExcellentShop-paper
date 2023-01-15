@@ -58,7 +58,7 @@ public class AuctionPurchaseConfirmationMenu extends AbstractMenu<ExcellentShop>
     }
 
     public void open(@NotNull Player player, @NotNull AuctionListing listing) {
-        ItemStack item = new ItemStack(listing.getItemStack()); // Copy to prevent modifying
+        ItemStack item = listing.getItemStack().clone(); // Copy to prevent modifying
 
         this.addItem(player, item, this.itemSlot);
         this.cache.put(player, listing);

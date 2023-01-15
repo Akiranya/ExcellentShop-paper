@@ -81,7 +81,7 @@ public class ChestListSearchMenu extends AbstractMenuAuto<ExcellentShop, ChestPr
     @Override
     @NotNull
     protected ItemStack getObjectStack(@NotNull Player player, @NotNull ChestProduct product) {
-        ItemStack item = new ItemStack(product.getItem());
+        ItemStack item = product.getItem();
         item.editMeta(meta -> {
             meta.displayName(this.productName);
             meta.lore(this.productLore);

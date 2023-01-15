@@ -87,7 +87,7 @@ public class EditorShopProductList extends EditorProductList<VirtualShop> {
         for (VirtualProduct shopProduct : this.shop.getProducts()) {
             if (shopProduct.getPage() != page) continue;
 
-            ItemStack productIcon = new ItemStack(shopProduct.getPreview());
+            ItemStack productIcon = shopProduct.getPreview().clone();
             productIcon.editMeta(meta -> {
                 ItemStack editorIcon = VirtualEditorType.PRODUCT_OBJECT.getItem();
                 meta.displayName(ItemUtil.getName(editorIcon));

@@ -105,7 +105,7 @@ public class ShopSellMenu extends AbstractMenu<ExcellentShop> {
             // if (toSell == 0) return true;
             // if (toSell > 0) toSell = item.getAmount();
 
-            ItemStack icon = new ItemStack(item);
+            ItemStack icon = item.clone();
             ItemMeta meta = icon.getItemMeta();
             if (meta == null) return true;
 
@@ -116,8 +116,8 @@ public class ShopSellMenu extends AbstractMenu<ExcellentShop> {
                 line = ComponentUtil.replace(line, product.getShop().replacePlaceholders(), product.replacePlaceholders());
                 return ComponentUtil.replace(line, Placeholders.GENERIC_PRICE, product.getCurrency().format(price));
             });
-            lore = ComponentUtil.replace(lore, "%item_lore%", false, ItemUtil.getLore(item));
-            lore = ComponentUtil.stripEmpty(lore);
+            lore = ComponentUtil.replacePlaceholderList("%item_lore%", lore, ItemUtil.getLore(item));
+            lore = ComponentUtil.compressEmptyLines(lore);
 
             meta.displayName(ComponentUtil.replace(this.itemName, "%item_name%", ItemUtil.getName(item)));
             meta.lore(lore);
@@ -125,7 +125,7 @@ public class ShopSellMenu extends AbstractMenu<ExcellentShop> {
             icon.setItemMeta(meta);
             inventory.setItem(firstSlot, icon);
 
-            USER_ITEMS.computeIfAbsent(player, k -> new ArrayList<>()).add(Pair.of(new ItemStack(item), product));
+            USER_ITEMS.computeIfAbsent(player, k -> new ArrayList<>()).add(Pair.of(item.clone(), product));
             item.setAmount(0);
         }
         return true;

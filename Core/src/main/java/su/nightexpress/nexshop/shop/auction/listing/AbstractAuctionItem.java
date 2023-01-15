@@ -36,7 +36,7 @@ public abstract class AbstractAuctionItem implements IPlaceholder {
         this.id = id;
         this.owner = owner;
         this.ownerName = ownerName;
-        this.itemStack = new ItemStack(itemStack);
+        this.itemStack = itemStack.clone();
         this.currency = currency;
         this.price = price;
         this.dateCreation = dateCreation;

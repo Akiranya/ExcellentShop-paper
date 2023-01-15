@@ -70,8 +70,9 @@ public class AuctionCurrencyFilterMenu extends AbstractMenuAuto<ExcellentShop, I
     protected ItemStack getObjectStack(@NotNull Player player, @NotNull ICurrency currency) {
         Set<ICurrency> currencies = AuctionMainMenu.getCurrencies(player);
         boolean isSelected = currencies.contains(currency);
-        ItemStack item = isSelected ? new ItemStack(this.selectedIcon) : currency.getIcon();
-        if (!isSelected) item.editMeta(meta -> {
+        ItemStack icon = currency.getIcon();
+        ItemStack item = isSelected ? this.selectedIcon.clone() : icon;
+        item.editMeta(meta -> {
             meta.displayName(ComponentUtil.asComponent(this.itemName));
             meta.lore(ComponentUtil.asComponent(this.itemLore));
         });

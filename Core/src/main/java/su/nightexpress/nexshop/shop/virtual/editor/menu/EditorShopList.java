@@ -78,7 +78,7 @@ public class EditorShopList extends AbstractEditorMenuAuto<ExcellentShop, Virtua
     @Override
     @NotNull
     protected ItemStack getObjectStack(@NotNull Player player, @NotNull VirtualShop shop) {
-        ItemStack item = new ItemStack(shop.getIcon());
+        ItemStack item = shop.getIcon().clone();
         ItemStack editor = VirtualEditorType.SHOP_OBJECT.getItem();
         item.editMeta(meta -> {
             ItemMeta meta2 = editor.getItemMeta();

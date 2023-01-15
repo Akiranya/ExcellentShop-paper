@@ -68,7 +68,7 @@ public abstract class AbstractAuctionMenu<A extends AbstractAuctionItem> extends
     @Override
     @NotNull
     protected ItemStack getObjectStack(@NotNull Player player, @NotNull A aucItem) {
-        ItemStack aucItemStack = new ItemStack(aucItem.getItemStack());
+        ItemStack aucItemStack = aucItem.getItemStack().clone();
         UnaryOperator<String> replacer = aucItem.replacePlaceholders();
         aucItemStack.editMeta(meta -> {
             // Prepare name

@@ -81,6 +81,6 @@ public class CurrencyConfig extends AbstractLoadableItem<ExcellentShop> implemen
     @NotNull
     @Override
     public ItemStack getIcon() {
-        return new ItemStack(this.icon);
+        return this.icon.clone();
     }
 }

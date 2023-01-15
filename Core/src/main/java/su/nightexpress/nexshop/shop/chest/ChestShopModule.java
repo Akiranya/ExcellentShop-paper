@@ -234,7 +234,7 @@ public class ChestShopModule extends ShopModule {
             return false;
         }
 
-        ItemStack hand = new ItemStack(player.getInventory().getItemInMainHand());
+        ItemStack hand = player.getInventory().getItemInMainHand().clone();
         ChestShop shop = new ChestShop(this, player, bChest, type);
         shop.createProduct(player, hand);
         shop.save();

@@ -28,12 +28,12 @@ public class CurrencyItemConfig extends CurrencyConfig {
     }
 
     public void setItem(@NotNull ItemStack item) {
-        this.item = new ItemStack(item);
+        this.item = item.clone();
     }
 
     @NotNull
     public ItemStack getItem() {
-        return new ItemStack(this.item);
+        return this.item.clone();
     }
 
     @Override

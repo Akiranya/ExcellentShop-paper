@@ -219,11 +219,11 @@ public final class VirtualShop extends Shop<VirtualShop, VirtualProduct> impleme
 
     @NotNull
     public ItemStack getIcon() {
-        return new ItemStack(this.icon);
+        return this.icon.clone();
     }
 
     public void setIcon(@NotNull ItemStack icon) {
-        this.icon = new ItemStack(icon);
+        this.icon = icon.clone();
         this.icon.setAmount(1);
     }
 

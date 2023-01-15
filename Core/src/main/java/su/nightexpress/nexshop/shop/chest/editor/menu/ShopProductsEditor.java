@@ -34,7 +34,7 @@ public class ShopProductsEditor extends EditorProductList<ChestShop> {
         for (Product<?, ?, ?> shopProduct : this.shop.getProducts()) {
             if (productCount >= maxProducts || productCount >= inventory.getSize()) break;
 
-            ItemStack productIcon = new ItemStack(shopProduct.getPreview());
+            ItemStack productIcon = shopProduct.getPreview().clone();
             productIcon.editMeta(meta -> {
                 ItemStack editorIcon = ChestEditorType.PRODUCT_OBJECT.getItem();
                 meta.displayName(ItemUtil.getName(editorIcon));
