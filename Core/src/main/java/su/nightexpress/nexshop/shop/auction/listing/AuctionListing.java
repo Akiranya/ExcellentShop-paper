@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.TimeUtil;
 import su.nightexpress.nexshop.api.currency.ICurrency;
-import su.nightexpress.nexshop.shop.auction.config.AuctionConfig;
 import su.nightexpress.nexshop.shop.auction.Placeholders;
+import su.nightexpress.nexshop.shop.auction.config.AuctionConfig;
 
 import java.util.UUID;
 import java.util.function.UnaryOperator;
@@ -51,9 +51,10 @@ public class AuctionListing extends AbstractAuctionItem {
     @Override
     @NotNull
     public UnaryOperator<String> replacePlaceholders() {
-        return str -> super.replacePlaceholders().apply(str
+        return str -> str
+            .transform(super.replacePlaceholders())
             .replace(Placeholders.LISTING_EXPIRES_IN, TimeUtil.formatTimeLeft(this.getExpireDate()))
-        );
+            ;
     }
 
     public long getExpireDate() {

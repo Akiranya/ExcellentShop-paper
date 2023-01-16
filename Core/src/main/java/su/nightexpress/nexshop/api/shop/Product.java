@@ -5,14 +5,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.item.PluginItem;
 import su.nexmedia.engine.api.config.JOption;
+import su.nexmedia.engine.api.item.PluginItem;
 import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.api.manager.ICleanable;
 import su.nexmedia.engine.api.manager.IEditable;
 import su.nexmedia.engine.api.manager.IPlaceholder;
 import su.nexmedia.engine.lang.LangManager;
-import su.nexmedia.engine.utils.*;
+import su.nexmedia.engine.utils.ComponentUtil;
+import su.nexmedia.engine.utils.ItemUtil;
+import su.nexmedia.engine.utils.NumberUtil;
+import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.nexshop.Placeholders;
 import su.nightexpress.nexshop.api.currency.ICurrency;
 import su.nightexpress.nexshop.api.type.ShopClickType;
@@ -57,19 +60,17 @@ public abstract class Product<
         ItemStack buyItem = this.getItem();
         String itemName = !buyItem.getType().isAir() ? ComponentUtil.asMiniMessage(ItemUtil.getName(buyItem)) : "null";
 
-        return str -> {
-            str = this.replacePlaceholdersView().apply(str);
-            str = this.getPricer().replacePlaceholders().apply(str);
-            return str
-                .replace(Placeholders.PRODUCT_PRICE_TYPE, getShop().plugin().getLangManager().getEnum(this.getPricer().getType()))
-                .replace(Placeholders.PRODUCT_DISCOUNT_ALLOWED, LangManager.getBoolean(this.isDiscountAllowed()))
-                .replace(Placeholders.PRODUCT_ITEM_META_ENABLED, LangManager.getBoolean(this.isItemMetaEnabled()))
-                .replace(Placeholders.PRODUCT_ITEM_NAME, itemName)
-                // .replace(Placeholders.PRODUCT_ITEM_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(buyItem))))
-                .replace(Placeholders.PRODUCT_PREVIEW_NAME, ComponentUtil.asMiniMessage(ItemUtil.getName(this.getPreview())))
-                // .replace(Placeholders.PRODUCT_PREVIEW_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getPreview()))))
-                ;
-        };
+        return str -> str
+            .transform(this.replacePlaceholders())
+            .transform(this.getPricer().replacePlaceholders())
+            .replace(Placeholders.PRODUCT_PRICE_TYPE, getShop().plugin().getLangManager().getEnum(this.getPricer().getType()))
+            .replace(Placeholders.PRODUCT_DISCOUNT_ALLOWED, LangManager.getBoolean(this.isDiscountAllowed()))
+            .replace(Placeholders.PRODUCT_ITEM_META_ENABLED, LangManager.getBoolean(this.isItemMetaEnabled()))
+            .replace(Placeholders.PRODUCT_ITEM_NAME, itemName)
+            // .replace(Placeholders.PRODUCT_ITEM_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(buyItem))))
+            .replace(Placeholders.PRODUCT_PREVIEW_NAME, ComponentUtil.asMiniMessage(ItemUtil.getName(this.getPreview())))
+            // .replace(Placeholders.PRODUCT_PREVIEW_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getPreview()))))
+            ;
     }
 
     @NotNull
@@ -78,7 +79,8 @@ public abstract class Product<
         double priceBuy = this.getPricer().getPriceBuy();
         double priceSell = this.getPricer().getPriceSell();
 
-        return str -> this.getStock().replacePlaceholders().apply(str)
+        return str -> str
+            .transform(this.getStock().replacePlaceholders())
             .replace(Placeholders.PRODUCT_DISCOUNT_AMOUNT, NumberUtil.format(this.getShop().getDiscountPlain(this)))
             .replace(Placeholders.PRODUCT_CURRENCY, this.getCurrency().getConfig().getName())
             .replace(Placeholders.PRODUCT_PRICE_BUY, NumberUtil.format(priceBuy))
@@ -92,13 +94,12 @@ public abstract class Product<
         double priceSell = this.getPricer().getPriceSell();
         double priceSellAll = this.getPricer().getPriceSellAll(player);
         ICurrency currency = this.getCurrency();
-        return str -> {
-            str = this.replacePlaceholdersView().apply(str);
-            str = this.getStock().replacePlaceholders(player).apply(str);
-            return str
-                .replace(Placeholders.PRODUCT_PRICE_SELL_ALL, NumberUtil.format(priceSellAll))
-                .replace(Placeholders.PRODUCT_PRICE_SELL_ALL_FORMATTED, priceSell >= 0 ? currency.format(priceSellAll) : "-");
-        };
+        return str -> str
+            .transform(this.replacePlaceholdersView())
+            .transform(this.getStock().replacePlaceholders(player))
+            .replace(Placeholders.PRODUCT_PRICE_SELL_ALL, NumberUtil.format(priceSellAll))
+            .replace(Placeholders.PRODUCT_PRICE_SELL_ALL_FORMATTED, priceSell >= 0 ? currency.format(priceSellAll) : "-")
+            ;
     }
 
     public void prepareTrade(@NotNull Player player, @NotNull ShopClickType click) {

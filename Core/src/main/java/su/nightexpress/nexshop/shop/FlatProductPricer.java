@@ -17,7 +17,7 @@ public class FlatProductPricer extends ProductPricer {
     @Override
     @NotNull
     public UnaryOperator<String> replacePlaceholders() {
-        return str -> str;
+        return UnaryOperator.identity();
     }
 
     @NotNull

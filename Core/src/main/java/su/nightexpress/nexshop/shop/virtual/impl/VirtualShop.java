@@ -88,7 +88,8 @@ public final class VirtualShop extends Shop<VirtualShop, VirtualProduct> impleme
     @Override
     @NotNull
     public UnaryOperator<String> replacePlaceholders() {
-        return str -> super.replacePlaceholders().apply(str
+        return str -> str
+            .transform(super.replacePlaceholders())
             .replace(Placeholders.SHOP_BANK_BALANCE, plugin.getCurrencyManager().getCurrencies().stream().map(currency -> currency.format(this.getBank().getBalance(currency))).collect(Collectors.joining(DELIMITER_DEFAULT)))
             .replace(Placeholders.SHOP_VIRTUAL_DESCRIPTION, this.getDescription())
             .replace(Placeholders.SHOP_VIRTUAL_PERMISSION_NODE, Perms.PREFIX_VIRTUAL_SHOP + this.getId())
@@ -99,7 +100,7 @@ public final class VirtualShop extends Shop<VirtualShop, VirtualProduct> impleme
             .replace(Placeholders.SHOP_VIRTUAL_VIEW_SIZE, String.valueOf(this.getView().getSize()))
             .replace(Placeholders.SHOP_VIRTUAL_VIEW_TITLE, ComponentUtil.asMiniMessage(this.getView().getTitle()))
             .replace(Placeholders.SHOP_VIRTUAL_NPC_IDS, String.join(", ", IntStream.of(this.getCitizensIds()).boxed().map(String::valueOf).toList()))
-        );
+            ;
     }
 
     @Override

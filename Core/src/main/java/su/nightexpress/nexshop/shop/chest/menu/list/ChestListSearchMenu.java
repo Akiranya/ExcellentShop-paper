@@ -22,11 +22,11 @@ import java.util.*;
 
 public class ChestListSearchMenu extends AbstractMenuAuto<ExcellentShop, ChestProduct> {
 
-    private final ChestShopModule                chestShop;
+    private final ChestShopModule chestShop;
     private final Map<String, Set<ChestProduct>> searchCache;
 
-    private final int[]           productSlots;
-    private final Component       productName;
+    private final int[] productSlots;
+    private final Component productName;
     private final List<Component> productLore;
 
     public ChestListSearchMenu(@NotNull ChestShopModule chestShop) {
@@ -74,7 +74,9 @@ public class ChestListSearchMenu extends AbstractMenuAuto<ExcellentShop, ChestPr
     @NotNull
     protected List<ChestProduct> getObjects(@NotNull Player player) {
         return new ArrayList<>(this.getSearchResult(player).stream()
-                                   .sorted((p1, p2) -> (int) (p1.getPricer().getPriceBuy() - p2.getPricer().getPriceBuy())).toList());
+            .sorted((p1, p2) -> (int) (p1.getPricer().getPriceBuy() - p2.getPricer().getPriceBuy()))
+            .toList()
+        );
     }
 
     @Override
@@ -86,7 +88,7 @@ public class ChestListSearchMenu extends AbstractMenuAuto<ExcellentShop, ChestPr
             meta.displayName(this.productName);
             meta.lore(this.productLore);
             ItemUtil.replaceNameAndLore(meta, product.replacePlaceholders(), product.getShop().replacePlaceholders());
-            ItemUtil.replacePlaceholderListComponent(meta, Placeholders.PRODUCT_ITEM_LORE, ItemUtil.getLore(item));
+            ItemUtil.replacePlaceholderListComponent(meta, Placeholders.PRODUCT_ITEM_LORE, ItemUtil.getLore(item)); // Last to compress empty
             ItemUtil.replacePlaceholderListComponent(meta, Placeholders.PRODUCT_PREVIEW_LORE, ItemUtil.getLore(preview), true);
         });
         return item;

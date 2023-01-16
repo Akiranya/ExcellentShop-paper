@@ -110,7 +110,8 @@ public class VirtualProductStock extends ProductStock<VirtualProduct> {
         String never = plugin.getMessage(Lang.OTHER_NEVER).getLocalized();
         String infin = plugin.getMessage(Lang.OTHER_INFINITY).getLocalized();
 
-        return str -> this.replacePlaceholders().apply(str)
+        return str -> str
+            .transform(this.replacePlaceholders())
             .replace(Placeholders.PRODUCT_STOCK_PLAYER_BUY_AMOUNT_LEFT, stockPLBuyAmountLeft < 0 ? infin : String.valueOf(stockPLBuyAmountLeft))
             .replace(Placeholders.PRODUCT_STOCK_PLAYER_SELL_AMOUNT_LEFT, stockPLSellAmountLeft < 0 ? infin : String.valueOf(stockPLSellAmountLeft))
             .replace(Placeholders.PRODUCT_STOCK_PLAYER_BUY_RESTOCK_DATE, stockPLBuyRestockDate < 0 ? never : stockPLBuyRestockDate == 0 ? "-" : TimeUtil.formatTimeLeft(stockPLBuyRestockDate))
@@ -127,8 +128,7 @@ public class VirtualProductStock extends ProductStock<VirtualProduct> {
     }
 
     @Nullable
-    private ProductStockData getProductStockData(@NotNull String holder,
-                                                 @NotNull StockType stockType, @NotNull TradeType tradeType) {
+    private ProductStockData getProductStockData(@NotNull String holder, @NotNull StockType stockType, @NotNull TradeType tradeType) {
         // Если лимит не установлен, то и записи в БД нет.
         if (this.isUnlimited(stockType, tradeType)) {
             ProductStockManager.removeProductStockData(holder, this.getProduct(), stockType, tradeType);
@@ -157,7 +157,7 @@ public class VirtualProductStock extends ProductStock<VirtualProduct> {
      * Обрабатываем покупку продукта, обновляя лимиты у записи в БД.
      */
     @Override
-    public void onPurchase(@NotNull ShopPurchaseEvent event) {
+    public void onPurchase(@NotNull ShopPurchaseEvent<?> event) {
         TradeType tradeType = event.getTradeType();
         int amount = event.getPrepared().getAmount();
         Player player = event.getPlayer();
@@ -233,8 +233,7 @@ public class VirtualProductStock extends ProductStock<VirtualProduct> {
             stockData = new ProductStockData(this, tradeType, stockType);
             stockData.setItemsLeft(Math.min(initial, amount));
             ProductStockManager.createProductStockData(holder, stockData);
-        }
-        else {
+        } else {
             stockData.setItemsLeft(Math.min(initial, amount));
             ProductStockManager.saveProductStockData(holder, stockData);
         }

@@ -13,7 +13,10 @@ import su.nexmedia.engine.api.menu.AbstractMenu;
 import su.nexmedia.engine.api.menu.MenuClick;
 import su.nexmedia.engine.api.menu.MenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
-import su.nexmedia.engine.utils.*;
+import su.nexmedia.engine.utils.ComponentUtil;
+import su.nexmedia.engine.utils.ItemUtil;
+import su.nexmedia.engine.utils.Pair;
+import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.Placeholders;
 import su.nightexpress.nexshop.api.type.TradeType;
@@ -23,8 +26,10 @@ import su.nightexpress.nexshop.shop.virtual.impl.VirtualPreparedProduct;
 import su.nightexpress.nexshop.shop.virtual.impl.VirtualProduct;
 import su.nightexpress.nexshop.shop.virtual.impl.VirtualShop;
 
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public class ShopSellMenu extends AbstractMenu<ExcellentShop> {
 
@@ -112,10 +117,11 @@ public class ShopSellMenu extends AbstractMenu<ExcellentShop> {
             double price = product.getPricer().getPriceSell() * item.getAmount(); // toSell;
 
             List<Component> lore = new ArrayList<>(this.itemLore);
-            lore.replaceAll(line -> {
-                line = ComponentUtil.replace(line, product.getShop().replacePlaceholders(), product.replacePlaceholders());
-                return ComponentUtil.replace(line, Placeholders.GENERIC_PRICE, product.getCurrency().format(price));
-            });
+            lore = ComponentUtil.replace(lore, str -> str
+                .transform(product.getShop().replacePlaceholders())
+                .transform(product.replacePlaceholders())
+                .replace(Placeholders.GENERIC_PRICE, product.getCurrency().format(price))
+            );
             lore = ComponentUtil.replacePlaceholderList("%item_lore%", lore, ItemUtil.getLore(item));
             lore = ComponentUtil.compressEmptyLines(lore);
 

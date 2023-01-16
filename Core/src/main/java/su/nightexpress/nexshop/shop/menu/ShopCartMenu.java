@@ -7,7 +7,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.menu.*;
+import su.nexmedia.engine.api.menu.AbstractMenu;
+import su.nexmedia.engine.api.menu.MenuClick;
+import su.nexmedia.engine.api.menu.MenuItem;
+import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.MessageUtil;
 import su.nexmedia.engine.utils.NumberUtil;
@@ -225,7 +228,8 @@ public class ShopCartMenu extends AbstractMenu<ExcellentShop> {
         int stacks = (int) ((double) amount / (double) preview.getType().getMaxStackSize());
         double balance = this.balance.computeIfAbsent(player, k -> currency.getBalance(player));
 
-        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, line -> currency.replacePlaceholders().apply(line)
+        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, line -> line
+            .transform(currency.replacePlaceholders())
             .replace(Placeholders.GENERIC_AMOUNT, NumberUtil.format(amount))
             .replace("%amount_stacks%", String.valueOf(stacks))
             .replace(Placeholders.GENERIC_PRICE, currency.format(prepared.getPrice()))

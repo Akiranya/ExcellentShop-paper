@@ -58,12 +58,10 @@ public class VirtualShopView extends ShopView<VirtualShop> {
             if (meta == null) return;
 
             List<String> loreFormat = VirtualConfig.PRODUCT_FORMAT_LORE_GENERAL_ALL.get();
-            if (!product.isBuyable() || !shop.isTransactionEnabled(TradeType.BUY)) {
+            if (!product.isBuyable() || !shop.isTransactionEnabled(TradeType.BUY))
                 loreFormat = VirtualConfig.PRODUCT_FORMAT_LORE_GENERAL_SELL_ONLY.get();
-            }
-            if (!product.isSellable() || !shop.isTransactionEnabled(TradeType.SELL)) {
+            if (!product.isSellable() || !shop.isTransactionEnabled(TradeType.SELL))
                 loreFormat = VirtualConfig.PRODUCT_FORMAT_LORE_GENERAL_BUY_ONLY.get();
-            }
 
             List<Component> lore = new ArrayList<>();
 
@@ -104,7 +102,6 @@ public class VirtualShopView extends ShopView<VirtualShop> {
             menuItem.setClickHandler((player1, type, e) -> {
                 ShopClickType clickType = ShopClickType.getByDefault(e.getClick());
                 if (clickType == null) return;
-
                 product.prepareTrade(player1, clickType);
             });
             this.addItem(player, menuItem);

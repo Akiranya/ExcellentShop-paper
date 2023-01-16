@@ -21,9 +21,9 @@ import java.time.format.DateTimeFormatter;
 
 public abstract class ShopModule extends AbstractModule<ExcellentShop> {
 
-    protected JYML                          cfg;
+    protected JYML cfg;
     protected ShopModuleCommand<ShopModule> moduleCommand;
-    protected Logger                        logger;
+    protected Logger logger;
 
     public ShopModule(@NotNull ExcellentShop plugin, @NotNull String id) {
         super(plugin, id);
@@ -93,10 +93,10 @@ public abstract class ShopModule extends AbstractModule<ExcellentShop> {
 
     public class Logger {
 
-        private final boolean           outFile;
-        private final boolean           outConsole;
+        private final boolean outFile;
+        private final boolean outConsole;
         private final DateTimeFormatter dateFormat;
-        private final String            format;
+        private final String format;
 
         public Logger() {
             String path = "Transaction_Logs.";
@@ -114,10 +114,11 @@ public abstract class ShopModule extends AbstractModule<ExcellentShop> {
             PreparedProduct<?> prepared = event.getPrepared();
             Shop<?, ?> shop = event.getShop();
 
-            String format = this.format.replace("%player%", player.getName());
-            format = prepared.replacePlaceholders().apply(format);
-            format = shop.replacePlaceholders().apply(format);
-            format = ComponentUtil.stripTags(format);
+            String format = this.format
+                .replace("%player%", player.getName())
+                .transform(prepared.replacePlaceholders())
+                .transform(shop.replacePlaceholders())
+                .transform(ComponentUtil::stripTags);
 
             this.print(format);
         }

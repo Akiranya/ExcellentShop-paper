@@ -93,12 +93,12 @@ public class AuctionCurrencySelectorMenu extends AbstractMenuAuto<ExcellentShop,
         double tax = AuctionUtils.calculateTax(price, AuctionConfig.LISTINGS_TAX_ON_LISTING_ADD);
 
         // Prepare name and lore
-        UnaryOperator<String> replacer1 = currency.replacePlaceholders();
-        UnaryOperator<String> replacer2 = str -> str
+        UnaryOperator<String> replacer = str -> str
+            .transform(currency.replacePlaceholders())
             .replace(Placeholders.GENERIC_PRICE, currency.format(price))
             .replace(Placeholders.GENERIC_TAX, currency.format(tax));
-        final String name = StringUtil.replace(this.itemName, replacer1, replacer2);
-        final List<String> lore = StringUtil.replace(this.itemLore, replacer1, replacer2);
+        final String name = StringUtil.replace(this.itemName, replacer);
+        final List<String> lore = StringUtil.replace(this.itemLore, replacer);
         // Apply
         item.editMeta(meta -> {
             meta.displayName(ComponentUtil.asComponent(name));
