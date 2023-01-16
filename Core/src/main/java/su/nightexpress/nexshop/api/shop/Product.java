@@ -61,7 +61,7 @@ public abstract class Product<
         String itemName = !buyItem.getType().isAir() ? ComponentUtil.asMiniMessage(ItemUtil.getName(buyItem)) : "null";
 
         return str -> str
-            .transform(this.replacePlaceholders())
+            .transform(this.replacePlaceholdersView())
             .transform(this.getPricer().replacePlaceholders())
             .replace(Placeholders.PRODUCT_PRICE_TYPE, getShop().plugin().getLangManager().getEnum(this.getPricer().getType()))
             .replace(Placeholders.PRODUCT_DISCOUNT_ALLOWED, LangManager.getBoolean(this.isDiscountAllowed()))
