@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 
 public class AuctionMainMenu extends AbstractAuctionMenu<AuctionListing> {
 
-    private static final Map<Player, AuctionSortType>      LISTING_ORDER = new WeakHashMap<>();
-    private static final Map<Player, Set<AuctionCategory>> CATEGORIES    = new WeakHashMap<>();
-    private static final Map<Player, Set<ICurrency>>       CURRENCIES   = new WeakHashMap<>();
+    private static final Map<Player, AuctionSortType> LISTING_ORDER = new WeakHashMap<>();
+    private static final Map<Player, Set<AuctionCategory>> CATEGORIES = new WeakHashMap<>();
+    private static final Map<Player, Set<ICurrency>> CURRENCIES = new WeakHashMap<>();
 
     private static final String PLACEHOLDER_CATEGORIES = "%categories%";
     private static final String PLACEHOLDER_CURRENCIES = "%currencies%";
@@ -40,8 +40,7 @@ public class AuctionMainMenu extends AbstractAuctionMenu<AuctionListing> {
 
             if (type instanceof MenuItemType type2) {
                 this.onItemClickDefault(player, type2);
-            }
-            else if (type instanceof AuctionItemType type2) {
+            } else if (type instanceof AuctionItemType type2) {
                 switch (type2) {
                     case EXPIRED_LISTINGS -> this.auctionManager.getExpiredMenu().open(player, 1);
                     case SALES_HISTORY -> this.auctionManager.getHistoryMenu().open(player, 1);
@@ -55,17 +54,15 @@ public class AuctionMainMenu extends AbstractAuctionMenu<AuctionListing> {
                         if (e.isRightClick()) {
                             CATEGORIES.remove(player);
                             this.open(player, this.getPage(player));
-                        }
-                        else this.auctionManager.getCategoryFilterMenu().open(player, 1);
+                        } else this.auctionManager.getCategoryFilterMenu().open(player, 1);
                     }
                     case CURRENCY_FILTER -> {
                         if (e.isRightClick()) {
                             CURRENCIES.remove(player);
                             this.open(player, this.getPage(player));
-                        }
-                        else this.auctionManager.getCurrencyFilterMenu().open(player, 1);
+                        } else this.auctionManager.getCurrencyFilterMenu().open(player, 1);
                     }
-                    default -> { }
+                    default -> {}
                 }
             }
         };
@@ -117,7 +114,8 @@ public class AuctionMainMenu extends AbstractAuctionMenu<AuctionListing> {
         return this.auctionManager.getActiveListings().stream()
             .filter(listing -> categories.isEmpty() || categories.stream().anyMatch(category -> category.isItemOfThis(listing.getItemStack())))
             .filter(listing -> currencies.isEmpty() || currencies.contains(listing.getCurrency()))
-            .sorted(getListingOrder(player).getComparator()).toList();
+            .sorted(getListingOrder(player).getComparator())
+            .toList();
     }
 
     @Override
