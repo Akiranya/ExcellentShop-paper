@@ -16,7 +16,6 @@ import su.nexmedia.engine.api.menu.MenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.editor.AbstractEditorMenu;
 import su.nexmedia.engine.editor.EditorManager;
-import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nexmedia.engine.utils.StringUtil;
@@ -266,24 +265,20 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
         super.onItemPrepare(player, menuItem, item);
 
         Enum<?> type = menuItem.getType();
-        if (type != null) {
-            if (type == VirtualEditorType.PRODUCT_CHANGE_ITEM_META) {
-                item.setType(object.isItemMetaEnabled() ? Material.WRITABLE_BOOK : Material.BOOK);
-            } else if (type == VirtualEditorType.PRODUCT_CHANGE_PREVIEW) {
-                item.setType(this.object.getPreview().getType());
-            } else if (type == VirtualEditorType.PRODUCT_CHANGE_ITEM) {
-                ItemStack buyItem = object.getItem();
-                if (!buyItem.getType().isAir()) {
-                    item.setType(buyItem.getType());
-                }
-            } else if (type == VirtualEditorType.PRODUCT_CHANGE_COMMANDS) {
-                item.editMeta(meta -> {
-                    List<Component> dst = meta.lore();
-                    List<Component> src = object.getCommands().stream().map(cmd -> Component.text(cmd).color(NamedTextColor.WHITE).asComponent()).toList();
-                    List<Component> lore = ComponentUtil.replacePlaceholderList(Placeholders.PRODUCT_VIRTUAL_COMMANDS, dst, src);
-                    meta.lore(lore);
-                });
+        if (type == VirtualEditorType.PRODUCT_CHANGE_ITEM_META) {
+            item.setType(object.isItemMetaEnabled() ? Material.WRITABLE_BOOK : Material.BOOK);
+        } else if (type == VirtualEditorType.PRODUCT_CHANGE_PREVIEW) {
+            item.setType(this.object.getPreview().getType());
+        } else if (type == VirtualEditorType.PRODUCT_CHANGE_ITEM) {
+            ItemStack buyItem = object.getItem();
+            if (!buyItem.getType().isAir()) {
+                item.setType(buyItem.getType());
             }
+        } else if (type == VirtualEditorType.PRODUCT_CHANGE_COMMANDS) {
+            item.editMeta(meta -> {
+                List<Component> src = object.getCommands().stream().map(cmd -> Component.text(cmd).color(NamedTextColor.WHITE).asComponent()).toList();
+                ItemUtil.replacePlaceholderListComponent(meta, Placeholders.PRODUCT_VIRTUAL_COMMANDS, src, true);
+            });
         }
 
         item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, object.replacePlaceholders()));
