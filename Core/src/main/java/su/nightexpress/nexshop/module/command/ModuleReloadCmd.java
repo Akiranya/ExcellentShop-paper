@@ -23,7 +23,7 @@ public class ModuleReloadCmd extends ShopModuleCommand<ShopModule> {
     @Override
     @NotNull
     public String getDescription() {
-        return "Reload the module.";
+        return plugin.getLangManager().getMessage(Lang.MODULE_COMMAND_RELOAD_DESC).getLocalized();
     }
 
     @Override
@@ -34,6 +34,6 @@ public class ModuleReloadCmd extends ShopModuleCommand<ShopModule> {
     @Override
     public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
         this.module.reload();
-        this.plugin.getMessage(Lang.Module_Cmd_Reload).replace("%module%", module.getName()).send(sender);
+        this.plugin.getMessage(Lang.MODULE_COMMAND_RELOAD_DONE).replace("%module%", module.getName()).send(sender);
     }
 }
