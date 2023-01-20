@@ -319,7 +319,7 @@ public class AuctionManager extends ShopModule {
             plugin.getMessage(AuctionLang.LISTING_ADD_SUCCESS_ANNOUNCE)
                 .replace(Placeholders.Player.replacer(player))
                 .replace(listing.replacePlaceholders())
-                .broadcast();
+                .broadcast(player);
         }
 
         this.getMainMenu().update();
