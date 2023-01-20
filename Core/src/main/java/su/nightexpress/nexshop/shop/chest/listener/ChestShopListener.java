@@ -21,7 +21,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractListener;
-import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.MessageUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.Perms;
@@ -39,7 +38,7 @@ import java.util.*;
 
 public class ChestShopListener extends AbstractListener<ExcellentShop> {
 
-    private final ChestShopModule       chestShop;
+    private final ChestShopModule chestShop;
     private final Map<String, Set<JYML>> unloadedShops;
 
     public ChestShopListener(@NotNull ChestShopModule chestShop) {
@@ -60,23 +59,19 @@ public class ChestShopListener extends AbstractListener<ExcellentShop> {
                 plugin.getMessage(Lang.SHOP_PRODUCT_ERROR_TOO_EXPENSIVE)
                     .replace(prepared.replacePlaceholders())
                     .send(player);
-            }
-            else if (e.getResult() == ChestShopPurchaseEvent.Result.NOT_ENOUGH_ITEMS) {
+            } else if (e.getResult() == ChestShopPurchaseEvent.Result.NOT_ENOUGH_ITEMS) {
                 plugin.getMessage(Lang.SHOP_PRODUCT_ERROR_NOT_ENOUGH_ITEMS)
                     .replace(prepared.replacePlaceholders())
                     .send(player);
-            }
-            else if (e.getResult() == ChestShopPurchaseEvent.Result.OUT_OF_MONEY) {
+            } else if (e.getResult() == ChestShopPurchaseEvent.Result.OUT_OF_MONEY) {
                 plugin.getMessage(Lang.SHOP_PRODUCT_ERROR_OUT_OF_FUNDS)
                     .replace(prepared.replacePlaceholders())
                     .send(player);
-            }
-            else if (e.getResult() == ChestShopPurchaseEvent.Result.OUT_OF_SPACE) {
+            } else if (e.getResult() == ChestShopPurchaseEvent.Result.OUT_OF_SPACE) {
                 plugin.getMessage(Lang.SHOP_PRODUCT_ERROR_OUT_OF_SPACE)
                     .replace(prepared.replacePlaceholders())
                     .send(player);
-            }
-            else if (e.getResult() == ChestShopPurchaseEvent.Result.OUT_OF_STOCK) {
+            } else if (e.getResult() == ChestShopPurchaseEvent.Result.OUT_OF_STOCK) {
                 plugin.getMessage(Lang.SHOP_PRODUCT_ERROR_OUT_OF_STOCK)
                     .replace(prepared.replacePlaceholders())
                     .send(player);
@@ -97,19 +92,18 @@ public class ChestShopListener extends AbstractListener<ExcellentShop> {
                 .send(player);
 
             if (owner != null && !shop.isAdminShop()) plugin.getMessage(ChestLang.SHOP_TRADE_BUY_INFO_OWNER)
-                .replace("%player%", ComponentUtil.asMiniMessage(player.displayName()))
+                .replace("%player%", player.getName())
                 .replace(prepared.replacePlaceholders())
                 .replace(shop.replacePlaceholders())
                 .send(owner);
-        }
-        else {
+        } else {
             plugin.getMessage(ChestLang.SHOP_TRADE_SELL_INFO_USER)
                 .replace(prepared.replacePlaceholders())
                 .replace(shop.replacePlaceholders())
                 .send(player);
 
             if (owner != null && !shop.isAdminShop()) plugin.getMessage(ChestLang.SHOP_TRADE_SELL_INFO_OWNER)
-                .replace("%player%", ComponentUtil.asMiniMessage(player.displayName()))
+                .replace("%player%", player.getName())
                 .replace(prepared.replacePlaceholders())
                 .replace(shop.replacePlaceholders())
                 .send(owner);
@@ -135,8 +129,7 @@ public class ChestShopListener extends AbstractListener<ExcellentShop> {
 
                 if (shop.isOwner(player) || player.hasPermission(Perms.ADMIN)) {
                     shop.getEditor().open(player, 1);
-                }
-                else {
+                } else {
                     plugin.getMessage(ChestLang.SHOP_ERROR_NOT_OWNER).send(player);
                 }
                 return;
@@ -144,8 +137,7 @@ public class ChestShopListener extends AbstractListener<ExcellentShop> {
 
             if (shop.isAdminShop() || !shop.isOwner(player)) {
                 shop.open(player, 1);
-            }
-            else if (!isDenied) {
+            } else if (!isDenied) {
                 e.setUseInteractedBlock(Result.ALLOW);
             }
         }
@@ -162,8 +154,7 @@ public class ChestShopListener extends AbstractListener<ExcellentShop> {
         if (!shop.isOwner(player)) {
             e.setCancelled(true);
             plugin.getMessage(ChestLang.SHOP_ERROR_NOT_OWNER).send(player);
-        }
-        else {
+        } else {
             if (player.getGameMode() == GameMode.CREATIVE) {
                 e.setCancelled(true);
                 return;
@@ -190,7 +181,7 @@ public class ChestShopListener extends AbstractListener<ExcellentShop> {
             return;
         }
 
-        //shop.setChest((Chest) block.getState());
+        // shop.setChest((Chest) block.getState());
         this.chestShop.getShopsMap().put(block.getLocation(), shop);
         this.plugin.runTask(c -> shop.updateDisplay(), false);
     }

@@ -3,7 +3,6 @@ package su.nightexpress.nexshop.shop.auction.listing;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.TimeUtil;
 import su.nightexpress.nexshop.api.currency.ICurrency;
 import su.nightexpress.nexshop.shop.auction.Placeholders;
@@ -25,7 +24,7 @@ public class AuctionListing extends AbstractAuctionItem {
         this(
             UUID.randomUUID(),
             player.getUniqueId(),
-            ComponentUtil.asMiniMessage(player.displayName()),
+            player.getName(),
             itemStack,
             currency,
             price,
