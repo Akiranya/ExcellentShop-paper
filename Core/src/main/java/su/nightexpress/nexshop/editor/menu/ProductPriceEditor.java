@@ -45,7 +45,8 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
         EditorInput<Product<?, ?, ?>, GenericEditorType> input = (player, product2, type, e) -> {
             String msg = e.getMessage();
             switch (type) {
-                case PRODUCT_CHANGE_PRICE_FLAT_SELL, PRODUCT_CHANGE_PRICE_FLAT_BUY -> {
+                case PRODUCT_CHANGE_PRICE_FLAT_SELL,
+                    PRODUCT_CHANGE_PRICE_FLAT_BUY -> {
                     double price = StringUtil.getDouble(StringUtil.asPlainText(msg), -1D, true);
                     if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLAT_BUY) {
                         product2.getPricer().setPrice(TradeType.BUY, price);
@@ -53,7 +54,10 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                         product2.getPricer().setPrice(TradeType.SELL, price);
                     }
                 }
-                case PRODUCT_CHANGE_PRICE_FLOAT_BUY_MIN, PRODUCT_CHANGE_PRICE_FLOAT_BUY_MAX, PRODUCT_CHANGE_PRICE_FLOAT_SELL_MIN, PRODUCT_CHANGE_PRICE_FLOAT_SELL_MAX -> {
+                case PRODUCT_CHANGE_PRICE_FLOAT_BUY_MIN,
+                    PRODUCT_CHANGE_PRICE_FLOAT_BUY_MAX,
+                    PRODUCT_CHANGE_PRICE_FLOAT_SELL_MIN,
+                    PRODUCT_CHANGE_PRICE_FLOAT_SELL_MAX -> {
                     FloatProductPricer pricer = (FloatProductPricer) product2.getPricer();
                     double price = StringUtil.getDouble(StringUtil.asPlainText(msg), -1D, true);
                     if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_BUY_MIN) {
@@ -87,7 +91,10 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                         return false;
                     }
                 }
-                case PRODUCT_CHANGE_PRICE_DYNAMIC_BUY_MIN, PRODUCT_CHANGE_PRICE_DYNAMIC_BUY_MAX, PRODUCT_CHANGE_PRICE_DYNAMIC_SELL_MIN, PRODUCT_CHANGE_PRICE_DYNAMIC_SELL_MAX -> {
+                case PRODUCT_CHANGE_PRICE_DYNAMIC_BUY_MIN,
+                    PRODUCT_CHANGE_PRICE_DYNAMIC_BUY_MAX,
+                    PRODUCT_CHANGE_PRICE_DYNAMIC_SELL_MIN,
+                    PRODUCT_CHANGE_PRICE_DYNAMIC_SELL_MAX -> {
                     DynamicProductPricer pricer = (DynamicProductPricer) product2.getPricer();
                     double price = StringUtil.getDouble(StringUtil.asPlainText(msg), 0D);
                     if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_BUY_MIN) {
@@ -100,7 +107,8 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                         pricer.setPriceMax(TradeType.SELL, price);
                     }
                 }
-                case PRODUCT_CHANGE_PRICE_DYNAMIC_INITIAL_BUY, PRODUCT_CHANGE_PRICE_DYNAMIC_INITIAL_SELL -> {
+                case PRODUCT_CHANGE_PRICE_DYNAMIC_INITIAL_BUY,
+                    PRODUCT_CHANGE_PRICE_DYNAMIC_INITIAL_SELL -> {
                     DynamicProductPricer pricer = (DynamicProductPricer) product2.getPricer();
                     double price = StringUtil.getDouble(StringUtil.asPlainText(msg), 0D);
                     if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_INITIAL_BUY) {
@@ -109,7 +117,8 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                         pricer.setInitial(TradeType.SELL, price);
                     }
                 }
-                case PRODUCT_CHANGE_PRICE_DYNAMIC_STEP_BUY, PRODUCT_CHANGE_PRICE_DYNAMIC_STEP_SELL -> {
+                case PRODUCT_CHANGE_PRICE_DYNAMIC_STEP_BUY,
+                    PRODUCT_CHANGE_PRICE_DYNAMIC_STEP_SELL -> {
                     DynamicProductPricer pricer = (DynamicProductPricer) product2.getPricer();
                     double price = StringUtil.getDouble(StringUtil.asPlainText(msg), 0D);
                     if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_STEP_BUY) {
@@ -132,8 +141,11 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                 switch (type2) {
                     case PRODUCT_CHANGE_PRICE_TYPE -> {
                         PriceType priceType = CollectionsUtil.switchEnum(product.getPricer().getType());
-                        if (product instanceof ChestProduct chestProduct) {
-                            while (priceType != product.getPricer().getType() && !player.hasPermission(Perms.PREFIX_CHEST_PRICE + priceType.name().toLowerCase()) && !player.hasPermission(Perms.CHEST_SHOP_PRICE)) {
+                        if (product instanceof ChestProduct) {
+                            while (priceType != product.getPricer().getType() &&
+                                   !player.hasPermission(Perms.PREFIX_CHEST_PRICE + priceType.name().toLowerCase()) &&
+                                   !player.hasPermission(Perms.CHEST_SHOP_PRICE)
+                            ) {
                                 priceType = CollectionsUtil.switchEnum(product.getPricer().getType());
                             }
                         }
@@ -290,23 +302,44 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
 
         PriceType priceType = this.object.getPricer().getType();
         if (menuItem.getType() instanceof GenericEditorType type) {
-            if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLAT_BUY || type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLAT_SELL) {
-                if (priceType != PriceType.FLAT) {
-                    item.setType(Material.AIR);
-                    menuItem.setSlots();
-                } else menuItem.setSlots(IntStream.of(map.get(type)).toArray());
-            } else if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_BUY || type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_SELL
-                       || type == GenericEditorType.PRODUCT_CHANGE_PRICE_FLOAT_REFRESH) {
-                if (priceType != PriceType.FLOAT) {
-                    item.setType(Material.AIR);
-                    menuItem.setSlots();
-                } else menuItem.setSlots(IntStream.of(map.get(type)).toArray());
-            } else if (type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_BUY || type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_SELL
-                       || type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_INITIAL || type == GenericEditorType.PRODUCT_CHANGE_PRICE_DYNAMIC_STEP) {
-                if (priceType != PriceType.DYNAMIC) {
-                    item.setType(Material.AIR);
-                    menuItem.setSlots();
-                } else menuItem.setSlots(IntStream.of(map.get(type)).toArray());
+            switch (type) {
+                case PRODUCT_CHANGE_PRICE_FLAT_BUY,
+                    PRODUCT_CHANGE_PRICE_FLAT_SELL -> {
+                    if (priceType != PriceType.FLAT) {
+                        item.setType(Material.AIR);
+                        menuItem.setSlots();
+                    } else {
+                        menuItem.setSlots(IntStream.of(map.get(type)).toArray());
+                    }
+                }
+                case PRODUCT_CHANGE_PRICE_FLOAT_BUY,
+                    PRODUCT_CHANGE_PRICE_FLOAT_SELL,
+                    PRODUCT_CHANGE_PRICE_FLOAT_REFRESH -> {
+                    if (priceType != PriceType.FLOAT) {
+                        item.setType(Material.AIR);
+                        menuItem.setSlots();
+                    } else {
+                        menuItem.setSlots(IntStream.of(map.get(type)).toArray());
+                    }
+
+                    // Replace placeholder list
+                    FloatProductPricer pricer = (FloatProductPricer) this.object.getPricer();
+                    item.editMeta(meta -> {
+                        ItemUtil.replacePlaceholderListString(meta, Placeholders.PRODUCT_PRICER_FLOAT_REFRESH_DAYS, pricer.getDays().stream().map(DayOfWeek::name).toList());
+                        ItemUtil.replacePlaceholderListString(meta, Placeholders.PRODUCT_PRICER_FLOAT_REFRESH_TIMES, pricer.getTimes().stream().map(IScheduled.TIME_FORMATTER::format).toList());
+                    });
+                }
+                case PRODUCT_CHANGE_PRICE_DYNAMIC_BUY,
+                    PRODUCT_CHANGE_PRICE_DYNAMIC_SELL,
+                    PRODUCT_CHANGE_PRICE_DYNAMIC_INITIAL,
+                    PRODUCT_CHANGE_PRICE_DYNAMIC_STEP -> {
+                    if (priceType != PriceType.DYNAMIC) {
+                        item.setType(Material.AIR);
+                        menuItem.setSlots();
+                    } else {
+                        menuItem.setSlots(IntStream.of(map.get(type)).toArray());
+                    }
+                }
             }
         }
         super.onItemPrepare(player, menuItem, item);

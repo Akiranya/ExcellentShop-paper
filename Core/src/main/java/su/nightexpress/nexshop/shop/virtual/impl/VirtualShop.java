@@ -21,7 +21,6 @@ import su.nightexpress.nexshop.shop.virtual.editor.menu.EditorShopMain;
 
 import java.util.*;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public final class VirtualShop extends Shop<VirtualShop, VirtualProduct> implements ICleanable {
@@ -90,7 +89,7 @@ public final class VirtualShop extends Shop<VirtualShop, VirtualProduct> impleme
     public UnaryOperator<String> replacePlaceholders() {
         return str -> str
             .transform(super.replacePlaceholders())
-            .replace(Placeholders.SHOP_BANK_BALANCE, plugin.getCurrencyManager().getCurrencies().stream().map(currency -> currency.format(this.getBank().getBalance(currency))).collect(Collectors.joining(DELIMITER_DEFAULT)))
+            // .replace(Placeholders.SHOP_BANK_BALANCE, plugin.getCurrencyManager().getCurrencies().stream().map(currency -> currency.format(this.getBank().getBalance(currency))).collect(Collectors.joining(DELIMITER_DEFAULT)))
             .replace(Placeholders.SHOP_VIRTUAL_DESCRIPTION, this.getDescription())
             .replace(Placeholders.SHOP_VIRTUAL_PERMISSION_NODE, Perms.PREFIX_VIRTUAL_SHOP + this.getId())
             .replace(Placeholders.SHOP_VIRTUAL_PERMISSION_REQUIRED, LangManager.getBoolean(this.isPermissionRequired()))

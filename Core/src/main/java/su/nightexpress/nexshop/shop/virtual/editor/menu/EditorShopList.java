@@ -78,17 +78,17 @@ public class EditorShopList extends AbstractEditorMenuAuto<ExcellentShop, Virtua
     @Override
     @NotNull
     protected ItemStack getObjectStack(@NotNull Player player, @NotNull VirtualShop shop) {
-        ItemStack item = shop.getIcon().clone();
-        ItemStack editor = VirtualEditorType.SHOP_OBJECT.getItem();
-        item.editMeta(meta -> {
-            ItemMeta meta2 = editor.getItemMeta();
-            if (meta2 == null) return;
-            meta.displayName(meta2.displayName());
-            meta.lore(meta2.lore());
-            meta.addItemFlags(ItemFlag.values());
-            ItemUtil.replaceNameAndLore(meta, shop.replacePlaceholders());
+        ItemStack shopIcon = shop.getIcon();
+        ItemStack editorItem = VirtualEditorType.SHOP_OBJECT.getItem();
+        shopIcon.editMeta(iconMeta -> {
+            ItemMeta editorMeta = editorItem.getItemMeta();
+            if (editorMeta == null) return;
+            iconMeta.displayName(editorMeta.displayName());
+            iconMeta.lore(editorMeta.lore());
+            iconMeta.addItemFlags(ItemFlag.values());
+            ItemUtil.replaceNameAndLore(iconMeta, shop.replacePlaceholders());
         });
-        return item;
+        return shopIcon;
     }
 
     @Override

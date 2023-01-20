@@ -189,7 +189,16 @@ public class ShopSettingsMenu extends AbstractMenu<ExcellentShop> {
     @Override
     public void onItemPrepare(@NotNull Player player, @NotNull MenuItem menuItem, @NotNull ItemStack item) {
         super.onItemPrepare(player, menuItem, item);
-        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, this.shop.replacePlaceholders()));
+
+        // Replace placeholders
+        item.editMeta(meta -> {
+            ItemUtil.replaceNameAndLore(meta, this.shop.replacePlaceholders());
+            ItemUtil.replacePlaceholderListString(
+                meta,
+                Placeholders.SHOP_BANK_BALANCE,
+                ChestConfig.ALLOWED_CURRENCIES.stream().map(currency -> currency.format(this.shop.getBank().getBalance(currency))).toList()
+            );
+        });
     }
 
     @Override

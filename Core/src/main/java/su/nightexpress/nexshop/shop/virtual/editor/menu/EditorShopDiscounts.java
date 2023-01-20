@@ -11,10 +11,12 @@ import su.nexmedia.engine.editor.AbstractEditorMenuAuto;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.Placeholders;
+import su.nightexpress.nexshop.api.IScheduled;
 import su.nightexpress.nexshop.shop.virtual.editor.VirtualEditorType;
 import su.nightexpress.nexshop.shop.virtual.impl.VirtualDiscount;
 import su.nightexpress.nexshop.shop.virtual.impl.VirtualShop;
 
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +67,11 @@ public class EditorShopDiscounts extends AbstractEditorMenuAuto<ExcellentShop, V
     @NotNull
     protected ItemStack getObjectStack(@NotNull Player player, @NotNull VirtualDiscount discount) {
         ItemStack item = VirtualEditorType.DISCOUNT_OBJECT.getItem();
-        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, discount.replacePlaceholders()));
+        item.editMeta(meta -> {
+            ItemUtil.replaceNameAndLore(meta, discount.replacePlaceholders());
+            ItemUtil.replacePlaceholderListString(meta, Placeholders.DISCOUNT_CONFIG_DAYS, discount.getDays().stream().map(DayOfWeek::name).toList());
+            ItemUtil.replacePlaceholderListString(meta, Placeholders.DISCOUNT_CONFIG_TIMES, discount.getTimes().stream().map(IScheduled.TIME_FORMATTER::format).toList());
+        });
         return item;
     }
 

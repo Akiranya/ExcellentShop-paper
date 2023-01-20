@@ -237,7 +237,18 @@ public class EditorShopMain extends AbstractEditorMenu<ExcellentShop, VirtualSho
                 item.setType(this.object.getIcon().getType());
             }
         }
-        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, this.object.replacePlaceholders()));
+
+        // Replace placeholders
+        item.editMeta(meta -> {
+            ItemUtil.replaceNameAndLore(meta, this.object.replacePlaceholders());
+            ItemUtil.replacePlaceholderListString(
+                meta,
+                Placeholders.SHOP_BANK_BALANCE,
+                plugin.getCurrencyManager().getCurrencies().stream()
+                    .map(currency -> currency.format(this.object.getBank().getBalance(currency)))
+                    .toList()
+            );
+        });
     }
 
     @Override

@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanable {
@@ -132,9 +131,9 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         World world = this.getContainer().getWorld();
         return str -> str
             .transform(super.replacePlaceholders())
-            .replace(Placeholders.SHOP_BANK_BALANCE, ChestConfig.ALLOWED_CURRENCIES.stream()
-                .map(currency -> currency.format(this.getBank().getBalance(currency)))
-                .collect(Collectors.joining(DELIMITER_DEFAULT)))
+            // .replace(Placeholders.SHOP_BANK_BALANCE, ChestConfig.ALLOWED_CURRENCIES.stream()
+            //     .map(currency -> currency.format(this.getBank().getBalance(currency)))
+            //     .collect(Collectors.joining(DELIMITER_DEFAULT)))
             .replace(Placeholders.SHOP_CHEST_OWNER, this.getOwnerName())
             .replace(Placeholders.SHOP_CHEST_LOCATION_X, NumberUtil.format(location.getX()))
             .replace(Placeholders.SHOP_CHEST_LOCATION_Y, NumberUtil.format(location.getY()))

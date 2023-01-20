@@ -70,10 +70,8 @@ public class FloatProductPricer extends ProductPricer implements IScheduled {
             .replace(Placeholders.PRODUCT_PRICER_BUY_MAX, String.valueOf(this.getPriceMax(TradeType.BUY)))
             .replace(Placeholders.PRODUCT_PRICER_SELL_MIN, String.valueOf(this.getPriceMin(TradeType.SELL)))
             .replace(Placeholders.PRODUCT_PRICER_SELL_MAX, String.valueOf(this.getPriceMax(TradeType.SELL)))
-            .replace(Placeholders.PRODUCT_PRICER_FLOAT_REFRESH_DAYS, String.join(DELIMITER_DEFAULT, this.getDays()
-                .stream().map(DayOfWeek::name).toList()))
-            .replace(Placeholders.PRODUCT_PRICER_FLOAT_REFRESH_TIMES, String.join(DELIMITER_DEFAULT, this.getTimes()
-                .stream().map(TIME_FORMATTER::format).toList()))
+            // .replace(Placeholders.PRODUCT_PRICER_FLOAT_REFRESH_DAYS, String.join(DELIMITER_DEFAULT, this.getDays().stream().map(DayOfWeek::name).toList()))
+            // .replace(Placeholders.PRODUCT_PRICER_FLOAT_REFRESH_TIMES, String.join(DELIMITER_DEFAULT, this.getTimes().stream().map(TIME_FORMATTER::format).toList()))
             ;
     }
 

@@ -63,8 +63,8 @@ public class VirtualDiscount implements IScheduled, IEditable, ICleanable, IPlac
     public UnaryOperator<String> replacePlaceholders() {
         return str -> str
             .replace(Placeholders.DISCOUNT_CONFIG_DURATION, TimeUtil.formatTime(this.getDuration() * 1000L))
-            .replace(Placeholders.DISCOUNT_CONFIG_DAYS, String.join(DELIMITER_DEFAULT, this.getDays().stream().map(DayOfWeek::name).toList()))
-            .replace(Placeholders.DISCOUNT_CONFIG_TIMES, String.join(DELIMITER_DEFAULT, this.getTimes().stream().map(TIME_FORMATTER::format).toList()))
+            // .replace(Placeholders.DISCOUNT_CONFIG_DAYS, String.join(DELIMITER_DEFAULT, this.getDays().stream().map(DayOfWeek::name).toList()))
+            // .replace(Placeholders.DISCOUNT_CONFIG_TIMES, String.join(DELIMITER_DEFAULT, this.getTimes().stream().map(TIME_FORMATTER::format).toList()))
             .replace(Placeholders.DISCOUNT_CONFIG_AMOUNT, NumberUtil.format(this.getDiscount()))
             ;
     }
@@ -104,9 +104,7 @@ public class VirtualDiscount implements IScheduled, IEditable, ICleanable, IPlac
     @Override
     @NotNull
     public Runnable getCommand() {
-        return () -> {
-            this.getShop().getDiscounts().add(new Discount(this.getDiscount(), this.getDuration()));
-        };
+        return () -> this.getShop().getDiscounts().add(new Discount(this.getDiscount(), this.getDuration()));
     }
 
     @NotNull

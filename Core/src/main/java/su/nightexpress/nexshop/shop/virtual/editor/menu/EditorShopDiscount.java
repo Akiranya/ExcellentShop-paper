@@ -133,7 +133,11 @@ public class EditorShopDiscount extends AbstractEditorMenu<ExcellentShop, Virtua
     @Override
     public void onItemPrepare(@NotNull Player player, @NotNull MenuItem menuItem, @NotNull ItemStack item) {
         super.onItemPrepare(player, menuItem, item);
-        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, this.object.replacePlaceholders()));
+        item.editMeta(meta -> {
+            ItemUtil.replaceNameAndLore(meta, this.object.replacePlaceholders());
+            ItemUtil.replacePlaceholderListString(meta, Placeholders.DISCOUNT_CONFIG_DAYS, this.object.getDays().stream().map(DayOfWeek::name).toList());
+            ItemUtil.replacePlaceholderListString(meta, Placeholders.DISCOUNT_CONFIG_TIMES, this.object.getTimes().stream().map(IScheduled.TIME_FORMATTER::format).toList());
+        });
     }
 
     @Override
