@@ -141,12 +141,9 @@ public class ProductPriceEditor extends AbstractEditorMenu<ExcellentShop, Produc
                 switch (type2) {
                     case PRODUCT_CHANGE_PRICE_TYPE -> {
                         PriceType priceType = CollectionsUtil.switchEnum(product.getPricer().getType());
-                        if (product instanceof ChestProduct) {
-                            while (priceType != product.getPricer().getType() &&
-                                   !player.hasPermission(Perms.PREFIX_CHEST_PRICE + priceType.name().toLowerCase()) &&
-                                   !player.hasPermission(Perms.CHEST_SHOP_PRICE)
-                            ) {
-                                priceType = CollectionsUtil.switchEnum(product.getPricer().getType());
+                        if (product instanceof ChestProduct chestProduct && !player.hasPermission(Perms.CHEST_SHOP_PRICE)) {
+                            while (priceType != product.getPricer().getType() && !player.hasPermission(Perms.PREFIX_CHEST_PRICE + priceType.name().toLowerCase())) {
+                                priceType = CollectionsUtil.switchEnum(priceType);
                             }
                         }
                         if (priceType == product.getPricer().getType()) return;
