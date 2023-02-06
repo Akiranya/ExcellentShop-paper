@@ -27,9 +27,7 @@ dependencies {
 
     // 3rd party plugins
     compileOnly("su.nightexpress.gamepoints:GamePoints:1.3.4")
-    compileOnly("com.github.Ghost-chu:GemsEconomy:74073694a3") {
-        isTransitive = false
-    }
+    compileOnly("me.xanium.gemseconomy:GemsEconomy:1.3.3")
     compileOnly("com.github.TechFortress:GriefPrevention:16.17.1")
     compileOnly("com.github.angeschossen:LandsAPI:6.20.0")
     compileOnly("org.black_ixx:playerpoints:3.0.0")

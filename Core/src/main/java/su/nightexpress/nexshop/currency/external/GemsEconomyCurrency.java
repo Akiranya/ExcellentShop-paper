@@ -50,7 +50,7 @@ public class GemsEconomyCurrency extends AbstractCurrency implements MultiCurren
     @Override
     public double getBalance(@NotNull Player player) {
         Currency gemsCurrency = GemsEconomy.getInstance().getCurrencyManager().getCurrency(this.identifier);
-        Account account = GemsEconomy.getInstance().getAccountManager().getAccount(player);
+        Account account = GemsEconomy.getInstance().getAccountManager().fetchAccount(player);
         validateCurrency(gemsCurrency);
         validateAccount(account, player);
         return account.getBalance(gemsCurrency);
@@ -59,7 +59,7 @@ public class GemsEconomyCurrency extends AbstractCurrency implements MultiCurren
     @Override
     public void give(@NotNull Player player, double amount) {
         Currency gemsCurrency = GemsEconomy.getInstance().getCurrencyManager().getCurrency(this.identifier);
-        Account account = GemsEconomy.getInstance().getAccountManager().getAccount(player);
+        Account account = GemsEconomy.getInstance().getAccountManager().fetchAccount(player);
         validateCurrency(gemsCurrency);
         validateAccount(account, player);
         account.deposit(gemsCurrency, amount);
@@ -68,7 +68,7 @@ public class GemsEconomyCurrency extends AbstractCurrency implements MultiCurren
     @Override
     public void take(@NotNull Player player, double amount) {
         Currency gemsCurrency = GemsEconomy.getInstance().getCurrencyManager().getCurrency(this.identifier);
-        Account account = GemsEconomy.getInstance().getAccountManager().getAccount(player);
+        Account account = GemsEconomy.getInstance().getAccountManager().fetchAccount(player);
         validateCurrency(gemsCurrency);
         validateAccount(account, player);
         account.withdraw(gemsCurrency, amount);
