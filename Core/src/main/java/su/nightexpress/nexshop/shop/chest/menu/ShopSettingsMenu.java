@@ -47,7 +47,7 @@ public class ShopSettingsMenu extends AbstractMenu<ExcellentShop> {
                         if (msg.startsWith("+")) type = ChestEditorType.SHOP_BANK_DEPOSIT;
                         else if (msg.startsWith("-")) type = ChestEditorType.SHOP_BANK_WITHDRAW;
                         else return false;
-                        
+
                         msg = msg.substring(1);
                     }
 

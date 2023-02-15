@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.api.config.JOption;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.hooks.Hooks;
 import su.nightexpress.nexshop.api.currency.ICurrency;
@@ -11,34 +12,40 @@ import su.nightexpress.nexshop.shop.auction.AuctionCategory;
 import su.nightexpress.nexshop.shop.auction.AuctionManager;
 
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class AuctionConfig {
 
     public static DateTimeFormatter DATE_FORMAT;
-    public static Set<String>       DISABLED_WORLDS;
-    public static Set<String>       DISABLED_GAMEMODES;
+    public static Set<String> DISABLED_WORLDS;
+    public static Set<String> DISABLED_GAMEMODES;
 
-    public static long     LISTINGS_EXPIRE_IN;
-    public static long     LISTINGS_PURGE_IN;
-    public static  boolean LISTINGS_ANNOUNCE;
+    public static long LISTINGS_EXPIRE_IN;
+    public static long LISTINGS_PURGE_IN;
+    public static boolean LISTINGS_ANNOUNCE;
     private static Map<String, Integer> LISTINGS_PER_RANK;
     public static Map<String, AuctionCurrencySetting> CURRENCIES;
+    public static final JOption<Boolean> LISTINGS_PRICE_ROUND_TO_INT = JOption.create("Settings.Listings.Price.Round_To_Integer", false,
+        "When 'true', removes decimals from listing's price on sell.");
     private static Map<String, double[]> LISTINGS_PRICE_PER_CURRENCY;
-    private static  Map<String, double[]> LISTINGS_PRICE_PER_MATERIAL;
-    public static  double                LISTINGS_TAX_ON_LISTING_ADD;
-    public static  double                LISTINGS_TAX_ON_LISTING_PURCHASE;
-    public static  Set<String>           LISTINGS_DISABLED_MATERIALS;
-    public static  Set<String>           LISTINGS_DISABLED_NAMES;
-    public static  Set<String>           LISTINGS_DISABLED_LORES;
+    private static Map<String, double[]> LISTINGS_PRICE_PER_MATERIAL;
+    public static double LISTINGS_TAX_ON_LISTING_ADD;
+    public static double LISTINGS_TAX_ON_LISTING_PURCHASE;
+    public static Set<String> LISTINGS_DISABLED_MATERIALS;
+    public static Set<String> LISTINGS_DISABLED_NAMES;
+    public static Set<String> LISTINGS_DISABLED_LORES;
 
     public static Map<String, AuctionCategory> CATEGORIES_MAP;
 
     public static void load(@NotNull AuctionManager manager) {
         JYML cfgCategories = JYML.loadOrExtract(manager.plugin(), manager.getPath() + "categories.yml");
         JYML cfg = manager.getConfig();
+        cfg.initializeOptions(AuctionConfig.class);
 
         /*Map<String, List<String>> categories = V1_19_R1.getItemsWithCategory();
         categories.forEach((catName, catItems) -> {
@@ -70,7 +77,7 @@ public class AuctionConfig {
         DATE_FORMAT = DateTimeFormatter.ofPattern(cfg.getString(path + "Date_Format", "MM/dd/yyyy HH:mm:ss"));
         DISABLED_WORLDS = cfg.getStringSet(path + "Disabled_Worlds");
         DISABLED_GAMEMODES = cfg.getStringSet(path + "Disabled_Gamemodes").stream()
-                .map(String::toUpperCase).collect(Collectors.toSet());
+            .map(String::toUpperCase).collect(Collectors.toSet());
 
         CURRENCIES = new HashMap<>();
         for (String curId : cfg.getSection(path + "Currency")) {
@@ -97,7 +104,7 @@ public class AuctionConfig {
             LISTINGS_PER_RANK.put(rank.toLowerCase(), cfg.getInt(path + "Listings_Per_Rank." + rank));
         }
         LISTINGS_DISABLED_MATERIALS = cfg.getStringSet(path + "Disabled_Materials").stream()
-                .map(String::toUpperCase).collect(Collectors.toSet());
+            .map(String::toUpperCase).collect(Collectors.toSet());
         LISTINGS_DISABLED_NAMES = cfg.getStringSet(path + "Disabled_Names");
         LISTINGS_DISABLED_LORES = cfg.getStringSet(path + "Disabled_Lores");
 

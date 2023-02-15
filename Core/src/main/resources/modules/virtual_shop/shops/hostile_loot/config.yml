@@ -1,0 +1,13 @@
+Name: 'Hostile Mob Shop'
+Pages: 4
+Permission_Required: false
+Transaction_Allowed:
+  SELL: true
+  BUY: true
+Citizens:
+  Attached_NPC: ''
+Description:
+  - '<#d4d9d8>Everything related to'
+  - '<#d4d9d8>hostile mobs and their loot.'
+Icon:
+  Material: CREEPER_HEAD

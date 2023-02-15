@@ -1,0 +1,12 @@
+Name: 'Block Market'
+Pages: 4
+Permission_Required: false
+Transaction_Allowed:
+  SELL: true
+  BUY: true
+Citizens:
+  Attached_NPC: ''
+Description:
+  - '<#d4d9d8>Building blocks and resources.'
+Icon:
+  Material: JUNGLE_LOG

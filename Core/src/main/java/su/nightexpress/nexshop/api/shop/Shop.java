@@ -22,11 +22,11 @@ public abstract class Shop<
     S extends Shop<S, P>,
     P extends Product<P, S, ?>> extends AbstractConfigHolder<ExcellentShop> implements IEditable, IPlaceholder {
 
-    protected final Set<Discount>           discounts;
+    protected final Set<Discount> discounts;
     protected final Map<TradeType, Boolean> transactions;
-    protected final Map<String, P>          products;
+    protected final Map<String, P> products;
 
-    protected String      name;
+    protected String name;
     protected ShopBank<S> bank;
 
     public Shop(@NotNull ExcellentShop plugin, @NotNull JYML cfg) {
@@ -61,7 +61,7 @@ public abstract class Shop<
         if (!this.canAccess(player, true)) {
             return;
         }
-        this.getView().open(player, 1);
+        this.getView().open(player, page);
     }
 
     @Override

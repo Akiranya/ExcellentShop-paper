@@ -12,12 +12,12 @@ import java.util.*;
 
 public class VirtualConfig {
 
-    public static final JOption<String>      DEFAULT_CURRENCY       = JOption.create("General.Default_Currency", CurrencyId.VAULT,
+    public static final JOption<String> DEFAULT_CURRENCY = JOption.create("General.Default_Currency", CurrencyId.VAULT,
         "Sets default currency for the Virtual Shop module.",
         "This currency will be used when you create new products or in case, where other currencies are not available.",
         "Compatible plugins: https://github.com/nulli0n/ExcellentShop-spigot/wiki/Shop-Currency"
     );
-    public static final JOption<Boolean>     MAIN_MENU_ENABLED      = JOption.create("General.Main_Menu_Enabled", true,
+    public static final JOption<Boolean> MAIN_MENU_ENABLED = JOption.create("General.Main_Menu_Enabled", true,
         "When 'true', enables the Main Menu, where you can list all of your Virtual Shops."
     );
     public static final JOption<Boolean> SELL_MENU_ENABLED = JOption.create("General.Sell_Menu.Enabled", true,
@@ -31,22 +31,21 @@ public class VirtualConfig {
         "A list of Game Modes, in which Virtual Shop can not be used.",
         "https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/GameMode.html"
     );
-    public static final JOption<Set<String>> GEN_DISABLED_WORLDS    = JOption.create("General.Disabled_In_Worlds",
+    public static final JOption<Set<String>> GEN_DISABLED_WORLDS = JOption.create("General.Disabled_In_Worlds",
         Sets.newHashSet("world_name", "example_world123"),
         "A list of worlds, where Virtual Shop will be disabled"
     );
 
-    public static final JOption<String>       SHOP_FORMAT_NAME = JOption.create("GUI.Shop_Format.Name", Placeholders.SHOP_NAME,
+    public static final JOption<String> SHOP_FORMAT_NAME = JOption.create("GUI.Shop_Format.Name", Placeholders.SHOP_NAME,
         "Sets display name for the shop item in the Main Menu.",
         "You can use 'Shop' placeholders here:" + Placeholders.URL_WIKI_PLACEHOLDERS
     );
     public static final JOption<List<String>> SHOP_FORMAT_LORE = JOption.create("GUI.Shop_Format.Lore",
         Arrays.asList(
-            "<gray>Need Permission: <white>" + Placeholders.SHOP_VIRTUAL_PERMISSION_REQUIRED,
-            "",
             Placeholders.SHOP_VIRTUAL_DESCRIPTION,
             "",
-            "<green>Left-Click to <white>Open"),
+            "<#ff9a9a>[!] <#d4d9d8>Need Permission:</#d4d9d8> " + Placeholders.SHOP_VIRTUAL_PERMISSION_REQUIRED
+        ),
         "Sets lore for the shop item in the Main Menu.",
         "You can use 'Shop' placeholders here: " + Placeholders.URL_WIKI_PLACEHOLDERS
     );

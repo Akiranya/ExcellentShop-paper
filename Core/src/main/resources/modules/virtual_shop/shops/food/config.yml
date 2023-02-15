@@ -1,10 +1,12 @@
-Name: '<yellow><b>Weapons'
-Pages: 2
+Name: 'Food'
+Pages: 1
 Permission_Required: false
 Transaction_Allowed:
   SELL: true
   BUY: true
 Citizens:
   Attached_NPC: ''
+Description:
+  - '<#d4d9d8>All regular food.'
 Icon:
-  Material: GOLDEN_SWORD
+  Material: SWEET_BERRIES

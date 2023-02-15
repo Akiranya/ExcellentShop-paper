@@ -1,0 +1,12 @@
+Name: 'Garden'
+Description:
+  - '<#d4d9d8>Everything your garden need.'
+Pages: 2
+Permission_Required: false
+Citizens:
+  Attached_NPC: ''
+Transaction_Allowed:
+  BUY: true
+  SELL: true
+Icon:
+  Material: WHEAT

@@ -61,8 +61,8 @@ public class ShopCartMenu extends AbstractMenu<ExcellentShop> {
                     case CONFIRMATION_ACCEPT, CONFIRMATION_DECLINE -> {
                         if (type2 == MenuItemType.CONFIRMATION_ACCEPT) prepared.trade(player, false);
                         int page = 1;
-                        if (product instanceof VirtualProduct) {
-                            page = ((VirtualProduct) product).getPage();
+                        if (product instanceof VirtualProduct virtualProduct) {
+                            page = virtualProduct.getPage();
                         }
                         shop.open(player, page);
                     }
@@ -99,7 +99,7 @@ public class ShopCartMenu extends AbstractMenu<ExcellentShop> {
                                 capacitySpace = PlayerUtil.countItemSpace(player, item);
                             } else {
                                 // Allow to sell no more than chest shop can carry.
-                                if (shop instanceof ChestShop shopChest) {
+                                if (shop instanceof ChestShop) {
                                     int chestSpace = product.getStock().getLeftAmount(TradeType.SELL);
                                     if (chestSpace >= 0) capacitySpace = chestSpace;
                                     // shopBalance = shopChest.getBank().getBalance(product.getCurrency());

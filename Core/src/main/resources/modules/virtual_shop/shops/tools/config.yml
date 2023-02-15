@@ -1,10 +1,12 @@
-Name: '<aqua><b>Tools'
+Name: 'Tool Store'
 Pages: 1
 Permission_Required: false
+Description:
+  - '<#d4d9d8>All type tools.'
 Transaction_Allowed:
   SELL: true
   BUY: true
 Citizens:
   Attached_NPC: ''
 Icon:
-  Material: DIAMOND_SHOVEL
+  Material: DIAMOND_PICKAXE

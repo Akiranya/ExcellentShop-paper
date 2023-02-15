@@ -1,0 +1,13 @@
+Name: 'Fishing'
+Description:
+  - '<#d4d9d8>Everything you can obtain'
+  - '<#d4d9d8>when fishing.'
+Pages: 1
+Permission_Required: false
+Citizens:
+  Attached_NPC: ''
+Transaction_Allowed:
+  BUY: true
+  SELL: true
+Icon:
+  Material: TROPICAL_FISH

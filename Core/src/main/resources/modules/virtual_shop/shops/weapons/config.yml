@@ -1,10 +1,12 @@
-Name: '<dark_green><b>Blocks'
-Pages: 1
+Name: 'Armory'
+Pages: 2
 Permission_Required: false
 Transaction_Allowed:
   SELL: true
   BUY: true
 Citizens:
   Attached_NPC: ''
+Description:
+  - '<#d4d9d8>All type armors and weapons.'
 Icon:
-  Material: SPRUCE_LOG
+  Material: GOLDEN_SWORD

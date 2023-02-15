@@ -10,7 +10,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.data.StorageType;
-import su.nexmedia.engine.utils.*;
+import su.nexmedia.engine.hooks.Hooks;
+import su.nexmedia.engine.hooks.npc.CitizensHook;
+import su.nexmedia.engine.utils.ComponentUtil;
+import su.nexmedia.engine.utils.ItemUtil;
+import su.nexmedia.engine.utils.NumberUtil;
+import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.Perms;
 import su.nightexpress.nexshop.api.currency.ICurrency;
@@ -28,6 +33,7 @@ import su.nightexpress.nexshop.shop.auction.listing.AuctionCompletedListing;
 import su.nightexpress.nexshop.shop.auction.listing.AuctionListing;
 import su.nightexpress.nexshop.shop.auction.menu.*;
 import su.nightexpress.nexshop.shop.auction.task.AuctionMenuUpdateTask;
+import su.nightexpress.nexshop.shop.auction.trait.AuctionTrait;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -90,6 +96,10 @@ public class AuctionManager extends ShopModule {
         // AuctionUtils.fillDummy(this);
         this.menuUpdateTask = new AuctionMenuUpdateTask(this);
         this.menuUpdateTask.start();
+
+        if (Hooks.hasCitizens()) {
+            CitizensHook.registerTrait(plugin, AuctionTrait.class);
+        }
     }
 
     @Override
@@ -273,6 +283,10 @@ public class AuctionManager extends ShopModule {
     }
 
     public boolean add(@NotNull Player player, @NotNull ItemStack item, @NotNull ICurrency currency, double price) {
+        if (AuctionConfig.LISTINGS_PRICE_ROUND_TO_INT.get()) {
+            price = NumberUtil.round(price);
+        }
+
         if (!player.hasPermission(Perms.AUCTION_BYPASS_LISTING_PRICE)) {
             double curPriceMin = AuctionConfig.getCurrencyPriceMin(currency);
             double curPriceMax = AuctionConfig.getCurrencyPriceMax(currency);

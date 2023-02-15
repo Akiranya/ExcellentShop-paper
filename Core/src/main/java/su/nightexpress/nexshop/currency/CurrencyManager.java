@@ -23,7 +23,7 @@ import java.util.*;
 public class CurrencyManager extends AbstractManager<ExcellentShop> {
 
     public static final String DIR_DEFAULT = "/currency/default/";
-    public static final String DIR_CUSTOM  = "/currency/custom_item/";
+    public static final String DIR_CUSTOM = "/currency/custom_item/";
 
     private Map<String, ICurrency> currencyMap;
 

@@ -1,4 +1,4 @@
-Name: '<red><b>Food'
+Name: 'Brewing'
 Pages: 1
 Permission_Required: false
 Transaction_Allowed:
@@ -6,5 +6,8 @@ Transaction_Allowed:
   BUY: true
 Citizens:
   Attached_NPC: ''
+Description:
+  - '<#d4d9d8>Potions and Ingredients.'
 Icon:
-  Material: APPLE
+  Material: POTION
+  Color: '0,0,200'

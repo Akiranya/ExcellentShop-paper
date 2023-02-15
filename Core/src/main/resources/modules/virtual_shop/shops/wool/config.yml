@@ -1,4 +1,4 @@
-Name: '<green><b>Wool'
+Name: '<green><b>Wool Market'
 Pages: 1
 Permission_Required: false
 Transaction_Allowed:
@@ -6,5 +6,7 @@ Transaction_Allowed:
   BUY: true
 Citizens:
   Attached_NPC: ''
+Description:
+- '<#d4d9d8>Wool with colors.'
 Icon:
   Material: LIME_WOOL
