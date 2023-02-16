@@ -1,12 +1,12 @@
 package su.nightexpress.nexshop.api.shop;
 
+import cc.mewcraft.mewcore.item.api.PluginItem;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JOption;
-import su.nexmedia.engine.api.item.PluginItem;
 import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.api.manager.ICleanable;
 import su.nexmedia.engine.api.manager.IEditable;

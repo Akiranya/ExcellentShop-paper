@@ -1,13 +1,13 @@
 package su.nightexpress.nexshop.shop.virtual.editor.menu;
 
+import cc.mewcraft.mewcore.item.api.PluginItem;
+import cc.mewcraft.mewcore.item.api.PluginItemRegistry;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.NexEngine;
-import su.nexmedia.engine.api.item.PluginItem;
 import su.nexmedia.engine.api.menu.MenuClick;
 import su.nexmedia.engine.api.menu.MenuItem;
 import su.nexmedia.engine.api.menu.MenuItemImpl;
@@ -165,7 +165,7 @@ public class EditorShopProductList extends EditorProductList<VirtualShop> {
                 shopProduct = new VirtualProduct(VirtualShopModule.defaultCurrency, cursor);
                 shopProduct.setItem(cursor);
                 // Start - Integrations with custom items from external plugins
-                PluginItem<?> pluginItem = NexEngine.get().getPluginItemRegistry().fromItemStackNullable(cursor);
+                PluginItem<?> pluginItem = PluginItemRegistry.get().fromItemStackNullable(cursor);
                 shopProduct.setPluginItem(pluginItem);
                 shopProduct.setPreviewPluginItem(pluginItem);
                 // End

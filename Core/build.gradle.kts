@@ -50,7 +50,7 @@ bukkit {
     description = "Advanced 3 in 1 shop plugin with many features!"
     apiVersion = "1.17"
     authors = listOf("NightExpress")
-    depend = listOf("NexEngine")
+    depend = listOf("NexEngine", "MewCore")
     softDepend = listOf(
         "Vault",
         "Citizens",

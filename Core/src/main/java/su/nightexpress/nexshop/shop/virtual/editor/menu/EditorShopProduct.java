@@ -1,5 +1,6 @@
 package su.nightexpress.nexshop.shop.virtual.editor.menu;
 
+import cc.mewcraft.mewcore.item.api.PluginItemRegistry;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -8,7 +9,6 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.api.editor.EditorButtonType;
 import su.nexmedia.engine.api.editor.EditorInput;
 import su.nexmedia.engine.api.menu.MenuClick;
@@ -16,6 +16,7 @@ import su.nexmedia.engine.api.menu.MenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.editor.AbstractEditorMenu;
 import su.nexmedia.engine.editor.EditorManager;
+import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nexmedia.engine.utils.StringUtil;
@@ -47,7 +48,7 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
             switch (type) {
                 case PRODUCT_CHANGE_COMMANDS -> product2.getCommands().add(msg);
                 case PRODUCT_CHANGE_CURRENCY -> {
-                    String id = StringUtil.asPlainText(msg);
+                    String id = Colorizer.strip(msg);
                     ICurrency currency = plugin.getCurrencyManager().getCurrency(id);
                     if (currency == null) {
                         EditorManager.error(player, plugin.getMessage(Lang.EDITOR_GENERIC_ERROR_CURRENCY).getLocalized());
@@ -56,35 +57,35 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
                     product2.setCurrency(currency);
                 }
                 case PRODUCT_CHANGE_STOCK_GLOBAL_BUY_INITIAL_AMOUNT -> {
-                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), -1, true);
+                    int value = StringUtil.getInteger(Colorizer.strip(msg), -1, true);
                     product2.getStock().setInitialAmount(StockType.GLOBAL, TradeType.BUY, value);
                 }
                 case PRODUCT_CHANGE_STOCK_GLOBAL_BUY_RESTOCK_TIME -> {
-                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), -1, true);
+                    int value = StringUtil.getInteger(Colorizer.strip(msg), -1, true);
                     product2.getStock().setRestockCooldown(StockType.GLOBAL, TradeType.BUY, value);
                 }
                 case PRODUCT_CHANGE_STOCK_GLOBAL_SELL_INITIAL_AMOUNT -> {
-                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), -1, true);
+                    int value = StringUtil.getInteger(Colorizer.strip(msg), -1, true);
                     product2.getStock().setInitialAmount(StockType.GLOBAL, TradeType.SELL, value);
                 }
                 case PRODUCT_CHANGE_STOCK_GLOBAL_SELL_RESTOCK_TIME -> {
-                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), -1, true);
+                    int value = StringUtil.getInteger(Colorizer.strip(msg), -1, true);
                     product2.getStock().setRestockCooldown(StockType.GLOBAL, TradeType.SELL, value);
                 }
                 case PRODUCT_CHANGE_STOCK_PLAYER_BUY_INITIAL_AMOUNT -> {
-                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), -1, true);
+                    int value = StringUtil.getInteger(Colorizer.strip(msg), -1, true);
                     product2.getStock().setInitialAmount(StockType.PLAYER, TradeType.BUY, value);
                 }
                 case PRODUCT_CHANGE_STOCK_PLAYER_BUY_RESTOCK_TIME -> {
-                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), -1, true);
+                    int value = StringUtil.getInteger(Colorizer.strip(msg), -1, true);
                     product2.getStock().setRestockCooldown(StockType.PLAYER, TradeType.BUY, value);
                 }
                 case PRODUCT_CHANGE_STOCK_PLAYER_SELL_INITIAL_AMOUNT -> {
-                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), -1, true);
+                    int value = StringUtil.getInteger(Colorizer.strip(msg), -1, true);
                     product2.getStock().setInitialAmount(StockType.PLAYER, TradeType.SELL, value);
                 }
                 case PRODUCT_CHANGE_STOCK_PLAYER_SELL_RESTOCK_TIME -> {
-                    int value = StringUtil.getInteger(StringUtil.asPlainText(msg), -1, true);
+                    int value = StringUtil.getInteger(Colorizer.strip(msg), -1, true);
                     product2.getStock().setRestockCooldown(StockType.PLAYER, TradeType.SELL, value);
                 }
                 default -> {}
@@ -133,7 +134,7 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
                         ItemStack cursor = e.getCursor();
                         if (cursor != null && !cursor.getType().isAir()) {
                             // Start - integrations with custom items from external plugins
-                            product.setPluginItem(NexEngine.get().getPluginItemRegistry().fromItemStackNullable(cursor));
+                            product.setPluginItem(PluginItemRegistry.get().fromItemStackNullable(cursor));
                             // End
                             product.setItem(cursor);
                             e.getView().setCursor(null);
@@ -152,7 +153,7 @@ public class EditorShopProduct extends AbstractEditorMenu<ExcellentShop, Virtual
                         ItemStack cursor = e.getCursor();
                         if (cursor != null && !cursor.getType().isAir()) {
                             // Start - integrations with custom items from external plugins
-                            product.setPreviewPluginItem(NexEngine.get().getPluginItemRegistry().fromItemStackNullable(cursor));
+                            product.setPreviewPluginItem(PluginItemRegistry.get().fromItemStackNullable(cursor));
                             // End
                             product.setPreview(cursor);
                             e.getView().setCursor(null);

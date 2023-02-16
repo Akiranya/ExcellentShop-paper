@@ -1,11 +1,10 @@
 package su.nightexpress.nexshop.shop.virtual.impl;
 
+import cc.mewcraft.mewcore.item.api.PluginItem;
+import cc.mewcraft.mewcore.item.api.PluginItemRegistry;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.item.PluginItem;
-import su.nexmedia.engine.api.item.PluginItemRegistry;
 import su.nightexpress.nexshop.ShopAPI;
 import su.nightexpress.nexshop.api.IScheduled;
 import su.nightexpress.nexshop.api.currency.ICurrency;
@@ -87,16 +86,13 @@ public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, V
         }
 
         // Start - Integrations with custom items from external plugins
-        PluginItem<?> pluginItemPreview = null;
-        PluginItem<?> pluginItemReal = null;
+        PluginItem<?> pluginItemPreview;
+        PluginItem<?> pluginItemReal;
         // End
 
         ItemStack preview = cfg.getItemEncoded(path + ".Shop_View.Preview");
         // Start - Integrations with custom items from external plugins
-        PluginItemRegistry itemRegistry = NexEngine.get().getPluginItemRegistry();
-        String reference1 = cfg.getString(path + ".Shop_View.PluginItem");
-        if (itemRegistry.isPluginItemId(reference1)) {
-            pluginItemPreview = itemRegistry.fromReference(reference1);
+        if ((pluginItemPreview = PluginItemRegistry.get().fromReferenceNullable(cfg.getString(path + ".Shop_View.PluginItem"))) != null) {
             ItemStack pluginItemStack = pluginItemPreview.createItemStack();
             if (pluginItemStack != null) preview = pluginItemStack;
         }
@@ -118,9 +114,7 @@ public final class VirtualProduct extends Product<VirtualProduct, VirtualShop, V
 
         ItemStack real = cfg.getItemEncoded(path + ".Reward.Item");
         // Start - integrations with custom items from external plugins
-        String reference2 = cfg.getString(path + ".Reward.PluginItem");
-        if (itemRegistry.isPluginItemId(reference2)) {
-            pluginItemReal = itemRegistry.fromReference(reference2);
+        if ((pluginItemReal = PluginItemRegistry.get().fromReferenceNullable(cfg.getString(path + ".Reward.PluginItem"))) != null) {
             ItemStack pluginItemStack = pluginItemReal.createItemStack();
             if (pluginItemStack != null) real = pluginItemStack;
         }

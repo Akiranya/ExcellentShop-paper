@@ -50,6 +50,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly(("cc.mewcraft:MewCore:5.13.1"))
     compileOnly("su.nexmedia:NexEngine:2.2.9")
     implementation("org.jetbrains:annotations:23.1.0")
 }
