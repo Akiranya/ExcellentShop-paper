@@ -1,0 +1,29 @@
+name: ExcellentShop
+main: su.nightexpress.nexshop.ExcellentShop
+version: ${version}
+api-version: 1.19
+authors: [ NightExpress, Nailm ]
+description: ${description}
+load-before: [ ]
+load-after:
+  - name: NexEngine
+    bootstrap: false
+dependencies:
+  - name: NexEngine
+    required: true
+    bootstrap: false
+  - name: MewCore
+    required: true
+    bootstrap: false
+  - name: Vault
+    required: false
+    bootstrap: false
+  - name: GemsEconomy
+    required: false
+    bootstrap: false
+  - name: Citizens
+    required: false
+    bootstrap: false
+  - name: WorldGuard
+    required: false
+    bootstrap: false

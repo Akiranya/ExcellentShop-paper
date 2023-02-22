@@ -67,6 +67,9 @@ tasks {
     build {
         dependsOn(shadowJar)
     }
+    jar {
+        archiveClassifier.set("noshade")
+    }
     shadowJar {
         minimize {
             exclude(dependency("su.nightexpress.excellentshop:.*:.*"))
@@ -75,8 +78,13 @@ tasks {
         archiveClassifier.set("")
         destinationDirectory.set(file("$rootDir"))
     }
-    jar {
-        archiveClassifier.set("noshade")
+    processResources {
+        filesMatching("**/paper-plugin.yml") {
+            expand(mapOf(
+                "version" to "${project.version}",
+                "description" to project.description
+            ))
+        }
     }
     register("deployJar") {
         doLast {
