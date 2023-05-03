@@ -5,7 +5,7 @@
 plugins {
     id("su.nightexpress.excellentshop.java-conventions")
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.2"
+    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
     id("net.kyori.indra.git") version "2.1.1"
 }
 
@@ -20,7 +20,7 @@ dependencies {
     compileOnly("com.github.justisr:BrokerAPI:master-SNAPSHOT")
 
     // The server API
-    compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
 
     // 3rd party plugins
     compileOnly("su.nightexpress.gamepoints:GamePoints:1.3.4")
