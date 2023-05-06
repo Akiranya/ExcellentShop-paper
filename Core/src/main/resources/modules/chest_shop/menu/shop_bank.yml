@@ -1,0 +1,46 @@
+Title: 'Shop Bank'
+Size: 27
+Inventory_Type: CHEST
+
+Currency:
+  Slots: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17
+  Name: '<#fffc9a><b>Currency: &f%currency_name% &7(ID: &f%currency_id%&7)'
+  Lore:
+    - '<#ddecee>'
+    - '<#fffc9a><b>Details:'
+    - '<#fffc9a>▪ <#ddecee>Bank Balance:</#ddecee> %bank_balance%'
+    - '<#fffc9a>▪ <#ddecee>Your Balance:</#ddecee> %player_balance%'
+    - ''
+    - '<#9af7ff><b>Actions:'
+    - '<#9af7ff>▪ <#ddecee>Left-Click:</#ddecee> Deposit'
+    - '<#9af7ff>▪ <#ddecee>Right-Click:</#ddecee> Withdraw'
+    - '<#ff9a9a>▪ <#ddecee>[Q/Drop] Key:</#ddecee> Deposit All'
+    - '<#ff9a9a>▪ <#ddecee>[F/Swap] Key:</#ddecee> Withdraw All'
+
+Content:
+  return:
+    Priority: 5
+    Slots: 22
+    Type: RETURN
+    Item:
+      Material: PLAYER_HEAD
+      Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmU5YWU3YTRiZTY1ZmNiYWVlNjUxODEzODlhMmY3ZDQ3ZTJlMzI2ZGI1OWVhM2ViNzg5YTkyYzg1ZWE0NiJ9fX0=
+      Name: '<#e3fbf9>(↓) <b>Return'
+
+  page_next:
+    Priority: 5
+    Slots: 23
+    Type: PAGE_NEXT
+    Item:
+      Material: PLAYER_HEAD
+      Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjgyYWQxYjljYjRkZDIxMjU5YzBkNzVhYTMxNWZmMzg5YzNjZWY3NTJiZTM5NDkzMzgxNjRiYWM4NGE5NmUifX19
+      Name: '<#e3fbf9>(→) <b>Next Page'
+
+  page_previous:
+    Priority: 5
+    Slots: 21
+    Type: PAGE_PREVIOUS
+    Item:
+      Material: PLAYER_HEAD
+      Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0=
+      Name: '<#e3fbf9>(←) <b>Previous Page'

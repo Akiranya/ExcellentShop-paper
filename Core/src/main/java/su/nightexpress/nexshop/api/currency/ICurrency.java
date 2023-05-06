@@ -3,42 +3,29 @@ package su.nightexpress.nexshop.api.currency;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.manager.IPlaceholder;
+import su.nexmedia.engine.api.placeholder.Placeholder;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nightexpress.nexshop.Placeholders;
 
-import java.util.function.UnaryOperator;
-
-public interface ICurrency extends IPlaceholder {
-
-    @NotNull
-    default UnaryOperator<String> replacePlaceholders() {
-        return str -> str
-            .replace(Placeholders.CURRENCY_NAME, this.getConfig().getName())
-            .replace(Placeholders.CURRENCY_ID, this.getConfig().getId());
-    }
+public interface ICurrency extends Placeholder {
 
     @NotNull ICurrencyConfig getConfig();
 
-    @NotNull
-    default String getId() {
+    default @NotNull String getId() {
         return this.getConfig().getId();
     }
 
-    @NotNull
-    default String getFormat() {
+    default @NotNull String getFormat() {
         return this.replacePlaceholders().apply(this.getConfig().getFormat());
     }
 
-    @NotNull
-    default String format(double price) {
+    default @NotNull String format(double price) {
         return this.getFormat().replace(Placeholders.GENERIC_PRICE, this.getConfig().getNumberFormat().format(price));
     }
 
-    @NotNull
-    default ItemStack getIcon() {
+    default @NotNull ItemStack getIcon() {
         ItemStack icon = this.getConfig().getIcon();
-        icon.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, this.replacePlaceholders()));
+        ItemUtil.replaceNameAndLore(icon, this.replacePlaceholders());
         return icon;
     }
 

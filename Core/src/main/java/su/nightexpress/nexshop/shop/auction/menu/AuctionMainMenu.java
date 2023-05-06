@@ -7,6 +7,7 @@ import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.menu.MenuClick;
 import su.nexmedia.engine.api.menu.MenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
+import su.nexmedia.engine.api.placeholder.PlaceholderMap;
 import su.nexmedia.engine.utils.*;
 import su.nightexpress.nexshop.Perms;
 import su.nightexpress.nexshop.api.currency.ICurrency;
@@ -15,7 +16,6 @@ import su.nightexpress.nexshop.config.Lang;
 import su.nightexpress.nexshop.shop.auction.AuctionCategory;
 import su.nightexpress.nexshop.shop.auction.AuctionManager;
 import su.nightexpress.nexshop.shop.auction.config.AuctionConfig;
-import su.nightexpress.nexshop.shop.auction.listing.AbstractAuctionItem;
 import su.nightexpress.nexshop.shop.auction.listing.AuctionListing;
 
 import java.util.*;
@@ -47,7 +47,7 @@ public class AuctionMainMenu extends AbstractAuctionMenu<AuctionListing> {
                     case UNCLAIMED_ITEMS -> this.auctionManager.getUnclaimedMenu().open(player, 1);
                     case OWN_LISTINGS -> this.auctionManager.getSellingMenu().open(player, 1);
                     case LISTING_ORDER -> {
-                        setListingOrder(player, CollectionsUtil.switchEnum(getListingOrder(player)));
+                        setListingOrder(player, CollectionsUtil.next(getListingOrder(player)));
                         this.open(player, this.getPage(player));
                     }
                     case CATEGORY_FILTER -> {
@@ -86,8 +86,7 @@ public class AuctionMainMenu extends AbstractAuctionMenu<AuctionListing> {
         }
     }
 
-    @NotNull
-    public static AuctionSortType getListingOrder(@NotNull Player player) {
+    public static @NotNull AuctionSortType getListingOrder(@NotNull Player player) {
         return LISTING_ORDER.computeIfAbsent(player, type -> AuctionSortType.NEWEST);
     }
 
@@ -95,38 +94,38 @@ public class AuctionMainMenu extends AbstractAuctionMenu<AuctionListing> {
         LISTING_ORDER.put(player, sortType);
     }
 
-    @NotNull
-    public static Set<ICurrency> getCurrencies(@NotNull Player player) {
+    public static @NotNull Set<ICurrency> getCurrencies(@NotNull Player player) {
         return CURRENCIES.computeIfAbsent(player, k -> new HashSet<>());
     }
 
-    @NotNull
-    public static Set<AuctionCategory> getCategories(@NotNull Player player) {
+    public static @NotNull Set<AuctionCategory> getCategories(@NotNull Player player) {
         return CATEGORIES.computeIfAbsent(player, k -> new HashSet<>());
     }
 
     @Override
-    @NotNull
-    protected List<AuctionListing> getObjects(@NotNull Player player) {
-        Set<AuctionCategory> categories = getCategories(player);
-        Set<ICurrency> currencies = getCurrencies(player);
-
-        return this.auctionManager.getActiveListings().stream()
-            .filter(listing -> categories.isEmpty() || categories.stream().anyMatch(category -> category.isItemOfThis(listing.getItemStack())))
-            .filter(listing -> currencies.isEmpty() || currencies.contains(listing.getCurrency()))
-            .sorted(getListingOrder(player).getComparator())
-            .toList();
+    protected @NotNull List<AuctionListing> getObjects(@NotNull Player player) {
+        return this.auctionManager.getActiveListings();
     }
 
     @Override
-    @NotNull
-    protected MenuClick getObjectClick(@NotNull Player player, @NotNull AuctionListing item) {
+    protected @NotNull List<AuctionListing> fineObjects(@NotNull List<AuctionListing> objects, @NotNull Player player) {
+        Set<AuctionCategory> categories = getCategories(player);
+        Set<ICurrency> currencies = getCurrencies(player);
+
+        return objects.stream()
+            .filter(listing -> categories.isEmpty() || categories.stream().anyMatch(category -> category.isItemOfThis(listing.getItemStack())))
+            .filter(listing -> currencies.isEmpty() || currencies.contains(listing.getCurrency()))
+            .sorted(getListingOrder(player).getComparator()).toList();
+    }
+
+    @Override
+    protected @NotNull MenuClick getObjectClick(@NotNull Player player, @NotNull AuctionListing item) {
         return (player1, type, e) -> {
             boolean isOwner = item.isOwner(player1);
             boolean isBedrock = PlayerUtil.isBedrockPlayer(player1);
 
             if ((e.isShiftClick() && e.isRightClick()) || (isOwner && isBedrock)) {
-                if (isOwner|| player1.hasPermission(Perms.AUCTION_LISTING_REMOVE_OTHERS)) {
+                if (isOwner || player1.hasPermission(Perms.AUCTION_LISTING_REMOVE_OTHERS)) {
                     this.auctionManager.takeListing(player1, item);
                     this.open(player1, this.getPage(player1));
                 }
@@ -134,7 +133,7 @@ public class AuctionMainMenu extends AbstractAuctionMenu<AuctionListing> {
             }
             if (isOwner) return;
 
-            if (!Config.GENERAL_BUY_WITH_FULL_INVENTORY && player1.getInventory().firstEmpty() < 0) {
+            if (!Config.GENERAL_BUY_WITH_FULL_INVENTORY.get() && player1.getInventory().firstEmpty() < 0) {
                 plugin.getMessage(Lang.SHOP_PRODUCT_ERROR_FULL_INVENTORY).send(player1);
                 return;
             }
@@ -146,18 +145,16 @@ public class AuctionMainMenu extends AbstractAuctionMenu<AuctionListing> {
     public void onItemPrepare(@NotNull Player player, @NotNull MenuItem menuItem, @NotNull ItemStack item) {
         super.onItemPrepare(player, menuItem, item);
 
-        String category = getCategories(player).stream().map(AuctionCategory::getName).collect(Collectors.joining(", "));
-        String currency = getCurrencies(player).stream().map(c -> c.getConfig().getName()).collect(Collectors.joining(", "));
+        PlaceholderMap placeholderMap = new PlaceholderMap()
+            .add("%tax%", () -> NumberUtil.format(AuctionConfig.LISTINGS_TAX_ON_LISTING_ADD))
+            .add("%expire%", () -> TimeUtil.formatTime(AuctionConfig.LISTINGS_EXPIRE_IN))
+            .add(PLACEHOLDER_LISTING_ORDER, () -> plugin.getLangManager().getEnum(getListingOrder(player)))
+            .add(PLACEHOLDER_CATEGORIES, () -> getCategories(player).stream().map(AuctionCategory::getName).collect(Collectors.joining(", ")))
+            .add(PLACEHOLDER_CURRENCIES, () -> getCurrencies(player).stream().map(c -> c.getConfig().getName()).collect(Collectors.joining(", ")))
+            .add(PLACEHOLDER_EXPIRED_AMOUNT, () -> String.valueOf(auctionManager.getExpiredListings(player).size()))
+            .add(PLACEHOLDER_UNCLAIMED_AMOUNT, () -> String.valueOf(auctionManager.getUnclaimedListings(player).size()));
 
-        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, line -> line
-            .replace("%tax%", NumberUtil.format(AuctionConfig.LISTINGS_TAX_ON_LISTING_ADD))
-            .replace("%expire%", TimeUtil.formatTime(AuctionConfig.LISTINGS_EXPIRE_IN))
-            .replace(PLACEHOLDER_LISTING_ORDER, plugin.getLangManager().getEnum(getListingOrder(player)))
-            .replace(PLACEHOLDER_CATEGORIES, category)
-            .replace(PLACEHOLDER_CURRENCIES, currency)
-            .replace(PLACEHOLDER_EXPIRED_AMOUNT, String.valueOf(auctionManager.getExpiredListings(player).size()))
-            .replace(PLACEHOLDER_UNCLAIMED_AMOUNT, String.valueOf(auctionManager.getUnclaimedListings(player).size()))
-        ));
+        ItemUtil.replaceNameAndLore(item, placeholderMap.replacer());
     }
 
     private enum AuctionItemType {
@@ -182,11 +179,21 @@ public class AuctionMainMenu extends AbstractAuctionMenu<AuctionListing> {
             String type2 = l2.getItemStack().getType().name();
             return type1.compareTo(type2);
         }),
-        SELLER(Comparator.comparing(AbstractAuctionItem::getOwnerName)),
-        NEWEST((l1, l2) -> Long.compare(l2.getExpireDate(), l1.getExpireDate())),
-        OLDEST(Comparator.comparingLong(AuctionListing::getExpireDate)),
-        MOST_EXPENSIVE((l1, l2) -> Double.compare(l2.getPrice(), l1.getPrice())),
-        LEAST_EXPENSIVE(Comparator.comparingDouble(AbstractAuctionItem::getPrice)),
+        SELLER((l1, l2) -> {
+            return l1.getOwnerName().compareTo(l2.getOwnerName());
+        }),
+        NEWEST((l1, l2) -> {
+            return Long.compare(l2.getDateCreation(), l1.getDateCreation());
+        }),
+        OLDEST((l1, l2) -> {
+            return Long.compare(l1.getExpireDate(), l2.getExpireDate());
+        }),
+        MOST_EXPENSIVE((l1, l2) -> {
+            return Double.compare(l2.getPrice(), l1.getPrice());
+        }),
+        LEAST_EXPENSIVE((l1, l2) -> {
+            return Double.compare(l1.getPrice(), l2.getPrice());
+        }),
         ;
 
         private final Comparator<AuctionListing> comparator;
@@ -195,8 +202,7 @@ public class AuctionMainMenu extends AbstractAuctionMenu<AuctionListing> {
             this.comparator = comparator;
         }
 
-        @NotNull
-        public Comparator<AuctionListing> getComparator() {
+        public @NotNull Comparator<AuctionListing> getComparator() {
             return this.comparator;
         }
     }

@@ -15,26 +15,22 @@ public class AuctionUnclaimedCommand extends AbstractOpenCommand {
     }
 
     @Override
-    @NotNull
-    public String getDescription() {
+    public @NotNull String getDescription() {
         return plugin.getMessage(AuctionLang.COMMAND_UNCLAIMED_DESC).getLocalized();
     }
 
     @Override
-    @NotNull
-    public String getUsage() {
+    public @NotNull String getUsage() {
         return plugin.getMessage(AuctionLang.COMMAND_UNCLAIMED_USAGE).getLocalized();
     }
 
     @Override
-    @NotNull
-    protected AuctionUnclaimedMenu getMenu() {
+    protected @NotNull AuctionUnclaimedMenu getMenu() {
         return this.module.getUnclaimedMenu();
     }
 
     @Override
-    @Nullable
-    protected Permission getPermissionsOthers() {
+    protected @Nullable Permission getPermissionsOthers() {
         return Perms.AUCTION_COMMAND_UNCLAIMED_OTHERS;
     }
 }

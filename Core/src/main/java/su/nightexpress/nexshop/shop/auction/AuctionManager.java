@@ -10,8 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.data.StorageType;
-import su.nexmedia.engine.hooks.Hooks;
-import su.nexmedia.engine.hooks.npc.CitizensHook;
 import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.NumberUtil;
@@ -33,7 +31,6 @@ import su.nightexpress.nexshop.shop.auction.listing.AuctionCompletedListing;
 import su.nightexpress.nexshop.shop.auction.listing.AuctionListing;
 import su.nightexpress.nexshop.shop.auction.menu.*;
 import su.nightexpress.nexshop.shop.auction.task.AuctionMenuUpdateTask;
-import su.nightexpress.nexshop.shop.auction.trait.AuctionTrait;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,7 +44,7 @@ public class AuctionManager extends ShopModule {
     private static final Map<UUID, Set<AuctionListing>> PLAYER_LISTINGS_MAP = new ConcurrentHashMap<>();
     private static final Map<UUID, Set<AuctionCompletedListing>> PLAYER_COMPLETED_LISTINGS_MAP = new ConcurrentHashMap<>();
 
-    private static final Comparator<AbstractAuctionItem> SORT_BY_CREATION = (l1, l2) -> Long.compare(l2.getDateCreation(), l1.getDateCreation());
+    public static final Comparator<AbstractAuctionItem> SORT_BY_CREATION = (l1, l2) -> Long.compare(l2.getDateCreation(), l1.getDateCreation());
 
     private AuctionDataHandler dataHandler;
 
@@ -78,6 +75,8 @@ public class AuctionManager extends ShopModule {
         }
 
         this.plugin.getLangManager().loadMissing(AuctionLang.class);
+        this.plugin.getLangManager().setupEnum(AuctionMainMenu.AuctionSortType.class);
+        this.plugin.getLang().saveChanges();
         this.plugin.getConfigManager().extractResources(this.getPath() + "/menu/");
 
         this.dataHandler = AuctionDataHandler.getInstance(this);
@@ -93,13 +92,9 @@ public class AuctionManager extends ShopModule {
 
         this.addListener(new AuctionListener(this));
 
-        // AuctionUtils.fillDummy(this);
+        //AuctionUtils.fillDummy(this);
         this.menuUpdateTask = new AuctionMenuUpdateTask(this);
         this.menuUpdateTask.start();
-
-        if (Hooks.hasCitizens()) {
-            CitizensHook.registerTrait(plugin, AuctionTrait.class);
-        }
     }
 
     @Override
@@ -154,8 +149,7 @@ public class AuctionManager extends ShopModule {
         this.clearListings();
     }
 
-    @NotNull
-    public AuctionDataHandler getDataHandler() {
+    public @NotNull AuctionDataHandler getDataHandler() {
         return dataHandler;
     }
 
@@ -169,26 +163,18 @@ public class AuctionManager extends ShopModule {
         }
     }
 
-    @NotNull
-    public ICurrency getCurrencyDefault() {
-        return AuctionConfig.CURRENCIES.values().stream()
-            .filter(AuctionCurrencySetting::isDefault)
-            .map(AuctionCurrencySetting::getCurrency)
-            .findFirst().orElseThrow();
+    public @NotNull ICurrency getCurrencyDefault() {
+        return AuctionConfig.CURRENCIES.values().stream().filter(AuctionCurrencySetting::isDefault)
+            .map(AuctionCurrencySetting::getCurrency).findFirst().orElseThrow();
     }
 
-    @NotNull
-    public Set<ICurrency> getCurrencies() {
+    public @NotNull Set<ICurrency> getCurrencies() {
         return AuctionConfig.CURRENCIES.values().stream()
-            .filter(AuctionCurrencySetting::isEnabled)
-            .map(AuctionCurrencySetting::getCurrency)
-            .collect(Collectors.toSet());
+            .map(AuctionCurrencySetting::getCurrency).collect(Collectors.toSet());
     }
 
-    @NotNull
-    public Set<ICurrency> getCurrencies(@NotNull Player player) {
+    public @NotNull Set<ICurrency> getCurrencies(@NotNull Player player) {
         return AuctionConfig.CURRENCIES.values().stream()
-            .filter(AuctionCurrencySetting::isEnabled)
             .filter(setting -> setting.hasPermission(player) || setting.isDefault())
             .map(AuctionCurrencySetting::getCurrency)
             .collect(Collectors.toSet());
@@ -215,11 +201,7 @@ public class AuctionManager extends ShopModule {
 
         List<Component> metaLore = meta.lore();
         if (metaLore == null) return true;
-        if (metaLore.stream().map(ComponentUtil::asPlainText).anyMatch(line -> AuctionConfig.LISTINGS_DISABLED_LORES.stream().anyMatch(line::contains))) {
-            return false;
-        }
-
-        return true;
+        return metaLore.stream().map(ComponentUtil::asPlainText).noneMatch(line -> AuctionConfig.LISTINGS_DISABLED_LORES.stream().anyMatch(line::contains));
     }
 
     public boolean canAdd(@NotNull Player player, @NotNull ItemStack item, double price) {
@@ -323,7 +305,7 @@ public class AuctionManager extends ShopModule {
 
         AuctionListing listing = new AuctionListing(player, item, currency, price);
         this.addListing(listing);
-        this.getDataHandler().addListing(listing, true);
+        this.plugin.runTaskAsync(task -> this.getDataHandler().addListing(listing));
         this.plugin.getMessage(AuctionLang.LISTING_ADD_SUCCESS_INFO)
             .replace(Placeholders.GENERIC_TAX, currency.format(taxPay))
             .replace(listing.replacePlaceholders())
@@ -362,8 +344,10 @@ public class AuctionManager extends ShopModule {
 
         this.removeListing(listing);
         this.addCompletedListing(completedListing);
-        this.getDataHandler().addCompletedListing(completedListing, true);
-        this.getDataHandler().deleteListing(listing, true);
+        this.plugin.runTaskAsync(task -> {
+            this.getDataHandler().addCompletedListing(completedListing);
+            this.getDataHandler().deleteListing(listing);
+        });
         this.plugin.getMessage(AuctionLang.LISTING_BUY_SUCCESS_INFO).replace(listing.replacePlaceholders()).send(buyer);
 
         // Notify the seller about the purchase.
@@ -387,7 +371,7 @@ public class AuctionManager extends ShopModule {
 
         PlayerUtil.addItem(player, listing.getItemStack());
         this.removeListing(listing);
-        this.getDataHandler().deleteListing(listing, true);
+        this.plugin.runTaskAsync(task -> this.getDataHandler().deleteListing(listing));
 
         this.getMainMenu().update();
     }
@@ -402,8 +386,7 @@ public class AuctionManager extends ShopModule {
         return true;
     }
 
-    @NotNull
-    public AuctionMainMenu getMainMenu() {
+    public @NotNull AuctionMainMenu getMainMenu() {
         if (this.mainMenu == null) {
             JYML cfg = JYML.loadOrExtract(plugin, this.getPath() + "menu/main.yml");
             this.mainMenu = new AuctionMainMenu(this, cfg);
@@ -411,8 +394,7 @@ public class AuctionManager extends ShopModule {
         return this.mainMenu;
     }
 
-    @NotNull
-    public AuctionPurchaseConfirmationMenu getPurchaseConfirmationMenu() {
+    public @NotNull AuctionPurchaseConfirmationMenu getPurchaseConfirmationMenu() {
         if (this.purchaseConfirmationMenu == null) {
             JYML cfg = JYML.loadOrExtract(plugin, this.getPath() + "menu/purchase_confirm.yml");
             this.purchaseConfirmationMenu = new AuctionPurchaseConfirmationMenu(this, cfg);
@@ -420,8 +402,7 @@ public class AuctionManager extends ShopModule {
         return purchaseConfirmationMenu;
     }
 
-    @NotNull
-    public AuctionExpiredMenu getExpiredMenu() {
+    public @NotNull AuctionExpiredMenu getExpiredMenu() {
         if (this.expiredMenu == null) {
             JYML cfg = JYML.loadOrExtract(plugin, this.getPath() + "menu/expired.yml");
             this.expiredMenu = new AuctionExpiredMenu(this, cfg);
@@ -429,8 +410,7 @@ public class AuctionManager extends ShopModule {
         return this.expiredMenu;
     }
 
-    @NotNull
-    public AuctionHistoryMenu getHistoryMenu() {
+    public @NotNull AuctionHistoryMenu getHistoryMenu() {
         if (this.historyMenu == null) {
             JYML cfg = JYML.loadOrExtract(plugin, this.getPath() + "menu/history.yml");
             this.historyMenu = new AuctionHistoryMenu(this, cfg);
@@ -438,8 +418,7 @@ public class AuctionManager extends ShopModule {
         return this.historyMenu;
     }
 
-    @NotNull
-    public AuctionSellingMenu getSellingMenu() {
+    public @NotNull AuctionSellingMenu getSellingMenu() {
         if (this.sellingMenu == null) {
             JYML cfg = JYML.loadOrExtract(plugin, this.getPath() + "menu/selling.yml");
             this.sellingMenu = new AuctionSellingMenu(this, cfg);
@@ -447,8 +426,7 @@ public class AuctionManager extends ShopModule {
         return this.sellingMenu;
     }
 
-    @NotNull
-    public AuctionUnclaimedMenu getUnclaimedMenu() {
+    public @NotNull AuctionUnclaimedMenu getUnclaimedMenu() {
         if (this.unclaimedMenu == null) {
             JYML cfg = JYML.loadOrExtract(plugin, this.getPath() + "menu/unclaimed.yml");
             this.unclaimedMenu = new AuctionUnclaimedMenu(this, cfg);
@@ -456,8 +434,7 @@ public class AuctionManager extends ShopModule {
         return this.unclaimedMenu;
     }
 
-    @NotNull
-    public AuctionCategoryFilterMenu getCategoryFilterMenu() {
+    public @NotNull AuctionCategoryFilterMenu getCategoryFilterMenu() {
         if (this.categoryFilterMenu == null) {
             JYML cfg = JYML.loadOrExtract(plugin, this.getPath() + "menu/category_filter.yml");
             this.categoryFilterMenu = new AuctionCategoryFilterMenu(this, cfg);
@@ -465,8 +442,7 @@ public class AuctionManager extends ShopModule {
         return categoryFilterMenu;
     }
 
-    @NotNull
-    public AuctionCurrencyFilterMenu getCurrencyFilterMenu() {
+    public @NotNull AuctionCurrencyFilterMenu getCurrencyFilterMenu() {
         if (this.currencyFilterMenu == null) {
             JYML cfg = JYML.loadOrExtract(plugin, this.getPath() + "menu/currency_filter.yml");
             this.currencyFilterMenu = new AuctionCurrencyFilterMenu(this, cfg);
@@ -474,8 +450,7 @@ public class AuctionManager extends ShopModule {
         return currencyFilterMenu;
     }
 
-    @NotNull
-    public AuctionCurrencySelectorMenu getCurrencySelectorMenu() {
+    public @NotNull AuctionCurrencySelectorMenu getCurrencySelectorMenu() {
         if (this.currencySelectorMenu == null) {
             JYML cfg = JYML.loadOrExtract(plugin, this.getPath() + "menu/currency_selector.yml");
             this.currencySelectorMenu = new AuctionCurrencySelectorMenu(this, cfg);
@@ -518,98 +493,79 @@ public class AuctionManager extends ShopModule {
         return this.getListing(uuid) != null;
     }
 
-    @Nullable
-    public AuctionListing getListing(@NotNull UUID uuid) {
+    public @Nullable AuctionListing getListing(@NotNull UUID uuid) {
         return LISTINGS_MAP.getOrDefault(uuid, null);
     }
 
-    @NotNull
-    public List<AuctionListing> getListings() {
+    public @NotNull List<AuctionListing> getListings() {
         return LISTINGS_MAP.values().stream().sorted(SORT_BY_CREATION).toList();
     }
 
-    @NotNull
-    public List<AuctionListing> getListings(@NotNull Player player) {
+    public @NotNull List<AuctionListing> getListings(@NotNull Player player) {
         return this.getListings(player.getUniqueId());
     }
 
-    @NotNull
-    public List<AuctionListing> getListings(@NotNull UUID id) {
+    public @NotNull List<AuctionListing> getListings(@NotNull UUID id) {
         return new ArrayList<>(PLAYER_LISTINGS_MAP.getOrDefault(id, Collections.emptySet())).stream().sorted(SORT_BY_CREATION).toList();
     }
 
-    @NotNull
-    public List<AuctionCompletedListing> getCompletedListings() {
+    public @NotNull List<AuctionCompletedListing> getCompletedListings() {
         return COMPLETED_LISTINGS_MAP.values().stream().sorted(SORT_BY_CREATION).toList();
     }
 
-    @NotNull
-    public List<AuctionCompletedListing> getCompletedListings(@NotNull Player player) {
+    public @NotNull List<AuctionCompletedListing> getCompletedListings(@NotNull Player player) {
         return this.getCompletedListings(player.getUniqueId());
     }
 
-    @NotNull
-    public List<AuctionCompletedListing> getCompletedListings(@NotNull UUID id) {
+    public @NotNull List<AuctionCompletedListing> getCompletedListings(@NotNull UUID id) {
         return new ArrayList<>(PLAYER_COMPLETED_LISTINGS_MAP.getOrDefault(id, Collections.emptySet())).stream().sorted(SORT_BY_CREATION).toList();
     }
 
-    @NotNull
-    public List<AuctionListing> getActiveListings() {
-        return LISTINGS_MAP.values().stream().filter(Predicate.not(AuctionListing::isExpired)).sorted(SORT_BY_CREATION).toList();
+    public @NotNull List<AuctionListing> getActiveListings() {
+        return LISTINGS_MAP.values().stream().filter(Predicate.not(AuctionListing::isExpired))/*.sorted(SORT_BY_CREATION)*/.toList();
     }
 
-    @NotNull
-    public List<AuctionListing> getActiveListings(@NotNull Player owner) {
+    public @NotNull List<AuctionListing> getActiveListings(@NotNull Player owner) {
         return this.getActiveListings(owner.getUniqueId());
     }
 
-    @NotNull
-    public List<AuctionListing> getActiveListings(@NotNull UUID owner) {
+    public @NotNull List<AuctionListing> getActiveListings(@NotNull UUID owner) {
         return this.getListings(owner).stream().filter(Predicate.not(AuctionListing::isExpired)).toList();
     }
 
-    @NotNull
-    public List<AuctionListing> getExpiredListings() {
+    public @NotNull List<AuctionListing> getExpiredListings() {
         return LISTINGS_MAP.values().stream().filter(AuctionListing::isExpired).sorted(SORT_BY_CREATION).toList();
     }
 
-    @NotNull
-    public List<AuctionListing> getExpiredListings(@NotNull Player player) {
+    public @NotNull List<AuctionListing> getExpiredListings(@NotNull Player player) {
         return this.getExpiredListings(player.getUniqueId());
     }
 
-    @NotNull
-    public List<AuctionListing> getExpiredListings(@NotNull UUID id) {
+    public @NotNull List<AuctionListing> getExpiredListings(@NotNull UUID id) {
         return this.getListings(id).stream().filter(AuctionListing::isExpired).toList();
     }
 
-    @NotNull
-    public List<AuctionCompletedListing> getHistoryListings() {
+    public @NotNull List<AuctionCompletedListing> getHistoryListings() {
         return COMPLETED_LISTINGS_MAP.values().stream().filter(AuctionCompletedListing::isRewarded).sorted(SORT_BY_CREATION).toList();
     }
 
-    @NotNull
-    public List<AuctionCompletedListing> getHistoryListings(@NotNull Player player) {
+    public @NotNull List<AuctionCompletedListing> getHistoryListings(@NotNull Player player) {
         return this.getHistoryListings(player.getUniqueId());
     }
 
-    @NotNull
-    public List<AuctionCompletedListing> getHistoryListings(@NotNull UUID id) {
+    public @NotNull List<AuctionCompletedListing> getHistoryListings(@NotNull UUID id) {
         return this.getCompletedListings(id).stream().filter(AuctionCompletedListing::isRewarded).toList();
     }
 
-    @NotNull
-    public List<AuctionCompletedListing> getUnclaimedListings() {
+    public @NotNull List<AuctionCompletedListing> getUnclaimedListings() {
         return COMPLETED_LISTINGS_MAP.values().stream().filter(Predicate.not(AuctionCompletedListing::isRewarded)).sorted(SORT_BY_CREATION).toList();
     }
 
-    @NotNull
-    public List<AuctionCompletedListing> getUnclaimedListings(@NotNull Player player) {
+    public @NotNull List<AuctionCompletedListing> getUnclaimedListings(@NotNull Player player) {
         return this.getUnclaimedListings(player.getUniqueId());
     }
 
-    @NotNull
-    public List<AuctionCompletedListing> getUnclaimedListings(@NotNull UUID id) {
+    public @NotNull List<AuctionCompletedListing> getUnclaimedListings(@NotNull UUID id) {
         return this.getCompletedListings(id).stream().filter(Predicate.not(AuctionCompletedListing::isRewarded)).toList();
     }
 }

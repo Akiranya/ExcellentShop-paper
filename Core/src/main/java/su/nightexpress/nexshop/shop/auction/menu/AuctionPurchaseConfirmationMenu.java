@@ -72,7 +72,7 @@ public class AuctionPurchaseConfirmationMenu extends AbstractMenu<ExcellentShop>
         AuctionListing listing = this.cache.get(player);
         if (listing == null) return;
 
-        item.editMeta(meta -> ItemUtil.replaceNameAndLore(meta, listing.replacePlaceholders()));
+        ItemUtil.replaceNameAndLore(item, listing.replacePlaceholders());
     }
 
     @Override

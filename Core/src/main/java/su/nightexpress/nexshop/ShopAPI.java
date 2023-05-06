@@ -12,13 +12,11 @@ public class ShopAPI {
 
     public static final ExcellentShop PLUGIN = ExcellentShop.getPlugin(ExcellentShop.class);
 
-    @NotNull
-    public static ShopDataHandler getDataHandler() {
+    public static @NotNull ShopDataHandler getDataHandler() {
         return PLUGIN.getData();
     }
 
-    @NotNull
-    public static CurrencyManager getCurrencyManager() {
+    public static @NotNull CurrencyManager getCurrencyManager() {
         return PLUGIN.getCurrencyManager();
     }
 
@@ -34,8 +32,7 @@ public class ShopAPI {
         return PLUGIN.getChestShop();
     }
 
-    @NotNull
-    public static ShopUserManager getUserManager() {
+    public static @NotNull ShopUserManager getUserManager() {
         return PLUGIN.getUserManager();
     }
 }

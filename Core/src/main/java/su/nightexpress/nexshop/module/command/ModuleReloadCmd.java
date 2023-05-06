@@ -15,14 +15,12 @@ public class ModuleReloadCmd extends ShopModuleCommand<ShopModule> {
     }
 
     @Override
-    @NotNull
-    public String getUsage() {
+    public @NotNull String getUsage() {
         return "";
     }
 
     @Override
-    @NotNull
-    public String getDescription() {
+    public @NotNull String getDescription() {
         return plugin.getLangManager().getMessage(Lang.MODULE_COMMAND_RELOAD_DESC).getLocalized();
     }
 

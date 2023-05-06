@@ -19,14 +19,12 @@ public class OpenCommand extends ShopModuleCommand<ChestShopModule> {
     }
 
     @Override
-    @NotNull
-    public String getDescription() {
+    public @NotNull String getDescription() {
         return "Open shop inventory"; // TODO
     }
 
     @Override
-    @NotNull
-    public String getUsage() {
+    public @NotNull String getUsage() {
         return "";
     }
 

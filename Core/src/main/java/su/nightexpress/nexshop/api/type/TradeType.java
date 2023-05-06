@@ -6,8 +6,7 @@ public enum TradeType {
 
     BUY, SELL;
 
-    @NotNull
-    public TradeType getOpposite() {
+    public @NotNull TradeType getOpposite() {
         return this == BUY ? SELL : BUY;
     }
 }

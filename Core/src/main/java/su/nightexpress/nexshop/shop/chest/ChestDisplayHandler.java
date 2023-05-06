@@ -1,17 +1,18 @@
 package su.nightexpress.nexshop.shop.chest;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.manager.AbstractManager;
-import su.nexmedia.engine.api.task.AbstractTask;
+import su.nexmedia.engine.api.placeholder.PlaceholderConstants;
+import su.nexmedia.engine.api.server.AbstractTask;
 import su.nexmedia.engine.utils.random.Rnd;
 import su.nightexpress.nexshop.ExcellentShop;
-import su.nightexpress.nexshop.Placeholders;
 import su.nightexpress.nexshop.shop.chest.config.ChestConfig;
-import su.nightexpress.nexshop.shop.chest.nms.ChestNMS;
 import su.nightexpress.nexshop.shop.chest.impl.ChestProduct;
 import su.nightexpress.nexshop.shop.chest.impl.ChestShop;
+import su.nightexpress.nexshop.shop.chest.nms.ChestNMS;
 import su.nightexpress.nexshop.shop.chest.type.ChestShopType;
 
 import java.util.HashMap;
@@ -83,7 +84,7 @@ public class ChestDisplayHandler extends AbstractManager<ExcellentShop> {
     private void addHologram(@NotNull ChestShop shop, @NotNull String name) {
         Location location = shop.getDisplayLocation();
         ItemStack showcase = ChestConfig.DISPLAY_SHOWCASE.get()
-            .getOrDefault(shop.getContainer().getType().name(), ChestConfig.DISPLAY_SHOWCASE.get().get(Placeholders.DEFAULT));
+            .getOrDefault(shop.getLocation().getBlock().getType().name(), ChestConfig.DISPLAY_SHOWCASE.get().get(PlaceholderConstants.DEFAULT));
         if (showcase == null) return;
 
         if (!ChestConfig.DISPLAY_HOLOGRAM_ENABLED.get()) {
@@ -117,6 +118,13 @@ public class ChestDisplayHandler extends AbstractManager<ExcellentShop> {
     }
 
     public void create(@NotNull ChestShop chest) {
+        Location location = chest.getLocation();
+        World world = location.getWorld();
+        if (world == null || !world.isChunkLoaded(chest.getChunkX(), chest.getChunkZ())) {
+            //System.out.println("chunk is out, skipping");
+            return;
+        }
+        //System.out.println("display set");
         if (!chest.getDisplayText().isEmpty()) {
             int count = this.slider != null ? this.slider.getCount(chest) : 0;
             this.addHologram(chest, chest.getDisplayText().get(count));
@@ -128,28 +136,4 @@ public class ChestDisplayHandler extends AbstractManager<ExcellentShop> {
         this.deleteHologram(chest);
         this.deleteItem(chest);
     }
-
-    /*class DisplayListener extends AbstractListener<ExcellentShop> {
-
-        public DisplayListener(@NotNull ExcellentShop plugin) {
-            super(plugin);
-        }
-
-        private Chunk chunkLast;
-
-        @EventHandler(priority = EventPriority.HIGHEST)
-        public void onChunkUnload(ChunkUnloadEvent e) {
-            Chunk chunk = e.getChunk();
-            if (chunk.equals(this.chunkLast)) return;
-
-            this.chunkLast = chunk;
-            for (IShopChest shop : chestShop.getShops()) {
-                if (!shop.isDisplayCreated()) continue;
-                if (shop.getLocation().getChunk().equals(chunk)) {
-                    remove(shop);
-                }
-            }
-            this.chunkLast = null;
-        }
-    }*/
 }

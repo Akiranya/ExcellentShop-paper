@@ -42,8 +42,7 @@ public class CurrencyConfig extends AbstractLoadableItem<ExcellentShop> implemen
                 meta.displayName(Component.text(Placeholders.CURRENCY_NAME).color(NamedTextColor.YELLOW));
             }
             this.icon.setItemMeta(meta);
-        }
-        else this.icon = icon;
+        } else this.icon = icon;
     }
 
     @Override
@@ -61,26 +60,22 @@ public class CurrencyConfig extends AbstractLoadableItem<ExcellentShop> implemen
     }
 
     @Override
-    @NotNull
-    public String getName() {
+    public @NotNull String getName() {
         return name;
     }
 
     @Override
-    @NotNull
-    public String getFormat() {
+    public @NotNull String getFormat() {
         return format;
     }
 
-    @NotNull
     @Override
-    public DecimalFormat getNumberFormat() {
+    public @NotNull DecimalFormat getNumberFormat() {
         return numberFormat;
     }
 
-    @NotNull
     @Override
-    public ItemStack getIcon() {
+    public @NotNull ItemStack getIcon() {
         return this.icon.clone();
     }
 }

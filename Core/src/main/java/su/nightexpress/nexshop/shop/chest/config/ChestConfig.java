@@ -8,6 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JOption;
 import su.nexmedia.engine.api.config.JYML;
+import su.nexmedia.engine.api.placeholder.PlaceholderConstants;
 import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.utils.ComponentUtil;
 import su.nightexpress.nexshop.ExcellentShop;
@@ -24,12 +25,12 @@ public class ChestConfig {
 
     public static final JOption<Map<String, ItemStack>> DISPLAY_SHOWCASE = new JOption<Map<String, ItemStack>>("Display.Showcase",
         (cfg, path, def) -> cfg.getSection(path).stream().collect(Collectors.toMap(k -> k, v -> cfg.getItem(path + "." + v))),
-        () -> Map.of(Placeholders.DEFAULT, new ItemStack(Material.GLASS), Material.CHEST.name(), new ItemStack(Material.WHITE_STAINED_GLASS)),
+        () -> Map.of(PlaceholderConstants.DEFAULT, new ItemStack(Material.GLASS), Material.CHEST.name(), new ItemStack(Material.WHITE_STAINED_GLASS)),
         "Sets an item that will be used as a shop showcase.",
         "You can provide different showcases for different shop types you set in 'Allowed_Containers' option.",
         "Showcase is basically an invisible armor stand with equipped item on the head.",
-        "Feel free to use custom-modeled items and such!",
-        Placeholders.URL_ENGINE_ITEMS);
+        "Feel free to use custom-modeled items and such!", Placeholders.URL_ENGINE_ITEMS)
+        .setWriter((cfg, path, map) -> map.forEach((type, item) -> cfg.setItem(path + "." + type, item)));
 
     public static final JOption<Boolean> DISPLAY_HOLOGRAM_ENABLED = JOption.create("Display.Title.Enabled", true,
         "When 'true', creates a client-side hologram above the shop.");
@@ -39,6 +40,7 @@ public class ChestConfig {
     public static final JOption<String> EDITOR_TITLE = JOption.create("Shops.Editor_Title", "Shop Editor",
         "Sets title for Editor GUIs."
     );
+
     public static boolean DELETE_INVALID_SHOP_CONFIGS;
     public static ICurrency DEFAULT_CURRENCY;
     public static final JOption<Set<String>> ALLOWED_CONTAINERS = new JOption<Set<String>>("Shops.Allowed_Containers",
@@ -125,10 +127,6 @@ public class ChestConfig {
         cfg.saveChanges();
     }
 
-    static {
-        DISPLAY_SHOWCASE.setWriter((cfg, path) -> DISPLAY_SHOWCASE.get().forEach((type, item) -> cfg.setItem(path + "." + type, item)));
-    }
-
     public static int getMaxShops(@NotNull Player player) {
         return Hooks.getGroupValueInt(player, SHOP_CREATION_MAX_PER_RANK, true);
     }
@@ -137,8 +135,7 @@ public class ChestConfig {
         return Hooks.getGroupValueInt(player, SHOP_PRODUCTS_MAX_PER_RANK, true);
     }
 
-    @NotNull
-    public static List<String> getDisplayText(@NotNull ChestShopType chestType) {
+    public static @NotNull List<String> getDisplayText(@NotNull ChestShopType chestType) {
         return DISPLAY_TEXT.getOrDefault(chestType, Collections.emptyList());
     }
 
@@ -149,7 +146,8 @@ public class ChestConfig {
         }
 
         ItemMeta meta = item.getItemMeta();
-        if (meta == null) return true;
+        if (meta == null)
+            return true;
         if (meta.hasDisplayName()) {
             String plainName = ComponentUtil.asPlainText(Objects.requireNonNull(meta.displayName()));
             return ChestConfig.SHOP_PRODUCT_DENIED_NAMES.stream().noneMatch(plainName::contains);
@@ -160,7 +158,6 @@ public class ChestConfig {
                 .map(ComponentUtil::asPlainText)
                 .noneMatch(line -> SHOP_PRODUCT_DENIED_LORES.stream().anyMatch(line::contains));
         }
-
         return true;
     }
 }

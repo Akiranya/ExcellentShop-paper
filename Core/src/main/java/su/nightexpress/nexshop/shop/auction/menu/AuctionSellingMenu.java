@@ -13,7 +13,7 @@ import su.nightexpress.nexshop.shop.auction.listing.AuctionListing;
 import java.util.List;
 import java.util.UUID;
 
-public class AuctionSellingMenu extends AbstractAuctionMenu<AuctionListing>  {
+public class AuctionSellingMenu extends AbstractAuctionMenu<AuctionListing> {
 
     public AuctionSellingMenu(@NotNull AuctionManager auctionManager, @NotNull JYML cfg) {
         super(auctionManager, cfg);
@@ -22,8 +22,7 @@ public class AuctionSellingMenu extends AbstractAuctionMenu<AuctionListing>  {
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.RETURN) {
                     this.auctionManager.getMainMenu().open(p, 1);
-                }
-                else this.onItemClickDefault(p, type2);
+                } else this.onItemClickDefault(p, type2);
             }
         };
 
@@ -38,15 +37,13 @@ public class AuctionSellingMenu extends AbstractAuctionMenu<AuctionListing>  {
     }
 
     @Override
-    @NotNull
-    protected List<AuctionListing> getObjects(@NotNull Player player) {
+    protected @NotNull List<AuctionListing> getObjects(@NotNull Player player) {
         UUID id = this.seeOthers.getOrDefault(player, player.getUniqueId());
         return this.auctionManager.getActiveListings(id);
     }
 
     @Override
-    @NotNull
-    protected MenuClick getObjectClick(@NotNull Player player, @NotNull AuctionListing item) {
+    protected @NotNull MenuClick getObjectClick(@NotNull Player player, @NotNull AuctionListing item) {
         return (player1, type, e) -> {
             if (e.isRightClick() || PlayerUtil.isBedrockPlayer(player1)) {
                 this.auctionManager.takeListing(player1, item);

@@ -15,26 +15,22 @@ public class AuctionExpiredCommand extends AbstractOpenCommand {
     }
 
     @Override
-    @NotNull
-    public String getUsage() {
+    public @NotNull String getUsage() {
         return plugin.getMessage(AuctionLang.COMMAND_EXPIRED_USAGE).getLocalized();
     }
 
     @Override
-    @NotNull
-    public String getDescription() {
+    public @NotNull String getDescription() {
         return plugin.getMessage(AuctionLang.COMMAND_EXPIRED_DESC).getLocalized();
     }
 
     @Override
-    @NotNull
-    protected AuctionExpiredMenu getMenu() {
+    protected @NotNull AuctionExpiredMenu getMenu() {
         return this.module.getExpiredMenu();
     }
 
     @Override
-    @Nullable
-    protected Permission getPermissionsOthers() {
+    protected @Nullable Permission getPermissionsOthers() {
         return Perms.AUCTION_COMMAND_EXPIRED_OTHERS;
     }
 }

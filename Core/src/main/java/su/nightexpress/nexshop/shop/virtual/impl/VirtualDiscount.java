@@ -1,27 +1,26 @@
 package su.nightexpress.nexshop.shop.virtual.impl;
 
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.config.JOption;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.ICleanable;
-import su.nexmedia.engine.api.manager.IEditable;
-import su.nexmedia.engine.api.manager.IPlaceholder;
+import su.nexmedia.engine.api.placeholder.Placeholder;
+import su.nexmedia.engine.api.placeholder.PlaceholderMap;
 import su.nexmedia.engine.utils.NumberUtil;
 import su.nexmedia.engine.utils.TimeUtil;
 import su.nightexpress.nexshop.Placeholders;
 import su.nightexpress.nexshop.api.IScheduled;
 import su.nightexpress.nexshop.shop.Discount;
-import su.nightexpress.nexshop.shop.virtual.editor.menu.EditorShopDiscount;
+import su.nightexpress.nexshop.shop.virtual.editor.menu.DiscountMainEditor;
+import su.nightexpress.nexshop.shop.virtual.impl.shop.VirtualShop;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ScheduledFuture;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
-public class VirtualDiscount implements IScheduled, IEditable, ICleanable, IPlaceholder, JOption.Writer {
+public class VirtualDiscount implements IScheduled, ICleanable, Placeholder {
 
     private VirtualShop shop;
     private Set<DayOfWeek> days;
@@ -29,16 +28,24 @@ public class VirtualDiscount implements IScheduled, IEditable, ICleanable, IPlac
     private double discount;
     private int duration;
 
-    private ScheduledFuture<?> updateTask;
-    private EditorShopDiscount editor;
+    private BukkitTask updateTask;
+    private DiscountMainEditor editor;
+
+    private final PlaceholderMap placeholderMap;
 
     public VirtualDiscount() {
         this.setDays(new HashSet<>());
         this.setTimes(new HashSet<>());
+
+        this.placeholderMap = new PlaceholderMap()
+            .add(Placeholders.DISCOUNT_CONFIG_DURATION, () -> TimeUtil.formatTime(this.getDuration() * 1000L))
+            .add(Placeholders.DISCOUNT_CONFIG_DAYS, () -> String.join(", ", this.getDays().stream().map(DayOfWeek::name).toList()))
+            .add(Placeholders.DISCOUNT_CONFIG_TIMES, () -> String.join(", ", this.getTimes().stream().map(TIME_FORMATTER::format).toList()))
+            .add(Placeholders.DISCOUNT_CONFIG_AMOUNT, () -> NumberUtil.format(this.getDiscount()))
+        ;
     }
 
-    @NotNull
-    public static VirtualDiscount read(@NotNull JYML cfg, @NotNull String path) {
+    public static @NotNull VirtualDiscount read(@NotNull JYML cfg, @NotNull String path) {
         cfg.addMissing(path + ".Duration", 3600);
         cfg.saveChanges();
 
@@ -50,29 +57,17 @@ public class VirtualDiscount implements IScheduled, IEditable, ICleanable, IPlac
         return config;
     }
 
-    @Override
-    public void write(@NotNull JYML cfg, @NotNull String path) {
-        cfg.set(path + ".Discount", this.getDiscount());
-        cfg.set(path + ".Duration", this.getDuration());
-        cfg.set(path + ".Activation.Days", this.getDays().stream().map(DayOfWeek::name).collect(Collectors.joining(",")));
-        cfg.set(path + ".Activation.Times", this.getTimes().stream().map(TIME_FORMATTER::format).toList());
-    }
-
-    @Override
-    @NotNull
-    public UnaryOperator<String> replacePlaceholders() {
-        return str -> str
-            .replace(Placeholders.DISCOUNT_CONFIG_DURATION, TimeUtil.formatTime(this.getDuration() * 1000L))
-            // .replace(Placeholders.DISCOUNT_CONFIG_DAYS, String.join(DELIMITER_DEFAULT, this.getDays().stream().map(DayOfWeek::name).toList()))
-            // .replace(Placeholders.DISCOUNT_CONFIG_TIMES, String.join(DELIMITER_DEFAULT, this.getTimes().stream().map(TIME_FORMATTER::format).toList()))
-            .replace(Placeholders.DISCOUNT_CONFIG_AMOUNT, NumberUtil.format(this.getDiscount()))
-            ;
+    public static void write(@NotNull VirtualDiscount discount, @NotNull JYML cfg, @NotNull String path) {
+        cfg.set(path + ".Discount", discount.getDiscount());
+        cfg.set(path + ".Duration", discount.getDuration());
+        cfg.set(path + ".Activation.Days", discount.getDays().stream().map(DayOfWeek::name).collect(Collectors.joining(",")));
+        cfg.set(path + ".Activation.Times", discount.getTimes().stream().map(TIME_FORMATTER::format).toList());
     }
 
     @Override
     public void clear() {
         if (this.updateTask != null) {
-            this.updateTask.cancel(true);
+            this.updateTask.cancel();
             this.updateTask = null;
         }
         if (this.editor != null) {
@@ -82,11 +77,16 @@ public class VirtualDiscount implements IScheduled, IEditable, ICleanable, IPlac
     }
 
     @Override
+    public @NotNull PlaceholderMap getPlaceholders() {
+        return this.placeholderMap;
+    }
+
+    @Override
     public boolean canSchedule() {
         if (this.getDiscount() <= 0D || this.getDuration() <= 0) {
             return false;
         }
-        return this.updateTask == null || this.updateTask.isDone();
+        return this.updateTask == null || this.updateTask.isCancelled();
     }
 
     @Override
@@ -97,27 +97,23 @@ public class VirtualDiscount implements IScheduled, IEditable, ICleanable, IPlac
     @Override
     public void stopScheduler() {
         if (this.updateTask != null) {
-            this.updateTask.cancel(true);
+            this.updateTask.cancel();
         }
     }
 
     @Override
-    @NotNull
-    public Runnable getCommand() {
+    public @NotNull Runnable getCommand() {
         return () -> this.getShop().getDiscounts().add(new Discount(this.getDiscount(), this.getDuration()));
     }
 
-    @NotNull
-    @Override
-    public EditorShopDiscount getEditor() {
+    public @NotNull DiscountMainEditor getEditor() {
         if (this.editor == null) {
-            this.editor = new EditorShopDiscount(shop, this);
+            this.editor = new DiscountMainEditor(this.getShop(), this);
         }
         return editor;
     }
 
-    @NotNull
-    public VirtualShop getShop() {
+    public @NotNull VirtualShop getShop() {
         if (this.shop == null) {
             throw new IllegalStateException("Shop is undefined!");
         }
@@ -128,9 +124,8 @@ public class VirtualDiscount implements IScheduled, IEditable, ICleanable, IPlac
         this.shop = shop;
     }
 
-    @NotNull
     @Override
-    public Set<DayOfWeek> getDays() {
+    public @NotNull Set<DayOfWeek> getDays() {
         return days;
     }
 
@@ -139,9 +134,8 @@ public class VirtualDiscount implements IScheduled, IEditable, ICleanable, IPlac
         this.days = days;
     }
 
-    @NotNull
     @Override
-    public Set<LocalTime> getTimes() {
+    public @NotNull Set<LocalTime> getTimes() {
         return times;
     }
 

@@ -2,7 +2,6 @@ package su.nightexpress.nexshop.shop.chest.impl;
 
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Container;
@@ -16,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.ICleanable;
-import su.nexmedia.engine.config.EngineConfig;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.LocationUtil;
 import su.nexmedia.engine.utils.NumberUtil;
@@ -24,7 +22,6 @@ import su.nexmedia.engine.utils.Pair;
 import su.nightexpress.nexshop.Placeholders;
 import su.nightexpress.nexshop.api.currency.ICurrency;
 import su.nightexpress.nexshop.api.shop.Shop;
-import su.nightexpress.nexshop.api.shop.ShopView;
 import su.nightexpress.nexshop.api.type.TradeType;
 import su.nightexpress.nexshop.shop.FlatProductPricer;
 import su.nightexpress.nexshop.shop.chest.ChestDisplayHandler;
@@ -34,18 +31,17 @@ import su.nightexpress.nexshop.shop.chest.config.ChestLang;
 import su.nightexpress.nexshop.shop.chest.menu.ShopSettingsMenu;
 import su.nightexpress.nexshop.shop.chest.type.ChestShopType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.function.UnaryOperator;
-import java.util.stream.Stream;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanable {
 
     private final ChestShopModule module;
 
     private Location location;
+    private int chunkX;
+    private int chunkZ;
+
     private UUID ownerId;
     private String ownerName;
     private OfflinePlayer ownerPlayer;
@@ -57,7 +53,7 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
     private Location displayHologramLoc;
     private Location displayItemLoc;
 
-    private ShopView<ChestShop> view;
+    private final ChestShopView view;
 
     public ChestShop(@NotNull ChestShopModule module, @NotNull Player owner, @NotNull Container container, @NotNull ChestShopType type) {
         this(module, new JYML(module.getFullPath() + ChestShopModule.DIR_SHOPS, UUID.randomUUID() + ".yml"));
@@ -66,12 +62,27 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         this.setType(type);
         this.setOwner(owner);
         this.setName(Placeholders.Player.replacer(owner).apply(ChestConfig.DEFAULT_NAME.get()));
-        Stream.of(TradeType.values()).forEach(tradeType -> this.setTransactionEnabled(tradeType, true));
+        Arrays.asList(TradeType.values()).forEach(tradeType -> this.setTransactionEnabled(tradeType, true));
     }
 
     public ChestShop(@NotNull ChestShopModule module, @NotNull JYML cfg) {
-        super(module.plugin(), cfg);
+        super(module.plugin(), cfg, cfg.getFile().getName().replace(".yml", "").toLowerCase());
         this.module = module;
+        this.view = new ChestShopView(this);
+
+        this.placeholderMap
+            .add(Placeholders.SHOP_BANK_BALANCE, () -> ChestConfig.ALLOWED_CURRENCIES
+                .stream()
+                .map(currency -> currency.format(this.getBank().getBalance(currency)))
+                .collect(Collectors.joining(", ")))
+            .add(Placeholders.SHOP_CHEST_OWNER, this::getOwnerName)
+            .add(Placeholders.SHOP_CHEST_LOCATION_X, () -> NumberUtil.format(this.getLocation().getX()))
+            .add(Placeholders.SHOP_CHEST_LOCATION_Y, () -> NumberUtil.format(this.getLocation().getY()))
+            .add(Placeholders.SHOP_CHEST_LOCATION_Z, () -> NumberUtil.format(this.getLocation().getZ()))
+            .add(Placeholders.SHOP_CHEST_LOCATION_WORLD, () -> LangManager.getWorld(this.getContainer().getWorld()))
+            .add(Placeholders.SHOP_CHEST_IS_ADMIN, () -> LangManager.getBoolean(this.isAdminShop()))
+            .add(Placeholders.SHOP_CHEST_TYPE, () -> plugin.getLangManager().getEnum(this.getType()))
+        ;
     }
 
     @Override
@@ -108,7 +119,6 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         }
 
         this.loadProducts();
-        this.setupView();
         return true;
     }
 
@@ -122,26 +132,6 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
                 return null;
             }
         }).filter(Objects::nonNull).forEach(this::addProduct);
-    }
-
-    @Override
-    @NotNull
-    public UnaryOperator<String> replacePlaceholders() {
-        Location location = this.getLocation();
-        World world = this.getContainer().getWorld();
-        return str -> str
-            .transform(super.replacePlaceholders())
-            // .replace(Placeholders.SHOP_BANK_BALANCE, ChestConfig.ALLOWED_CURRENCIES.stream()
-            //     .map(currency -> currency.format(this.getBank().getBalance(currency)))
-            //     .collect(Collectors.joining(DELIMITER_DEFAULT)))
-            .replace(Placeholders.SHOP_CHEST_OWNER, this.getOwnerName())
-            .replace(Placeholders.SHOP_CHEST_LOCATION_X, NumberUtil.format(location.getX()))
-            .replace(Placeholders.SHOP_CHEST_LOCATION_Y, NumberUtil.format(location.getY()))
-            .replace(Placeholders.SHOP_CHEST_LOCATION_Z, NumberUtil.format(location.getZ()))
-            .replace(Placeholders.SHOP_CHEST_LOCATION_WORLD, EngineConfig.getWorldName(world.getName()))
-            .replace(Placeholders.SHOP_CHEST_IS_ADMIN, LangManager.getBoolean(this.isAdminShop()))
-            .replace(Placeholders.SHOP_CHEST_TYPE, plugin.getLangManager().getEnum(this.getType()))
-            ;
     }
 
     @Override
@@ -172,34 +162,24 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
             cfg.set("Bank." + currencyId, balance);
         });
         this.cfg.set("Products", null);
-        this.getProducts().forEach(product -> product.write(cfg, "Products." + product.getId()));
+        this.getProducts().forEach(product -> ChestProduct.write(product, cfg, "Products." + product.getId()));
     }
 
     @Override
-    @NotNull
-    protected ChestShop get() {
+    protected @NotNull ChestShop get() {
         return this;
     }
 
-    @NotNull
-    public ChestShopModule getModule() {
+    public @NotNull ChestShopModule getModule() {
         return module;
     }
 
     @Override
-    public void setupView() {
-        this.view = new ChestShopView(this);
-    }
-
-    @Override
-    @NotNull
-    public ShopView<ChestShop> getView() {
+    public @NotNull ChestShopView getView() {
         return this.view;
     }
 
-    @Override
-    @NotNull
-    public ShopSettingsMenu getEditor() {
+    public @NotNull ShopSettingsMenu getEditor() {
         if (this.settingsMenu == null) {
             this.settingsMenu = new ShopSettingsMenu(this);
         }
@@ -227,8 +207,7 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         return true;
     }
 
-    @NotNull
-    public ChestShopType getType() {
+    public @NotNull ChestShopType getType() {
         return type;
     }
 
@@ -240,8 +219,7 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         return this.getType() == ChestShopType.ADMIN;
     }
 
-    @NotNull
-    public Container getContainer() {
+    public @NotNull Container getContainer() {
         return (Container) this.getLocation().getBlock().getState();
     }
 
@@ -249,11 +227,14 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         return this.getContainer().getInventory() instanceof DoubleChestInventory;
     }
 
-    @NotNull
-    public Pair<Container, Container> getSides() {
+    public boolean isProduct(@NotNull ItemStack item) {
+        return this.getProducts().stream().anyMatch(product -> product.isItemMatches(item));
+    }
+
+    public @NotNull Pair<Container, Container> getSides() {
         Container container = this.getContainer();
 
-        if (!(this.getContainer() instanceof Chest chest)) return Pair.of(container, container);
+        // if (!(this.getContainer() instanceof Chest chest)) return Pair.of(container, container);
         if (!this.isDoubleChest()) return Pair.of(container, container);
 
         DoubleChest doubleChest = (DoubleChest) this.getInventory().getHolder();
@@ -265,8 +246,7 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         return Pair.of(left != null ? left : container, right != null ? right : container);
     }
 
-    @NotNull
-    public Inventory getInventory() {
+    public @NotNull Inventory getInventory() {
         if (this.isDoubleChest()) {
             DoubleChest doubleChest = (DoubleChest) this.getContainer().getInventory().getHolder();
             if (doubleChest != null) {
@@ -289,17 +269,25 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         player.teleport(location);
     }
 
-    @NotNull
-    public Location getLocation() {
+    public @NotNull Location getLocation() {
         return this.location;
     }
 
     private void setLocation(@NotNull Location location) {
         this.location = location.clone();
+        this.chunkX = location.getChunk().getX();
+        this.chunkZ = location.getChunk().getZ();
     }
 
-    @NotNull
-    public UUID getOwnerId() {
+    public int getChunkX() {
+        return chunkX;
+    }
+
+    public int getChunkZ() {
+        return chunkZ;
+    }
+
+    public @NotNull UUID getOwnerId() {
         return this.ownerId;
     }
 
@@ -309,13 +297,11 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         this.ownerPlayer = player;
     }
 
-    @NotNull
-    public String getOwnerName() {
+    public @NotNull String getOwnerName() {
         return this.ownerName;
     }
 
-    @NotNull
-    public OfflinePlayer getOwner() {
+    public @NotNull OfflinePlayer getOwner() {
         return this.ownerPlayer;
     }
 
@@ -333,8 +319,7 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         this.displayCreated = displayCreated;
     }*/
 
-    @NotNull
-    public List<String> getDisplayText() {
+    public @NotNull List<String> getDisplayText() {
         if (this.displayText == null) this.updateDisplayText();
         return this.displayText;
     }
@@ -360,11 +345,12 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
     private double getDisplayYOffset() {
         if (this.getContainer() instanceof Chest) {
             return -1D;
-        } else return -0.85D;
+        } else {
+            return -0.85D;
+        }
     }
 
-    @NotNull
-    public Location getDisplayLocation() {
+    public @NotNull Location getDisplayLocation() {
         if (this.displayHologramLoc == null) {
             Location invLocation = this.getInventory().getLocation();
             if (invLocation == null || !this.isDoubleChest()) {
@@ -377,8 +363,7 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         return this.displayHologramLoc;
     }
 
-    @NotNull
-    public Location getDisplayItemLocation() {
+    public @NotNull Location getDisplayItemLocation() {
         if (this.displayItemLoc == null) {
             Location glassLocation = this.getDisplayLocation();
             this.displayItemLoc = glassLocation.clone().add(0, 1.4, 0);

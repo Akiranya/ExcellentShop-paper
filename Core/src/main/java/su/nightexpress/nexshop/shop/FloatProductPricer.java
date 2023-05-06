@@ -6,38 +6,43 @@ import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.utils.random.Rnd;
 import su.nightexpress.nexshop.Placeholders;
 import su.nightexpress.nexshop.api.IScheduled;
-import su.nightexpress.nexshop.api.shop.ProductPricer;
 import su.nightexpress.nexshop.api.type.PriceType;
 import su.nightexpress.nexshop.api.type.TradeType;
 import su.nightexpress.nexshop.data.price.ProductPriceData;
 import su.nightexpress.nexshop.data.price.ProductPriceManager;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ScheduledFuture;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
-public class FloatProductPricer extends ProductPricer implements IScheduled {
+public class FloatProductPricer extends RangedProductPricer /*implements IScheduled*/ {
 
-    private final Map<TradeType, double[]> priceMinMax;
-    private Set<DayOfWeek>   days;
+    private Set<DayOfWeek> days;
     private Set<LocalTime> times;
 
-    private ScheduledFuture<?> updateTask;
-
     public FloatProductPricer() {
-        this.priceMinMax = new HashMap<>();
         this.days = new HashSet<>();
         this.times = new HashSet<>();
+
+        this.placeholderMap
+            .add(Placeholders.PRODUCT_PRICER_BUY_MIN, () -> String.valueOf(this.getPriceMin(TradeType.BUY)))
+            .add(Placeholders.PRODUCT_PRICER_BUY_MAX, () -> String.valueOf(this.getPriceMax(TradeType.BUY)))
+            .add(Placeholders.PRODUCT_PRICER_SELL_MIN, () -> String.valueOf(this.getPriceMin(TradeType.SELL)))
+            .add(Placeholders.PRODUCT_PRICER_SELL_MAX, () -> String.valueOf(this.getPriceMax(TradeType.SELL)))
+            .add(Placeholders.PRODUCT_PRICER_FLOAT_REFRESH_DAYS, () -> String.join(", ", this.getDays()
+                .stream().map(DayOfWeek::name).toList()))
+            .add(Placeholders.PRODUCT_PRICER_FLOAT_REFRESH_TIMES, () -> String.join(", ", this.getTimes()
+                .stream().map(IScheduled.TIME_FORMATTER::format).toList()))
+        ;
     }
 
-    @NotNull
-    public static FloatProductPricer read(@NotNull JYML cfg, @NotNull String path) {
+    public static @NotNull FloatProductPricer read(@NotNull JYML cfg, @NotNull String path) {
         FloatProductPricer pricer = new FloatProductPricer();
         Map<TradeType, double[]> priceMap = new HashMap<>();
         for (TradeType tradeType : TradeType.values()) {
@@ -59,20 +64,7 @@ public class FloatProductPricer extends ProductPricer implements IScheduled {
             cfg.set(path + "." + tradeType.name() + ".Max", arr[1]);
         }));
         cfg.set(path + ".Refresh.Days", this.getDays().stream().map(DayOfWeek::name).collect(Collectors.joining(",")));
-        cfg.set(path + ".Refresh.Times", this.getTimes().stream().map(TIME_FORMATTER::format).toList());
-    }
-
-    @Override
-    @NotNull
-    public UnaryOperator<String> replacePlaceholders() {
-        return str -> str
-            .replace(Placeholders.PRODUCT_PRICER_BUY_MIN, String.valueOf(this.getPriceMin(TradeType.BUY)))
-            .replace(Placeholders.PRODUCT_PRICER_BUY_MAX, String.valueOf(this.getPriceMax(TradeType.BUY)))
-            .replace(Placeholders.PRODUCT_PRICER_SELL_MIN, String.valueOf(this.getPriceMin(TradeType.SELL)))
-            .replace(Placeholders.PRODUCT_PRICER_SELL_MAX, String.valueOf(this.getPriceMax(TradeType.SELL)))
-            // .replace(Placeholders.PRODUCT_PRICER_FLOAT_REFRESH_DAYS, String.join(DELIMITER_DEFAULT, this.getDays().stream().map(DayOfWeek::name).toList()))
-            // .replace(Placeholders.PRODUCT_PRICER_FLOAT_REFRESH_TIMES, String.join(DELIMITER_DEFAULT, this.getTimes().stream().map(TIME_FORMATTER::format).toList()))
-            ;
+        cfg.set(path + ".Refresh.Times", this.getTimes().stream().map(IScheduled.TIME_FORMATTER::format).toList());
     }
 
     @Override
@@ -82,83 +74,43 @@ public class FloatProductPricer extends ProductPricer implements IScheduled {
         if (hasData) {
             this.setPrice(TradeType.BUY, priceData.getLastBuyPrice());
             this.setPrice(TradeType.SELL, priceData.getLastSellPrice());
-        }
-        else {
+        } else {
             this.randomize();
         }
-        this.startScheduler();
+    }
+
+    public boolean isUpdateTime() {
+        if (this.getDays().isEmpty()) return false;
+        if (this.getTimes().isEmpty()) return false;
+        if (!this.getDays().contains(LocalDate.now().getDayOfWeek())) return false;
+
+        LocalTime roundNow = LocalTime.now().truncatedTo(ChronoUnit.MINUTES);
+        return this.getTimes().stream().anyMatch(time -> time.truncatedTo(ChronoUnit.MINUTES).equals(roundNow));
     }
 
     @Override
-    public void startScheduler() {
-        this.updateTask = this.createScheduler();
-    }
-
-    @Override
-    @NotNull
-    public Runnable getCommand() {
-        return this::randomize;
-    }
-
-    @Override
-    public boolean canSchedule() {
-        return this.updateTask == null || this.updateTask.isDone();
-    }
-
-    @Override
-    public void stopScheduler() {
-        if (this.updateTask != null) {
-            this.updateTask.cancel(true);
-        }
-    }
-
-    @Override
-    @NotNull
-    public PriceType getType() {
+    public @NotNull PriceType getType() {
         return PriceType.FLOAT;
     }
 
-    @NotNull
-    @Override
-    public Set<DayOfWeek> getDays() {
+    public @NotNull Set<DayOfWeek> getDays() {
         return days;
     }
 
-    @Override
     public void setDays(@NotNull Set<DayOfWeek> days) {
         this.days = days;
     }
 
-    @NotNull
-    @Override
-    public Set<LocalTime> getTimes() {
+    public @NotNull Set<LocalTime> getTimes() {
         return times;
     }
 
-    @Override
     public void setTimes(@NotNull Set<LocalTime> times) {
         this.times = times;
     }
 
-    @Nullable
-    public ProductPriceData getData() {
+    public @Nullable ProductPriceData getData() {
         return ProductPriceManager.getData(this.getProduct().getShop().getId(), this.getProduct().getId());
-    }
-
-    public double getPriceMin(@NotNull TradeType tradeType) {
-        return this.priceMinMax.computeIfAbsent(tradeType, b -> new double[]{-1, -1})[0];
-    }
-
-    public double getPriceMax(@NotNull TradeType tradeType) {
-        return this.priceMinMax.computeIfAbsent(tradeType, b -> new double[]{-1, -1})[1];
-    }
-
-    public void setPriceMin(@NotNull TradeType tradeType, double price) {
-        this.priceMinMax.computeIfAbsent(tradeType, b -> new double[]{-1, -1})[0] = price;
-    }
-
-    public void setPriceMax(@NotNull TradeType tradeType, double price) {
-        this.priceMinMax.computeIfAbsent(tradeType, b -> new double[]{-1, -1})[1] = price;
     }
 
     public void randomize() {
@@ -168,8 +120,8 @@ public class FloatProductPricer extends ProductPricer implements IScheduled {
             sellPrice = buyPrice;
         }
 
-        //this.setPrice(TradeType.BUY, buyPrice);
-        //this.setPrice(TradeType.SELL, sellPrice);
+        // this.setPrice(TradeType.BUY, buyPrice);
+        // this.setPrice(TradeType.SELL, sellPrice);
 
         ProductPriceData priceData = this.getData();
         boolean hasData = priceData != null;
@@ -181,8 +133,7 @@ public class FloatProductPricer extends ProductPricer implements IScheduled {
         priceData.setLastUpdated(System.currentTimeMillis());
         if (!hasData) {
             ProductPriceManager.createData(priceData);
-        }
-        else {
+        } else {
             ProductPriceManager.saveData(priceData);
         }
 

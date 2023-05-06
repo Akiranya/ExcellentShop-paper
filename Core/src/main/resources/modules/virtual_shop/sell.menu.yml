@@ -1,26 +1,22 @@
-Title: Sell GUI
+Title: 'Sell GUI'
 Size: 54
 
 Content:
   sell:
     Item:
-      Material: EMERALD
-      Name: '<!em><green><b>SELL ALL'
-      Lore:
-        - '<!em><gray>Click to sell items.'
-        - ''
-        - '<!em><red><b>NOTE:'
-        - '<!em><gray>You can''t sell items that'
-        - '<!em><gray>are <dark_gray>out of stock</dark_gray> or <dark_gray>on cooldown</dark_gray>.'
+      Material: PLAYER_HEAD
+      Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTc5YTVjOTVlZTE3YWJmZWY0NWM4ZGMyMjQxODk5NjQ5NDRkNTYwZjE5YTQ0ZjE5ZjhhNDZhZWYzZmVlNDc1NiJ9fX0='
+      Name: '<#a5ff9a><b>SELL ALL!'
     Type: SELL
     Slots: 49
     Priority: 5
 
 Item:
-  Name: '<!em>%item_name%'
+  Name: '%item_name%'
   Lore:
     - '%item_lore%'
     - ''
-    - '<!em><gray>Can be sold for <green>%price%</green>'
-    - '<!em><gray>Found in: <white>%shop_name%</white> shop.'
-  Slots: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44
+    - '<#a5ff9a><b>Details:'
+    - '<#a5ff9a>▪ <#ddecee>Approx Price:</#ddecee> %price%'
+    - '<#a5ff9a>▪ <#ddecee>Found In:</#ddecee> %shop_name%'
+  Slots: 0,1,2,3,4,5,6,7

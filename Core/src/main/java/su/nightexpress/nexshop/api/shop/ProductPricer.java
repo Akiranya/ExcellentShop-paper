@@ -2,9 +2,9 @@ package su.nightexpress.nexshop.api.shop;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.config.JOption;
 import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.manager.IPlaceholder;
+import su.nexmedia.engine.api.placeholder.Placeholder;
+import su.nexmedia.engine.api.placeholder.PlaceholderMap;
 import su.nightexpress.nexshop.api.type.PriceType;
 import su.nightexpress.nexshop.api.type.TradeType;
 import su.nightexpress.nexshop.currency.internal.ItemCurrency;
@@ -15,19 +15,23 @@ import su.nightexpress.nexshop.shop.FloatProductPricer;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class ProductPricer implements IPlaceholder, JOption.Writer {
+public abstract class ProductPricer implements Placeholder {
 
     protected final Map<TradeType, Double> priceCurrent;
-    protected       Product<?, ?, ?>       product;
+    protected final PlaceholderMap placeholderMap;
+
+    protected Product<?, ?, ?> product;
 
     public ProductPricer() {
         this.priceCurrent = new HashMap<>();
         this.setPrice(TradeType.BUY, -1D);
         this.setPrice(TradeType.SELL, -1D);
+        this.placeholderMap = new PlaceholderMap();
     }
 
-    @NotNull
-    public static ProductPricer read(@NotNull PriceType priceType, @NotNull JYML cfg, @NotNull String path) {
+    public static @NotNull ProductPricer read(@NotNull JYML cfg, @NotNull String path) {
+        PriceType priceType = cfg.getEnum(path + ".Type", PriceType.class, PriceType.FLAT);
+
         return switch (priceType) {
             case FLAT -> FlatProductPricer.read(cfg, path);
             case FLOAT -> FloatProductPricer.read(cfg, path);
@@ -35,13 +39,26 @@ public abstract class ProductPricer implements IPlaceholder, JOption.Writer {
         };
     }
 
+    public static @NotNull ProductPricer from(@NotNull PriceType priceType) {
+        return switch (priceType) {
+            case FLAT -> new FlatProductPricer();
+            case FLOAT -> new FloatProductPricer();
+            case DYNAMIC -> new DynamicProductPricer();
+        };
+    }
+
+    public abstract void write(@NotNull JYML cfg, @NotNull String path);
+
+    @Override
+    public @NotNull PlaceholderMap getPlaceholders() {
+        return this.placeholderMap;
+    }
+
     public abstract void update();
 
-    @NotNull
-    public abstract PriceType getType();
+    public abstract @NotNull PriceType getType();
 
-    @NotNull
-    public Product<?, ?, ?> getProduct() {
+    public @NotNull Product<?, ?, ?> getProduct() {
         if (this.product == null) {
             throw new IllegalStateException("Product is undefined!");
         }
@@ -77,7 +94,7 @@ public abstract class ProductPricer implements IPlaceholder, JOption.Writer {
     }
 
     public double getPriceSellAll(@NotNull Player player) {
-        int amountHas = this.getProduct().countItem(player);
+        int amountHas = this.getProduct().countUnits(player);
         int amountCan = this.getProduct().getStock().getPossibleAmount(TradeType.SELL, player);
 
         int balance = Math.min((amountCan < 0 ? amountHas : amountCan), amountHas);

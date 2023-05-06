@@ -20,14 +20,12 @@ public class AuctionSellCommand extends ShopModuleCommand<AuctionManager> {
     }
 
     @Override
-    @NotNull
-    public String getUsage() {
+    public @NotNull String getUsage() {
         return plugin.getMessage(AuctionLang.COMMAND_SELL_USAGE).getLocalized();
     }
 
     @Override
-    @NotNull
-    public String getDescription() {
+    public @NotNull String getDescription() {
         return plugin.getMessage(AuctionLang.COMMAND_SELL_DESC).getLocalized();
     }
 
@@ -65,8 +63,7 @@ public class AuctionSellCommand extends ShopModuleCommand<AuctionManager> {
                 if (!this.module.add(player, item, currency, price)) {
                     return;
                 }
-            }
-            else {
+            } else {
                 this.module.getCurrencySelectorMenu().open(player, item, price);
             }
             player.getInventory().setItemInMainHand(null);

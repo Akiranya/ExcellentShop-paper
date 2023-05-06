@@ -79,8 +79,7 @@ public class CurrencyManager extends AbstractManager<ExcellentShop> {
         });
     }
 
-    @NotNull
-    private CurrencyConfig loadConfigDefault(@NotNull String id) {
+    private @NotNull CurrencyConfig loadConfigDefault(@NotNull String id) {
         JYML cfg = JYML.loadOrExtract(plugin, DIR_DEFAULT + id + ".yml");
         return new CurrencyConfig(this.plugin, cfg);
     }
@@ -113,24 +112,20 @@ public class CurrencyManager extends AbstractManager<ExcellentShop> {
         return !this.currencyMap.isEmpty();
     }
 
-    @NotNull
-    public Collection<ICurrency> getCurrencies() {
+    public @NotNull Collection<ICurrency> getCurrencies() {
         return currencyMap.values();
     }
 
-    @NotNull
-    public Set<String> getCurrencyIds() {
+    public @NotNull Set<String> getCurrencyIds() {
         return this.currencyMap.keySet();
     }
 
-    @Nullable
-    public ICurrency getCurrency(@NotNull String id) {
+    public @Nullable ICurrency getCurrency(@NotNull String id) {
         return this.currencyMap.get(id.toLowerCase());
     }
 
-    @NotNull
     @Deprecated
-    public ICurrency getCurrencyFirst() {
+    public @NotNull ICurrency getCurrencyFirst() {
         Optional<ICurrency> opt = this.getCurrencies().stream().filter(Objects::nonNull).findFirst();
         if (opt.isEmpty()) throw new IllegalArgumentException("No currencies are installed!");
         return opt.get();

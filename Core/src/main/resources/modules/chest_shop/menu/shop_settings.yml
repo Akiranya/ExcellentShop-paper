@@ -1,123 +1,109 @@
 Title: 'Shop Settings'
 Size: 9
+Inventory_Type: CHEST
 
 Content:
-
   SHOP_CHANGE_NAME:
     Item:
-      Material: NAME_TAG
-      Name: '<yellow><b>Shop Name'
+      Material: PLAYER_HEAD
+      Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjVhMTlhZjBlNjFjYTQyNTMyYzA1OTlmYTBhMzkxNzUzZGY2YjcxZjlmYTRhMTc3ZjFhYTliMWQ4MWZlNmVlMiJ9fX0='
+      Name: '<#ee9aff><b>Shop Name'
       Lore:
-        - '<aqua><b>[?] Current:'
-        - '<green>%shop_name%'
-        - ' '
-        - '<gold><b>[?] Description:'
-        - '<gray>Sets the shop display name. This'
-        - '<gray>name is displayed above the shop.'
-        - ' '
-        - '<#55e136><b>[>] Actions:'
-        - '<#86de2a>Left-Click to <white>Change'
+        - '<#ee9aff>▪ <#ddecee>Current:</#ddecee> %shop_name%'
+        - ''
+        - '<#ddecee>Shop name to be displayed in'
+        - '<#ddecee>GUI and showcase.'
+        - ''
+        - '<#9af7ff><b>Actions:'
+        - '<#9af7ff>▪ <#ddecee>Left-Click:</#ddecee> Change'
     Type: SHOP_CHANGE_NAME
     Slots: 0
+    Priority: 5
 
   SHOP_CHANGE_TYPE:
     Item:
-      Material: REDSTONE
-      Name: '<yellow><b>Shop Type'
+      Material: PLAYER_HEAD
+      Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmRhOTExNDM3YjRlY2ZhYTNjMTg5NDE2MjIxN2MwMWI2OGE1NWM4OWJiMmY0ZDQ5MjczNDVjZTVjNzk0In19fQ=='
+      Name: '<#ee9aff><b>Shop Type'
       Lore:
-        - '<aqua><b>[?] Current:'
-        - '<green>%shop_type%'
-        - ' '
-        - '<gold><b>[?] Description:'
-        - '<gray>Sets the shop type.'
-        - ' '
-        - '<yellow><b>[!] Note:'
-        - '<#ffc300>Admin shops have unlimited funds and'
-        - '<#ffc300>items.'
-        - ' '
-        - '<yellow><b>[!] Note:'
-        - '<#ffc300>Player shop have to be restocked'
-        - '<#ffc300>with items and funds.'
-        - ' '
-        - '<#55e136><b>[>] Actions:'
-        - '<#86de2a>Left-Click to <white>Toggle'
+        - '<#ee9aff>▪ <#ddecee>Current:</#ddecee> %shop_type%'
+        - ''
+        - '<#ddecee>Setting shop as <#ee9aff>admin shop<#ddecee> will'
+        - '<#ddecee>make it to have unlimited funds and items.'
+        - ''
+        - '<#ff9a9a>[!]<#ddecee> Make sure you have <#ff9a9a>permission<#ddecee> to use it.'
+        - ''
+        - '<#9af7ff><b>Actions:'
+        - '<#9af7ff>▪ <#ddecee>Left-Click:</#ddecee> Toggle'
     Type: SHOP_CHANGE_TYPE
     Slots: 1
+    Priority: 5
 
   SHOP_CHANGE_TRANSACTIONS:
     Item:
-      Material: WRITABLE_BOOK
-      Name: '<yellow><b>Enabled Transactions'
+      Material: PLAYER_HEAD
+      Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTgzOTg0ODU1M2NhYmVkOTc3ZThkNWNjOTc2ZDQ0Y2JhMmVhYWVmZTFkYTQ0NjE4N2U4NTJlZGVlMTZiODcwZSJ9fX0='
+      Name: '<#ee9aff><b>Trade Mode'
       Lore:
-        - '<aqua><b>[?] Current:'
-        - '<green>Buying Enabled: <white>%shop_buy_allowed%'
-        - '<green>Selling Enabled: <white>%shop_sell_allowed%'
-        - ' '
-        - '<gold><b>[?] Description:'
-        - '<gray>Enables or disables Buying and Selling'
-        - '<gray>in the shop.'
-        - ' '
-        - '<#55e136><b>[>] Actions:'
-        - '<#86de2a>Left-Click to <white>Toggle Buying'
-        - '<#86de2a>Right-Click to <white>Toggle Selling'
+        - '<#ee9aff>▪ <#ddecee>Buying:</#ddecee> %shop_buy_allowed%'
+        - '<#ee9aff>▪ <#ddecee>Selling:</#ddecee> %shop_sell_allowed%'
+        - ''
+        - '<#ddecee>Enable/disable certain operations in the shop.'
+        - ''
+        - '<#9af7ff><b>Actions:'
+        - '<#9af7ff>▪ <#ddecee>Left-Click:</#ddecee> Toggle Buying'
+        - '<#9af7ff>▪ <#ddecee>Right-Click:</#ddecee> Toggle Selling'
     Type: SHOP_CHANGE_TRANSACTIONS
     Slots: 2
+    Priority: 5
 
   SHOP_CHANGE_PRODUCTS:
     Item:
-      Material: CHEST
-      Name: '<yellow><b>Shop Products'
+      Material: PLAYER_HEAD
+      Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTAwZDI4ZmY3YjU0M2RkMDg4ZDAwNGIxYjFmOTViMzhkNDQ0ZWEwNDYxZmY1YWUzYzY4ZDc2YzBjMTZlMjUyNyJ9fX0='
+      Name: '<#ee9aff><b>Shop Products'
       Lore:
-        - '<gold><b>[?] Description:'
-        - '<gray>Here you can manage your products'
-        - '<gray>and add new ones.'
-        - ' '
-        - '<#55e136><b>[>] Actions:'
-        - '<#86de2a>Left-Click to <white>Navigate'
+        - '<#ddecee>Here you can <#ee9aff>create<#ddecee> and <#ee9aff>manage'
+        - '<#ddecee>products of your shop.'
+        - ''
+        - '<#9af7ff><b>Actions:'
+        - '<#9af7ff>▪ <#ddecee>Left-Click:</#ddecee> Open'
     Type: SHOP_CHANGE_PRODUCTS
     Slots: 3
+    Priority: 5
 
   SHOP_BANK:
     Item:
-      Material: EMERALD
-      Name: '<yellow><b>Shop Bank'
+      Material: PLAYER_HEAD
+      Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjg4OWNmY2JhY2JlNTk4ZThhMWNkODYxMGI0OWZjYjYyNjQ0ZThjYmE5ZDQ5MTFkMTIxMTM0NTA2ZDhlYTFiNyJ9fX0='
+      Name: '<#ee9aff><b>Shop Bank'
       Lore:
-        - '<aqua><b>[?] Current:'
-        - '<green>Balance:'
-        - '<green>%shop_bank_balance%'
-        - ' '
-        - '<gold><b>[?] Description:'
-        - '<gray>Bank is where you deposit funds'
-        - '<gray>for the shop to be able'
-        - '<gray>to purchase items from players. And'
-        - '<gray>where all incoming funds from sales'
-        - '<gray>are stored for you to withdraw'
-        - '<gray>them later.'
-        - ' '
-        - '<red><b>[!] Warning:'
-        - '<#c70039>If shop don''t have enough funds,'
-        - '<#c70039>players won''t be able to sell'
-        - '<#c70039>into it'
-        - ' '
-        - '<#55e136><b>[>] Actions:'
-        - '<#86de2a>Left-Click to <white>Deposit'
-        - '<#86de2a>Right-Click to <white>Withdraw'
+        - '<#ee9aff>▪ <#ddecee>Balance:</#ddecee> %shop_bank_balance%'
+        - ''
+        - '<#ddecee>Bank is used to store funds of your shop.'
+        - '<#ddecee>Shop will <#a5ff9a>gain<#ddecee> funds from sales,'
+        - '<#ddecee>and <#ff9a9a>spend<#ddecee> them for purchases.'
+        - ''
+        - '<#9af7ff><b>Actions:'
+        - '<#9af7ff>▪ <#ddecee>Left-Click:</#ddecee> Open'
     Type: SHOP_BANK
     Slots: 4
+    Priority: 5
 
   SHOP_DELETE:
     Item:
-      Material: BARRIER
-      Name: '<yellow><b>Delete Shop'
+      Material: PLAYER_HEAD
+      Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjQ2NWY4MGJmMDJiNDA4ODg1OTg3YjAwOTU3Y2E1ZTllYjg3NGMzZmE4ODMwNTA5OTU5N2EzMzNhMzM2ZWUxNSJ9fX0='
+      Name: '<#ff9a9a><b>Delete Shop'
       Lore:
-        - '<gold><b>[?] Description:'
-        - '<gray>Permanently deletes this shop.'
-        - ' '
-        - '<red><b>[!] Warning:'
-        - '<#c70039>You have to remove all product'
-        - '<#c70039>items from the container first.'
-        - ' '
-        - '<#55e136><b>[>] Actions:'
-        - '<#86de2a>Shift-Left to <white>Delete'
+        - '<#ddecee>Permanently deletes the shop.'
+        - ''
+        - '<#ff9a9a><b>NOTE:'
+        - '<#ddecee>You have to remove all items'
+        - '<#ddecee>from the container first.'
+        - ''
+        - '<#9af7ff><b>Actions:'
+        - '<#9af7ff>▪ <#ddecee>Shift-Right:</#ddecee> Delete'
     Type: SHOP_DELETE
     Slots: 8
+    Priority: 5

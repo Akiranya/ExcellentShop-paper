@@ -5,62 +5,45 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.config.JYML;
-import su.nightexpress.nexshop.ExcellentShop;
+import su.nexmedia.engine.api.placeholder.PlaceholderMap;
+import su.nexmedia.engine.lang.LangManager;
 import su.nightexpress.nexshop.Placeholders;
-import su.nightexpress.nexshop.ShopAPI;
-import su.nightexpress.nexshop.api.event.ShopPurchaseEvent;
+import su.nightexpress.nexshop.api.event.ShopTransactionEvent;
 import su.nightexpress.nexshop.api.shop.ProductStock;
 import su.nightexpress.nexshop.api.type.StockType;
 import su.nightexpress.nexshop.api.type.TradeType;
 import su.nightexpress.nexshop.config.Lang;
 
-import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 public class ChestProductStock extends ProductStock<ChestProduct> {
 
     public ChestProductStock() {
-
+        this.placeholderMap
+            .add(Placeholders.PRODUCT_STOCK_GLOBAL_BUY_AMOUNT_LEFT, () -> {
+                int leftAmount = this.getLeftAmount(TradeType.BUY);
+                return leftAmount < 0 ? LangManager.getPlain(Lang.OTHER_INFINITY) : String.valueOf(leftAmount);
+            })
+            .add(Placeholders.PRODUCT_STOCK_GLOBAL_SELL_AMOUNT_LEFT, () -> {
+                int leftAmount = this.getLeftAmount(TradeType.SELL);
+                return leftAmount < 0 ? LangManager.getPlain(Lang.OTHER_INFINITY) : String.valueOf(leftAmount);
+            })
+        ;
     }
 
     @Override
-    public void write(@NotNull JYML cfg, @NotNull String path) {
-
+    public @NotNull PlaceholderMap getPlaceholders(@NotNull Player player) {
+        return this.getPlaceholders();
     }
 
-    @Override
-    @NotNull
-    public UnaryOperator<String> replacePlaceholders() {
-        ExcellentShop plugin = ShopAPI.PLUGIN;
-
-        int stockGLBuyAmountLeft = this.getLeftAmount(TradeType.BUY);
-        int stockGLSellAmountLeft = this.getLeftAmount(TradeType.SELL);
-        String infin = plugin.getMessage(Lang.OTHER_INFINITY).getLocalized();
-
-        return str -> str
-            .replace(Placeholders.PRODUCT_STOCK_GLOBAL_BUY_AMOUNT_LEFT, stockGLBuyAmountLeft < 0 ? infin : String.valueOf(stockGLBuyAmountLeft))
-            .replace(Placeholders.PRODUCT_STOCK_GLOBAL_SELL_AMOUNT_LEFT, stockGLSellAmountLeft < 0 ? infin : String.valueOf(stockGLSellAmountLeft))
-            ;
-    }
-
-    @Override
-    @NotNull
-    public UnaryOperator<String> replacePlaceholders(@NotNull Player player) {
-        return str -> str;
-    }
-
-    @NotNull
-    private ChestShop getShop() {
+    private @NotNull ChestShop getShop() {
         return this.getProduct().getShop();
     }
 
     @Override
-    public void onPurchase(@NotNull ShopPurchaseEvent<?> event) {
-        TradeType tradeType = event.getTradeType();
-        int amount = event.getPrepared().getAmount();
-        Player player = event.getPlayer();
-
+    public void onPurchase(@NotNull ShopTransactionEvent<?> event) {
+        TradeType tradeType = event.getResult().getTradeType();
+        int amount = event.getResult().getUnits();
         if (!this.isUnlimited(StockType.GLOBAL, tradeType)) {
             int amountLeft = this.getLeftAmount(tradeType);
             this.setLeftAmount(tradeType, amountLeft - amount);
@@ -102,20 +85,25 @@ public class ChestProductStock extends ProductStock<ChestProduct> {
         if (this.getShop().isAdminShop()) return -1;
 
         Inventory inventory = this.getShop().getInventory();
+        ChestProduct product = this.getProduct();
 
         // Для покупки со стороны игрока, возвращаем количество реальных предметов в контейнере.
         if (tradeType == TradeType.BUY) {
-            return Stream.of(inventory.getContents()).filter(has -> has != null && this.getProduct().isItemMatches(has))
+            double totalItems = Stream.of(inventory.getContents())
+                .filter(has -> has != null && product.isItemMatches(has))
                 .mapToInt(ItemStack::getAmount).sum();
+            return (int) Math.floor(totalItems / (double) product.getUnitAmount());
         }
         // Для продажи со стороны игрока, возвращаем количество в свободных и идентичных стопках для предмета.
         else {
             ItemStack item = this.getProduct().getItem();
-            int productSize = (int) Stream.of(inventory.getContents())
-                .filter(itemHas -> itemHas == null || itemHas.getType().isAir() || this.getProduct().isItemMatches(itemHas)).count();
-            int maxSpace = productSize * item.getMaxStackSize();
+            double totalSlots = (int) Stream.of(inventory.getContents())
+                .filter(itemHas -> itemHas == null || itemHas.getType().isAir() || product.isItemMatches(itemHas))
+                .count();
+            double totalSpace = totalSlots * (double) item.getMaxStackSize();
+            int unitsSpace = (int) Math.ceil(totalSpace / (double) product.getUnitAmount());
 
-            return maxSpace - this.getLeftAmount(TradeType.BUY);
+            return unitsSpace - this.getLeftAmount(TradeType.BUY);
         }
     }
 
@@ -126,8 +114,7 @@ public class ChestProductStock extends ProductStock<ChestProduct> {
             // Has: 10, Set: 20, Need to add 10 items
             // Has: 10, Set: 5, Need to remove 5 items
             amount = amount - amountHas;
-        }
-        else {
+        } else {
             // Has: 10 space, Set: 20, = -10 = Need to remove 10 items
             // Has: 10 space, Set: 5, = 5 = Need to add 5 items
             amount = amountHas - amount;
@@ -135,13 +122,12 @@ public class ChestProductStock extends ProductStock<ChestProduct> {
         boolean isRemoval = amount < 0;
 
         ItemStack item = this.getProduct().getItem();
-        item.setAmount(Math.abs(amount));
+        item.setAmount(Math.abs(amount * this.getProduct().getUnitAmount()));
         Inventory inventory = this.getShop().getInventory();
 
         if (isRemoval) {
             inventory.removeItem(item);
-        }
-        else {
+        } else {
             inventory.addItem(item);
         }
     }

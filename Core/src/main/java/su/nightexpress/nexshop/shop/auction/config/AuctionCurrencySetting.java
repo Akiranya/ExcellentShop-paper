@@ -9,20 +9,17 @@ public class AuctionCurrencySetting {
 
     private final ICurrency currency;
     private final boolean isDefault;
-    private final boolean isEnabled;
     private final boolean isPermissionRequired;
     private final String permission;
 
-    public AuctionCurrencySetting(@NotNull ICurrency currency, boolean isDefault, boolean isEnabled, boolean isPermissionRequired) {
+    public AuctionCurrencySetting(@NotNull ICurrency currency, boolean isDefault, boolean isPermissionRequired) {
         this.currency = currency;
         this.isDefault = isDefault;
-        this.isEnabled = isEnabled;
         this.isPermissionRequired = isPermissionRequired;
         this.permission = Perms.PREFIX_AUCTION_CURRENCY + this.getCurrency().getId();
     }
 
-    @NotNull
-    public ICurrency getCurrency() {
+    public @NotNull ICurrency getCurrency() {
         return currency;
     }
 
@@ -30,16 +27,16 @@ public class AuctionCurrencySetting {
         return isDefault;
     }
 
+    @Deprecated
     public boolean isEnabled() {
-        return isEnabled;
+        return true;
     }
 
     public boolean isPermissionRequired() {
         return isPermissionRequired;
     }
 
-    @NotNull
-    public String getPermission() {
+    public @NotNull String getPermission() {
         return permission;
     }
 

@@ -1,9 +1,9 @@
-Command_Aliases: 'virtualshop,vshop,shop'
+Command_Aliases: 'virtualshop,vshop'
 
 Transaction_Logs:
   Output:
     File: true
     Console: true
   Format:
-    Date: dd/MM/yyyy HH:mm:ss
+    Date: yyyy/MM/dd HH:mm:ss
     Purchase: '(%type%) %player% - x%amount% of %item% for %price% in %shop_name% shop.'

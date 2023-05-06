@@ -61,14 +61,12 @@ public class AuctionCurrencyFilterMenu extends AbstractMenuAuto<ExcellentShop, I
     }
 
     @Override
-    @NotNull
-    protected List<ICurrency> getObjects(@NotNull Player player) {
+    protected @NotNull List<ICurrency> getObjects(@NotNull Player player) {
         return new ArrayList<>(this.auctionManager.getCurrencies());
     }
 
     @Override
-    @NotNull
-    protected ItemStack getObjectStack(@NotNull Player player, @NotNull ICurrency currency) {
+    protected @NotNull ItemStack getObjectStack(@NotNull Player player, @NotNull ICurrency currency) {
         Set<ICurrency> currencies = AuctionMainMenu.getCurrencies(player);
         boolean isSelected = currencies.contains(currency);
         ItemStack item = isSelected ? this.selectedIcon.clone() : currency.getIcon();
@@ -83,8 +81,7 @@ public class AuctionCurrencyFilterMenu extends AbstractMenuAuto<ExcellentShop, I
     }
 
     @Override
-    @NotNull
-    protected MenuClick getObjectClick(@NotNull Player player, @NotNull ICurrency currency) {
+    protected @NotNull MenuClick getObjectClick(@NotNull Player player, @NotNull ICurrency currency) {
         return (player2, type, e) -> {
             ItemStack clicked = e.getCurrentItem();
             if (clicked == null || clicked.getType().isAir()) return;

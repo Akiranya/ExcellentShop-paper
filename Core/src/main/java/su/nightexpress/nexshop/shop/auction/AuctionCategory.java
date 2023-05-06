@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.manager.IPlaceholder;
+import su.nexmedia.engine.api.placeholder.PlaceholderConstants;
 import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.ItemUtil;
 
@@ -31,33 +32,28 @@ public class AuctionCategory implements IPlaceholder {
     }
 
     @Override
-    @NotNull
-    public UnaryOperator<String> replacePlaceholders() {
+    public @NotNull UnaryOperator<String> replacePlaceholders() {
         return str -> str
             .replace(Placeholders.CATEGORY_ID, this.getId())
             .replace(Placeholders.CATEGORY_NAME, this.getName())
             .replace(Placeholders.CATEGORY_ICON_NAME, ComponentUtil.asMiniMessage(ItemUtil.getName(this.getIcon())))
-            // .replace(Placeholders.CATEGORY_ICON_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getIcon())))
+            //.replace(Placeholders.CATEGORY_ICON_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getIcon())))
             ;
     }
 
-    @NotNull
-    public String getId() {
+    public @NotNull String getId() {
         return this.id;
     }
 
-    @NotNull
-    public String getName() {
+    public @NotNull String getName() {
         return this.name;
     }
 
-    @NotNull
-    public ItemStack getIcon() {
+    public @NotNull ItemStack getIcon() {
         return this.icon.clone();
     }
 
-    @NotNull
-    public Set<String> getMaterials() {
+    public @NotNull Set<String> getMaterials() {
         return this.materials;
     }
 
@@ -70,6 +66,6 @@ public class AuctionCategory implements IPlaceholder {
     }
 
     public boolean isItemOfThis(@NotNull String name) {
-        return this.materials.contains(name.toLowerCase()) || this.materials.contains(Placeholders.MASK_ANY);
+        return this.materials.contains(name.toLowerCase()) || this.materials.contains(PlaceholderConstants.WILDCARD);
     }
 }

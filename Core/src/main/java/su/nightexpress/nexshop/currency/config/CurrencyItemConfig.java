@@ -17,13 +17,17 @@ public class CurrencyItemConfig extends CurrencyConfig {
     public CurrencyItemConfig(@NotNull ExcellentShop plugin, @NotNull JYML cfg) {
         super(plugin, cfg);
 
-        this.item = cfg.getItem("Item");
+        if (cfg.contains("Item.Material")) {
+            this.item = cfg.getItem("Item");
+        } else {
+            this.item = cfg.getItemEncoded("Item");
+        }
     }
 
     @Override
     public void onSave() {
         super.onSave();
-        this.cfg.setItem("Item", this.getItem());
+        this.cfg.setItemEncoded("Item", this.getItem());
         this.cfg.remove("Icon");
     }
 
@@ -31,14 +35,12 @@ public class CurrencyItemConfig extends CurrencyConfig {
         this.item = item.clone();
     }
 
-    @NotNull
-    public ItemStack getItem() {
+    public @NotNull ItemStack getItem() {
         return this.item.clone();
     }
 
     @Override
-    @NotNull
-    public ItemStack getIcon() {
+    public @NotNull ItemStack getIcon() {
         return this.getItem();
     }
 }

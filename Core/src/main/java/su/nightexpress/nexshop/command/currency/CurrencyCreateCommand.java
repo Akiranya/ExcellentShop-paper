@@ -24,15 +24,11 @@ public class CurrencyCreateCommand extends AbstractCommand<ExcellentShop> {
         super(plugin, new String[]{"create"}, Perms.COMMAND_CURRENCY_CREATE);
     }
 
-    @Override
-    @NotNull
-    public String getUsage() {
+    @Override public @NotNull String getUsage() {
         return plugin.getMessage(Lang.COMMAND_CURRENCY_CREATE_USAGE).getLocalized();
     }
 
-    @Override
-    @NotNull
-    public String getDescription() {
+    @Override public @NotNull String getDescription() {
         return plugin.getMessage(Lang.COMMAND_CURRENCY_CREATE_DESC).getLocalized();
     }
 
@@ -41,9 +37,7 @@ public class CurrencyCreateCommand extends AbstractCommand<ExcellentShop> {
         return true;
     }
 
-    @Override
-    @NotNull
-    public List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
+    @Override public @NotNull List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
         if (arg == 2) {
             return Collections.singletonList("<name>");
         }
@@ -76,8 +70,7 @@ public class CurrencyCreateCommand extends AbstractCommand<ExcellentShop> {
                 .replace(currency.replacePlaceholders())
                 .replace(Placeholders.GENERIC_ITEM, ItemUtil.getName(item))
                 .send(sender);
-        }
-        else {
+        } else {
             if (!(currency instanceof ItemCurrency itemCurrency)) {
                 plugin.getMessage(Lang.COMMAND_CURRENCY_CREATE_ERROR_EXIST)
                     .replace(currency.replacePlaceholders())

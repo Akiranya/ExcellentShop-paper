@@ -22,8 +22,7 @@ public class AuctionHistoryMenu extends AbstractAuctionMenu<AuctionCompletedList
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.RETURN) {
                     this.auctionManager.getMainMenu().open(p, 1);
-                }
-                else this.onItemClickDefault(p, type2);
+                } else this.onItemClickDefault(p, type2);
             }
         };
 
@@ -38,17 +37,13 @@ public class AuctionHistoryMenu extends AbstractAuctionMenu<AuctionCompletedList
     }
 
     @Override
-    @NotNull
-    protected List<AuctionCompletedListing> getObjects(@NotNull Player player) {
+    protected @NotNull List<AuctionCompletedListing> getObjects(@NotNull Player player) {
         UUID id = this.seeOthers.getOrDefault(player, player.getUniqueId());
         return this.auctionManager.getHistoryListings(id);
     }
 
     @Override
-    @NotNull
-    protected MenuClick getObjectClick(@NotNull Player player, @NotNull AuctionCompletedListing item) {
-        return (player1, type, e) -> {
-
-        };
+    protected @NotNull MenuClick getObjectClick(@NotNull Player player, @NotNull AuctionCompletedListing item) {
+        return (player1, type, e) -> {};
     }
 }

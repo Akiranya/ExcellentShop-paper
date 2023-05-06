@@ -21,15 +21,11 @@ public class CurrencyMainCommand extends GeneralCommand<ExcellentShop> {
         this.addChildren(new CurrencyGiveTakeCommand(this.plugin, CurrencyGiveTakeCommand.Mode.TAKE));
     }
 
-    @Override
-    @NotNull
-    public String getUsage() {
+    @Override public @NotNull String getUsage() {
         return plugin.getMessage(Lang.COMMAND_CURRENCY_USAGE).getLocalized();
     }
 
-    @Override
-    @NotNull
-    public String getDescription() {
+    @Override public @NotNull String getDescription() {
         return plugin.getMessage(Lang.COMMAND_CURRENCY_DESC).getLocalized();
     }
 

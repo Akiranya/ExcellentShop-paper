@@ -3,25 +3,31 @@ package su.nightexpress.nexshop.api.shop;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.config.JOption;
-import su.nexmedia.engine.api.manager.IPlaceholder;
+import su.nexmedia.engine.api.placeholder.Placeholder;
+import su.nexmedia.engine.api.placeholder.PlaceholderMap;
 import su.nightexpress.nexshop.api.IPurchaseListener;
 import su.nightexpress.nexshop.api.type.StockType;
 import su.nightexpress.nexshop.api.type.TradeType;
 
-import java.util.function.UnaryOperator;
+public abstract class ProductStock<P extends Product<P, ?, ?>> implements Placeholder, IPurchaseListener {
 
-public abstract class ProductStock<P extends Product<P, ?, ?>> implements IPlaceholder, IPurchaseListener, JOption.Writer {
+    protected final PlaceholderMap placeholderMap;
 
-    protected P       product;
+    protected P product;
     protected boolean locked;
 
     public ProductStock() {
-
+        this.placeholderMap = new PlaceholderMap();
     }
 
-    @NotNull
-    public P getProduct() {
+    @Override
+    public @NotNull PlaceholderMap getPlaceholders() {
+        return this.placeholderMap;
+    }
+
+    public abstract @NotNull PlaceholderMap getPlaceholders(@NotNull Player player);
+
+    public @NotNull P getProduct() {
         if (this.product == null) {
             throw new IllegalStateException("Product is undefined!");
         }
@@ -47,9 +53,6 @@ public abstract class ProductStock<P extends Product<P, ?, ?>> implements IPlace
     public void lock() {
         this.setLocked(true);
     }
-
-    @NotNull
-    public abstract UnaryOperator<String> replacePlaceholders(@NotNull Player player);
 
     public abstract int getInitialAmount(@NotNull StockType stockType, @NotNull TradeType tradeType);
 

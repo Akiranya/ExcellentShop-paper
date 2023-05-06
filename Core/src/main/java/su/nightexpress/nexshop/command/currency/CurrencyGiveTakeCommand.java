@@ -4,8 +4,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.AbstractCommand;
+import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.NumberUtil;
-import su.nexmedia.engine.utils.PlayerUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.Perms;
@@ -31,15 +31,11 @@ public class CurrencyGiveTakeCommand extends AbstractCommand<ExcellentShop> {
         this.mode = mode;
     }
 
-    @Override
-    @NotNull
-    public String getUsage() {
+    @Override public @NotNull String getUsage() {
         return plugin.getMessage(this.mode == Mode.GIVE ? Lang.COMMAND_CURRENCY_GIVE_USAGE : Lang.COMMAND_CURRENCY_TAKE_USAGE).getLocalized();
     }
 
-    @Override
-    @NotNull
-    public String getDescription() {
+    @Override public @NotNull String getDescription() {
         return plugin.getMessage(this.mode == Mode.GIVE ? Lang.COMMAND_CURRENCY_GIVE_DESC : Lang.COMMAND_CURRENCY_TAKE_DESC).getLocalized();
     }
 
@@ -48,14 +44,12 @@ public class CurrencyGiveTakeCommand extends AbstractCommand<ExcellentShop> {
         return false;
     }
 
-    @Override
-    @NotNull
-    public List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
+    @Override public @NotNull List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
         if (arg == 2) {
             return new ArrayList<>(this.plugin.getCurrencyManager().getCurrencyIds());
         }
         if (arg == 3) {
-            return PlayerUtil.getPlayerNames();
+            return CollectionsUtil.playerNames(player);
         }
         if (arg == 4) {
             return Arrays.asList("1", "10", "100");
@@ -90,8 +84,7 @@ public class CurrencyGiveTakeCommand extends AbstractCommand<ExcellentShop> {
 
         if (this.mode == Mode.GIVE) {
             currency.give(player, amount);
-        }
-        else {
+        } else {
             currency.take(player, amount);
         }
 

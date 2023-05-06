@@ -15,26 +15,22 @@ public class AuctionHistoryCommand extends AbstractOpenCommand {
     }
 
     @Override
-    @NotNull
-    public String getUsage() {
+    public @NotNull String getUsage() {
         return plugin.getMessage(AuctionLang.COMMAND_HISTORY_USAGE).getLocalized();
     }
 
     @Override
-    @NotNull
-    public String getDescription() {
+    public @NotNull String getDescription() {
         return plugin.getMessage(AuctionLang.COMMAND_HISTORY_DESC).getLocalized();
     }
 
     @Override
-    @NotNull
-    protected AuctionHistoryMenu getMenu() {
+    protected @NotNull AuctionHistoryMenu getMenu() {
         return this.module.getHistoryMenu();
     }
 
     @Override
-    @Nullable
-    protected Permission getPermissionsOthers() {
+    protected @Nullable Permission getPermissionsOthers() {
         return Perms.AUCTION_COMMAND_HISTORY_OTHERS;
     }
 }

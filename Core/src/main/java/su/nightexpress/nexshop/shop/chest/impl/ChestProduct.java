@@ -1,39 +1,42 @@
 package su.nightexpress.nexshop.shop.chest.impl;
 
+import cc.mewcraft.mewcore.item.api.PluginItem;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
+import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.nexshop.ShopAPI;
 import su.nightexpress.nexshop.api.IScheduled;
 import su.nightexpress.nexshop.api.currency.ICurrency;
+import su.nightexpress.nexshop.api.shop.ItemProduct;
 import su.nightexpress.nexshop.api.shop.Product;
 import su.nightexpress.nexshop.api.shop.ProductPricer;
-import su.nightexpress.nexshop.api.type.PriceType;
 import su.nightexpress.nexshop.api.type.TradeType;
 import su.nightexpress.nexshop.currency.CurrencyId;
 import su.nightexpress.nexshop.shop.FlatProductPricer;
 import su.nightexpress.nexshop.shop.FloatProductPricer;
 import su.nightexpress.nexshop.shop.chest.config.ChestConfig;
-import su.nightexpress.nexshop.shop.chest.editor.menu.ShopProductEditor;
+import su.nightexpress.nexshop.shop.chest.menu.ProductPriceMenu;
 
 import java.util.UUID;
 
-public class ChestProduct extends Product<ChestProduct, ChestShop, ChestProductStock> {
+public class ChestProduct extends Product<ChestProduct, ChestShop, ChestProductStock> implements ItemProduct {
 
-    private ShopProductEditor editor;
+    private ItemStack item;
+    private ProductPriceMenu priceEditor;
 
     public ChestProduct(@NotNull ICurrency currency, @NotNull ItemStack item) {
         this(UUID.randomUUID().toString(), currency, item);
     }
 
     public ChestProduct(@NotNull String id, @NotNull ICurrency currency, @NotNull ItemStack item) {
-        super(id, item, currency);
+        super(id, currency);
         this.setItem(item);
-        this.setItemMetaEnabled(true);
     }
 
-    @NotNull
-    public static ChestProduct read(@NotNull JYML cfg, @NotNull String path, @NotNull String id) {
+    public static @NotNull ChestProduct read(@NotNull JYML cfg, @NotNull String path, @NotNull String id) {
         if (cfg.contains(path + ".Purchase")) {
             cfg.addMissing(path + ".Currency", cfg.getString(path + ".Purchase.Currency"));
             double buyMin = cfg.getDouble(path + ".Purchase.BUY.Price_Min");
@@ -51,8 +54,7 @@ public class ChestProduct extends Product<ChestProduct, ChestShop, ChestProductS
                 pricer.setTimes(IScheduled.parseTimesOld(cfg.getStringList(path + ".Purchase.Randomizer.Times.Times")));
                 cfg.addMissing(path + ".Price.Type", pricer.getType().name());
                 pricer.write(cfg, path + ".Price");
-            }
-            else {
+            } else {
                 FlatProductPricer pricer = new FlatProductPricer();
                 pricer.setPrice(TradeType.BUY, buyMin);
                 pricer.setPrice(TradeType.SELL, sellMin);
@@ -78,54 +80,121 @@ public class ChestProduct extends Product<ChestProduct, ChestShop, ChestProductS
         ChestProduct product = new ChestProduct(id, currency, item);
         //product.setItemMetaEnabled(true);
         //product.setItem(item);
-
-        PriceType priceType = cfg.getEnum(path + ".Price.Type", PriceType.class, PriceType.FLAT);
-        product.setPricer(ProductPricer.read(priceType, cfg, path + ".Price"));
+        product.setPricer(ProductPricer.read(cfg, path + ".Price"));
         product.setStock(new ChestProductStock());
         return product;
     }
 
-    @Override
-    public void write(@NotNull JYML cfg, @NotNull String path) {
-        ProductPricer pricer = this.getPricer();
-        cfg.set(path + ".Currency", this.getCurrency().getId());
+    public static void write(@NotNull ChestProduct product, @NotNull JYML cfg, @NotNull String path) {
+        ProductPricer pricer = product.getPricer();
+        cfg.set(path + ".Currency", product.getCurrency().getId());
         cfg.set(path + ".Price.Type", pricer.getType().name());
-        cfg.set(path + ".Price", pricer);
-        cfg.setItemEncoded(path + ".Reward.Item", this.getItem());
+        //cfg.set(path + ".Price", pricer);
+        pricer.write(cfg, path + ".Price");
+        cfg.setItemEncoded(path + ".Reward.Item", product.getItem());
     }
 
     @Override
     public void clear() {
-        if (this.editor != null) {
-            this.editor.clear();
-            this.editor = null;
+        if (this.priceEditor != null) {
+            this.priceEditor.clear();
+            this.priceEditor = null;
         }
     }
 
-    @Override
-    @NotNull
-    public ShopProductEditor getEditor() {
-        if (this.editor == null) {
-            this.editor = new ShopProductEditor(this);
+    public @NotNull ProductPriceMenu getPriceEditor() {
+        if (this.priceEditor == null) {
+            this.priceEditor = new ProductPriceMenu(this);
         }
-        return this.editor;
+        return priceEditor;
     }
 
     @Override
-    @NotNull
-    protected ChestProduct get() {
+    public void delivery(@NotNull Player player, int count) {
+        int amount = this.getUnitAmount() * count;
+        PlayerUtil.addItem(player, this.getItem(), amount);
+    }
+
+    @Override
+    public void take(@NotNull Player player, int count) {
+        int amount = this.getUnitAmount() * count;
+        PlayerUtil.takeItem(player, this::isItemMatches, amount);
+    }
+
+    @Override
+    public int count(@NotNull Player player) {
+        return PlayerUtil.countItem(player, this::isItemMatches);
+    }
+
+    @Override
+    protected @NotNull ChestProduct get() {
         return this;
     }
 
     @Override
-    public void setStock(@NotNull ChestProductStock stock) {
-        this.stock = stock;
-        this.stock.setProduct(this);
+    public int getUnitAmount() {
+        return this.getItem().getAmount();
     }
 
     @Override
-    @NotNull
-    public ChestPreparedProduct getPrepared(@NotNull TradeType buyType) {
-        return new ChestPreparedProduct(this, buyType);
+    public boolean hasSpace(@NotNull Player player) {
+        return PlayerUtil.countItemSpace(player, this.getItem()) > 0;
+    }
+
+    @Override
+    public @NotNull ItemStack getItem() {
+        return item.clone();
+    }
+
+    @Override
+    public void setItem(@NotNull ItemStack item) {
+        this.item = item.clone();
+    }
+
+    @Override
+    public @NotNull ItemStack getPreview() {
+        return this.getItem();
+    }
+
+    @Override
+    public void setRespectItemMeta(boolean respectItemMeta) {
+
+    }
+
+    @Override
+    public boolean isRespectItemMeta() {
+        return true;
+    }
+
+    @Override
+    public boolean isRespectPluginItem() {
+        // chest products shouldn't support plugin items
+        return false;
+    }
+
+    @Override public void setRespectPluginItem(final boolean respectPluginItem) {
+        // chest products shouldn't support plugin items
+    }
+
+    @Override
+    public void setPluginItem(final @NotNull PluginItem<?> pluginItem) {
+        // chest products shouldn't support plugin items
+    }
+
+    @Override
+    public @Nullable PluginItem<?> getPluginItem() {
+        // chest products shouldn't support plugin items
+        return null;
+    }
+
+    /*@Override
+    public void setStock(@NotNull ChestProductStock stock) {
+        this.stock = stock;
+        this.stock.setProduct(this);
+    }*/
+
+    @Override
+    public @NotNull ChestPreparedProduct getPrepared(@NotNull TradeType buyType, boolean all) {
+        return new ChestPreparedProduct(this, buyType, all);
     }
 }

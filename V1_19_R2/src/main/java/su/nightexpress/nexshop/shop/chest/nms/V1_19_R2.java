@@ -91,7 +91,7 @@ public class V1_19_R2 implements ChestNMS {
     @Override
     public void deleteEntity(int... ids) {
         ClientboundRemoveEntitiesPacket packetPlayOutEntityDestroy = new ClientboundRemoveEntitiesPacket(ids);
-        Bukkit.getServer().getOnlinePlayers().forEach(player ->  {
+        Bukkit.getServer().getOnlinePlayers().forEach(player -> {
             ((CraftPlayer) player).getHandle().connection.send(packetPlayOutEntityDestroy);
         });
     }

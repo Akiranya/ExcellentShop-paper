@@ -6,22 +6,13 @@ import su.nightexpress.nexshop.api.shop.ProductPricer;
 import su.nightexpress.nexshop.api.type.PriceType;
 import su.nightexpress.nexshop.api.type.TradeType;
 
-import java.util.function.UnaryOperator;
-
 public class FlatProductPricer extends ProductPricer {
 
     public FlatProductPricer() {
 
     }
 
-    @Override
-    @NotNull
-    public UnaryOperator<String> replacePlaceholders() {
-        return UnaryOperator.identity();
-    }
-
-    @NotNull
-    public static FlatProductPricer read(@NotNull JYML cfg, @NotNull String path) {
+    public static @NotNull FlatProductPricer read(@NotNull JYML cfg, @NotNull String path) {
         FlatProductPricer pricer = new FlatProductPricer();
         for (TradeType tradeType : TradeType.values()) {
             pricer.setPrice(tradeType, cfg.getDouble(path + "." + tradeType.name()));
@@ -40,8 +31,7 @@ public class FlatProductPricer extends ProductPricer {
     }
 
     @Override
-    @NotNull
-    public PriceType getType() {
+    public @NotNull PriceType getType() {
         return PriceType.FLAT;
     }
 }

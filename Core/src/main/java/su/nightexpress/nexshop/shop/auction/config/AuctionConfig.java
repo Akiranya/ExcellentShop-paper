@@ -40,6 +40,10 @@ public class AuctionConfig {
     public static Set<String> LISTINGS_DISABLED_NAMES;
     public static Set<String> LISTINGS_DISABLED_LORES;
 
+    public static final JOption<Integer> MENU_UPDATE_INTERVAL = JOption.create("Menu.Update_Interval", 1,
+        "Sets how often auction menus will be refreshed to players who are viewing them.",
+        "Set this to -1 to disable refreshing task. Then menus will be updated only when there are listings changes.");
+
     public static Map<String, AuctionCategory> CATEGORIES_MAP;
 
     public static void load(@NotNull AuctionManager manager) {
@@ -81,17 +85,20 @@ public class AuctionConfig {
 
         CURRENCIES = new HashMap<>();
         for (String curId : cfg.getSection(path + "Currency")) {
+            String path2 = path + "Currency." + curId + ".";
+            boolean isDefault = cfg.getBoolean(path2 + "Default");
+            boolean isEnabled = cfg.getBoolean(path2 + "Enabled");
+            boolean isPermRequired = cfg.getBoolean(path2 + "Need_Permission");
+
+            if (!isEnabled) continue;
+
             ICurrency currency = manager.plugin().getCurrencyManager().getCurrency(curId);
             if (currency == null) {
                 manager.error("Invalid/Unknown currency provided: '" + curId + "'. Ignoring...");
                 continue;
             }
 
-            String path2 = path + "Currency." + curId + ".";
-            boolean isDefault = cfg.getBoolean(path2 + "Default");
-            boolean isEnabled = cfg.getBoolean(path2 + "Enabled");
-            boolean isPermRequired = cfg.getBoolean(path2 + "Need_Permission");
-            AuctionCurrencySetting setting = new AuctionCurrencySetting(currency, isDefault, isEnabled, isPermRequired);
+            AuctionCurrencySetting setting = new AuctionCurrencySetting(currency, isDefault, isPermRequired);
             CURRENCIES.put(setting.getCurrency().getId(), setting);
         }
 
@@ -175,8 +182,7 @@ public class AuctionConfig {
         return LISTINGS_PRICE_PER_CURRENCY.getOrDefault(currency.getId(), new double[]{-1, -1})[index];
     }
 
-    @NotNull
-    public static Collection<AuctionCategory> getCategories() {
+    public static @NotNull Collection<AuctionCategory> getCategories() {
         return CATEGORIES_MAP.values();
     }
 }

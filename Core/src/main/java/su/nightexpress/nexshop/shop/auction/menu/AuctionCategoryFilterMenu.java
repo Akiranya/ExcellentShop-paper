@@ -62,14 +62,12 @@ public class AuctionCategoryFilterMenu extends AbstractMenuAuto<ExcellentShop, A
     }
 
     @Override
-    @NotNull
-    protected List<AuctionCategory> getObjects(@NotNull Player player) {
+    protected @NotNull List<AuctionCategory> getObjects(@NotNull Player player) {
         return new ArrayList<>(AuctionConfig.getCategories());
     }
 
     @Override
-    @NotNull
-    protected ItemStack getObjectStack(@NotNull Player player, @NotNull AuctionCategory category) {
+    protected @NotNull ItemStack getObjectStack(@NotNull Player player, @NotNull AuctionCategory category) {
         Set<AuctionCategory> categories = AuctionMainMenu.getCategories(player);
         boolean isSelected = categories.contains(category);
         ItemStack icon = category.getIcon();
@@ -86,8 +84,7 @@ public class AuctionCategoryFilterMenu extends AbstractMenuAuto<ExcellentShop, A
     }
 
     @Override
-    @NotNull
-    protected MenuClick getObjectClick(@NotNull Player player, @NotNull AuctionCategory category) {
+    protected @NotNull MenuClick getObjectClick(@NotNull Player player, @NotNull AuctionCategory category) {
         return (player2, type, e) -> {
             ItemStack clicked = e.getCurrentItem();
             if (clicked == null || clicked.getType().isAir()) return;

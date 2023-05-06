@@ -3,7 +3,10 @@ package su.nightexpress.nexshop.shop.chest;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
@@ -16,7 +19,6 @@ import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.hooks.misc.VaultHook;
 import su.nexmedia.engine.utils.Pair;
-import su.nexmedia.engine.utils.Reflex;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.Perms;
 import su.nightexpress.nexshop.Placeholders;
@@ -34,10 +36,9 @@ import su.nightexpress.nexshop.shop.chest.config.ChestConfig;
 import su.nightexpress.nexshop.shop.chest.config.ChestLang;
 import su.nightexpress.nexshop.shop.chest.impl.ChestShop;
 import su.nightexpress.nexshop.shop.chest.listener.ChestShopListener;
-import su.nightexpress.nexshop.shop.chest.menu.list.ChestListGlobalMenu;
-import su.nightexpress.nexshop.shop.chest.menu.list.ChestListOwnMenu;
-import su.nightexpress.nexshop.shop.chest.menu.list.ChestListSearchMenu;
-import su.nightexpress.nexshop.shop.chest.nms.ChestNMS;
+import su.nightexpress.nexshop.shop.chest.menu.ShopsListMenu;
+import su.nightexpress.nexshop.shop.chest.menu.ShopsSearchMenu;
+import su.nightexpress.nexshop.shop.chest.nms.*;
 import su.nightexpress.nexshop.shop.chest.type.ChestShopType;
 
 import java.util.*;
@@ -45,45 +46,44 @@ import java.util.stream.Stream;
 
 public class ChestShopModule extends ShopModule {
 
-    private ChestNMS chestNMS;
-
-    private Map<Location, ChestShop> shops;
-    private Set<ClaimHook> claimHooks;
-
-    private ChestListOwnMenu listOwnMenu;
-    private ChestListGlobalMenu listGlobalMenu;
-    private ChestListSearchMenu listSearchMenu;
-    private ChestDisplayHandler displayHandler;
-
     public static final String DIR_SHOPS = "/shops/";
+
+    private final Map<Location, ChestShop> shops;
+
+    private Set<ClaimHook> claimHooks;
+    private ShopsListMenu listMenu;
+    private ShopsSearchMenu searchMenu;
+    private ChestDisplayHandler displayHandler;
+    private ChestNMS chestNMS;
 
     public ChestShopModule(@NotNull ExcellentShop plugin) {
         super(plugin, ModuleId.CHEST_SHOP);
+        this.shops = new HashMap<>();
     }
 
     @Override
     protected void onLoad() {
         super.onLoad();
-        this.shops = new HashMap<>();
 
         ChestConfig.load(this);
         if (ChestConfig.DEFAULT_CURRENCY == null) {
             this.interruptLoad("Invalid default currency!");
             return;
         }
+        this.plugin.getLangManager().loadMissing(ChestLang.class);
+        this.plugin.getLangManager().setupEnum(ChestShopType.class);
+        this.plugin.getLang().saveChanges();
+        this.plugin.registerPermissions(ChestPerms.class);
 
-        String pack = ChestNMS.class.getPackage().getName();
-        Class<?> nmsClazz = Reflex.getClass(pack, Version.CURRENT.name());
-        if (nmsClazz != null) {
-            try {
-                this.chestNMS = (ChestNMS) nmsClazz.getConstructor().newInstance();
-                this.displayHandler = new ChestDisplayHandler(this);
-                this.displayHandler.setup();
-            } catch (ReflectiveOperationException ex) {
-                this.error("Could not setup internal NMS handler! Shop display will be disabled.");
-                ex.printStackTrace();
-            }
-        }
+        this.chestNMS = switch (Version.CURRENT) {
+            case V1_17_R1 -> new V1_17_R1();
+            case V1_18_R2 -> new V1_18_R2();
+            case V1_19_R2 -> new V1_19_R2();
+            case V1_19_R3 -> new V1_19_R3();
+            default -> throw new IllegalStateException("unsupported Minecraft version");
+        };
+        this.displayHandler = new ChestDisplayHandler(this);
+        this.displayHandler.setup();
 
         // Setup Claim Hooks
         if (ChestConfig.SHOP_CREATION_CLAIM_ONLY) {
@@ -95,17 +95,16 @@ public class ChestShopModule extends ShopModule {
 
         this.addListener(new ChestShopListener(this));
 
-        this.listOwnMenu = new ChestListOwnMenu(this);
-        this.listGlobalMenu = new ChestListGlobalMenu(this);
-        this.listSearchMenu = new ChestListSearchMenu(this);
+        this.listMenu = new ShopsListMenu(this);
+        this.searchMenu = new ShopsSearchMenu(this);
 
-        this.moduleCommand.addChildren(new CreateCmd(this));
-        this.moduleCommand.addChildren(new RemoveCmd(this));
-        this.moduleCommand.addChildren(new ListCmd(this));
-        this.moduleCommand.addChildren(new SearchCmd(this));
+        this.moduleCommand.addChildren(new CreateCommand(this));
+        this.moduleCommand.addChildren(new RemoveCommand(this));
+        this.moduleCommand.addChildren(new ListCommand(this));
+        this.moduleCommand.addChildren(new SearchCommand(this));
         this.moduleCommand.addChildren(new OpenCommand(this));
 
-        this.plugin.runTask(c -> this.loadShops(), false);
+        this.plugin.runTask(task -> this.loadShops());
     }
 
     public void loadShops() {
@@ -139,17 +138,13 @@ public class ChestShopModule extends ShopModule {
     protected void onShutdown() {
         super.onShutdown();
 
-        if (this.listOwnMenu != null) {
-            this.listOwnMenu.clear();
-            this.listOwnMenu = null;
+        if (this.listMenu != null) {
+            this.listMenu.clear();
+            this.listMenu = null;
         }
-        if (this.listGlobalMenu != null) {
-            this.listGlobalMenu.clear();
-            this.listGlobalMenu = null;
-        }
-        if (this.listSearchMenu != null) {
-            this.listSearchMenu.clear();
-            this.listSearchMenu = null;
+        if (this.searchMenu != null) {
+            this.searchMenu.clear();
+            this.searchMenu = null;
         }
 
         // Destroy shop editors and displays.
@@ -159,34 +154,24 @@ public class ChestShopModule extends ShopModule {
             this.displayHandler.shutdown();
             this.displayHandler = null;
         }
-        if (this.shops != null) {
-            this.shops.clear();
-            this.shops = null;
-        }
         if (this.claimHooks != null) {
             this.claimHooks.clear();
             this.claimHooks = null;
         }
+
+        this.shops.clear();
     }
 
-    @NotNull
-    public ChestNMS getNMS() {
+    public @NotNull ChestNMS getNMS() {
         return chestNMS;
     }
 
-    @NotNull
-    public ChestListOwnMenu getListOwnMenu() {
-        return this.listOwnMenu;
+    public @NotNull ShopsListMenu getListMenu() {
+        return this.listMenu;
     }
 
-    @NotNull
-    public ChestListGlobalMenu getListGlobalMenu() {
-        return this.listGlobalMenu;
-    }
-
-    @NotNull
-    public ChestListSearchMenu getListSearchMenu() {
-        return this.listSearchMenu;
+    public @NotNull ShopsSearchMenu getSearchMenu() {
+        return this.searchMenu;
     }
 
     public boolean createShop(@NotNull Player player, @NotNull Block block, @NotNull ChestShopType type) {
@@ -251,7 +236,7 @@ public class ChestShopModule extends ShopModule {
             return false;
         }
 
-        if (!shop.isOwner(player) && !player.hasPermission(Perms.CHEST_SHOP_REMOVE_OTHERS)) {
+        if (!shop.isOwner(player) && !player.hasPermission(ChestPerms.REMOVE_OTHERS)) {
             plugin.getMessage(ChestLang.SHOP_ERROR_NOT_OWNER).send(player);
             return false;
         }
@@ -274,8 +259,6 @@ public class ChestShopModule extends ShopModule {
         Pair<Container, Container> sides = shop.getSides();
         this.getShopsMap().put(sides.getFirst().getLocation(), shop);
         this.getShopsMap().put(sides.getSecond().getLocation(), shop);
-
-        shop.setupView();
         shop.updateDisplay();
     }
 
@@ -335,23 +318,19 @@ public class ChestShopModule extends ShopModule {
         return true;
     }
 
-    @Nullable
-    public ChestDisplayHandler getDisplayHandler() {
+    public @Nullable ChestDisplayHandler getDisplayHandler() {
         return this.displayHandler;
     }
 
-    @NotNull
-    public Map<Location, ChestShop> getShopsMap() {
+    public @NotNull Map<Location, ChestShop> getShopsMap() {
         return this.shops;
     }
 
-    @NotNull
-    public Collection<ChestShop> getShops() {
+    public @NotNull Collection<ChestShop> getShops() {
         return this.getShopsMap().values();
     }
 
-    @NotNull
-    public List<ChestShop> getShops(@NotNull Player player) {
+    public @NotNull List<ChestShop> getShops(@NotNull Player player) {
         return this.getShops().stream().filter(shop -> shop.getOwnerId().equals(player.getUniqueId())).toList();
     }
 
@@ -363,26 +342,22 @@ public class ChestShopModule extends ShopModule {
         return this.getShops(player).size();
     }
 
-    @Nullable
-    public ChestShop getShop(@NotNull Inventory inventory) {
+    public @Nullable ChestShop getShop(@NotNull Inventory inventory) {
         Location location = inventory.getLocation();
         if (location == null) return null;
 
         return this.getShop(location.getBlock());
     }
 
-    @Nullable
-    public ChestShop getShop(@NotNull Block block) {
+    public @Nullable ChestShop getShop(@NotNull Block block) {
         return this.getShop(block.getLocation());
     }
 
-    @Nullable
-    public ChestShop getShop(@NotNull Location location) {
+    public @Nullable ChestShop getShop(@NotNull Location location) {
         return this.getShopsMap().get(location);
     }
 
-    @Nullable
-    public ChestShop getShopSideChest(@NotNull Block block) {
+    public @Nullable ChestShop getShopSideChest(@NotNull Block block) {
         BlockData data = block.getBlockData();
         if (!(data instanceof Directional directional)) return null;
         if (!(block.getState() instanceof Chest chest)) return null;
@@ -399,7 +374,8 @@ public class ChestShopModule extends ShopModule {
                 return near.getBlockData() instanceof Directional nearDir && nearDir.getFacing() == face;
             })
             .map(this::getShop)
-            .filter(shop -> shop != null && !shop.isDoubleChest()).findFirst().orElse(null);
+            .filter(shop -> shop != null && !shop.isDoubleChest())
+            .findFirst().orElse(null);
     }
 
     public boolean isShop(@NotNull Block block) {
@@ -424,10 +400,7 @@ public class ChestShopModule extends ShopModule {
         if (ChestConfig.SHOP_CREATION_WORLD_BLACKLIST.contains(name)) {
             return false;
         }
-        if (Hooks.hasPlugin(Hooks.WORLD_GUARD) && !WorldGuardFlags.checkFlag(player, location)) {
-            return false;
-        }
-        return true;
+        return !Hooks.hasWorldGuard() || WorldGuardFlags.checkFlag(player, location);
     }
 
     public boolean isAllowedHereClaim(@NotNull Player player, @NotNull Block block) {

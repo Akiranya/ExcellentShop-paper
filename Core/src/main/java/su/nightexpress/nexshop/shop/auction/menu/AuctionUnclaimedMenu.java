@@ -22,8 +22,7 @@ public class AuctionUnclaimedMenu extends AbstractAuctionMenu<AuctionCompletedLi
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.RETURN) {
                     this.auctionManager.getMainMenu().open(p, 1);
-                }
-                else this.onItemClickDefault(p, type2);
+                } else this.onItemClickDefault(p, type2);
             }
         };
 
@@ -38,20 +37,18 @@ public class AuctionUnclaimedMenu extends AbstractAuctionMenu<AuctionCompletedLi
     }
 
     @Override
-    @NotNull
-    protected List<AuctionCompletedListing> getObjects(@NotNull Player player) {
+    protected @NotNull List<AuctionCompletedListing> getObjects(@NotNull Player player) {
         UUID id = this.seeOthers.getOrDefault(player, player.getUniqueId());
         return this.auctionManager.getUnclaimedListings(id);
     }
 
     @Override
-    @NotNull
-    protected MenuClick getObjectClick(@NotNull Player player, @NotNull AuctionCompletedListing listing) {
+    protected @NotNull MenuClick getObjectClick(@NotNull Player player, @NotNull AuctionCompletedListing listing) {
         return (player1, type, e) -> {
             listing.getCurrency().give(player, listing.getPrice());
             listing.setRewarded(true);
 
-            this.auctionManager.getDataHandler().saveCompletedListing(listing, true);
+            this.plugin.runTaskAsync(task -> this.auctionManager.getDataHandler().saveCompletedListing(listing));
             this.open(player, this.getPage(player), this.seeOthers.getOrDefault(player, player.getUniqueId()));
             this.plugin.getMessage(AuctionLang.NOTIFY_LISTING_CLAIM)
                 .replace(listing.replacePlaceholders())

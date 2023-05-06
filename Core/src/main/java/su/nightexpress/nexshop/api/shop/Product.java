@@ -1,110 +1,83 @@
 package su.nightexpress.nexshop.api.shop;
 
-import cc.mewcraft.mewcore.item.api.PluginItem;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.config.JOption;
 import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.api.manager.ICleanable;
-import su.nexmedia.engine.api.manager.IEditable;
-import su.nexmedia.engine.api.manager.IPlaceholder;
+import su.nexmedia.engine.api.menu.impl.MenuViewer;
+import su.nexmedia.engine.api.placeholder.Placeholder;
+import su.nexmedia.engine.api.placeholder.PlaceholderMap;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.NumberUtil;
-import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.nexshop.Placeholders;
 import su.nightexpress.nexshop.api.currency.ICurrency;
-import su.nightexpress.nexshop.api.type.ShopClickType;
+import su.nightexpress.nexshop.api.type.ShopClickAction;
 import su.nightexpress.nexshop.api.type.StockType;
 import su.nightexpress.nexshop.api.type.TradeType;
 import su.nightexpress.nexshop.config.Config;
 import su.nightexpress.nexshop.config.Lang;
 import su.nightexpress.nexshop.shop.chest.impl.ChestShop;
 
-import java.util.function.UnaryOperator;
-
 public abstract class Product<
     P extends Product<P, S, T>,
     S extends Shop<S, P>,
-    T extends ProductStock<P>> implements ICleanable, IEditable, IPlaceholder, JOption.Writer {
+    T extends ProductStock<P>> implements ICleanable, Placeholder {
 
     protected final String id;
+    protected final PlaceholderMap placeholderMap;
 
     protected S shop;
-    protected ItemStack itemPreview;
-    protected PluginItem<?> itemPreviewAsPluginItem;
-    protected ItemStack itemReal;
-    protected PluginItem<?> itemRealAsPluginItem;
     protected ICurrency currency;
     protected ProductPricer pricer;
     protected T stock;
     protected boolean isDiscountAllowed;
-    protected boolean isItemMetaEnabled;
 
-    public Product(@NotNull String id, @NotNull ItemStack itemPreview, @NotNull ICurrency currency) {
+    public Product(@NotNull String id, @NotNull ICurrency currency) {
         this.id = id.toLowerCase();
-        this.setPreview(itemPreview);
         this.setCurrency(currency);
+        this.placeholderMap = new PlaceholderMap()
+            .add(Placeholders.PRODUCT_DISCOUNT_AMOUNT, () -> NumberUtil.format(this.getShop().getDiscountPlain(this)))
+            .add(Placeholders.PRODUCT_CURRENCY, () -> this.getCurrency().getConfig().getName())
+            .add(Placeholders.PRODUCT_PRICE_BUY, () -> NumberUtil.format(this.getPricer().getPriceBuy()))
+            .add(Placeholders.PRODUCT_PRICE_BUY_FORMATTED, () -> this.getPricer().getPriceBuy() >= 0 ? getCurrency().format(this.getPricer().getPriceBuy()) : "-")
+            .add(Placeholders.PRODUCT_PRICE_SELL, () -> NumberUtil.format(this.getPricer().getPriceSell()))
+            .add(Placeholders.PRODUCT_PRICE_SELL_FORMATTED, () -> this.getPricer().getPriceSell() >= 0 ? getCurrency().format(this.getPricer().getPriceSell()) : "-")
+            .add(Placeholders.PRODUCT_PRICE_TYPE, () -> getShop().plugin().getLangManager().getEnum(this.getPricer().getType()))
+            .add(Placeholders.PRODUCT_DISCOUNT_ALLOWED, () -> LangManager.getBoolean(this.isDiscountAllowed()))
+            .add(Placeholders.PRODUCT_PREVIEW_NAME, () -> ComponentUtil.asMiniMessage(ItemUtil.getName(this.getPreview())))
+        //.add(Placeholders.PRODUCT_PREVIEW_LORE, () -> String.join("\n", ComponentUtil.asMiniMessage((ItemUtil.getLore(this.getPreview()))))
+        ;
     }
-
-    @NotNull
-    protected abstract P get();
 
     @Override
-    @NotNull
-    public UnaryOperator<String> replacePlaceholders() {
-        ItemStack buyItem = this.getItem();
-        String itemName = !buyItem.getType().isAir() ? ComponentUtil.asMiniMessage(ItemUtil.getName(buyItem)) : "null";
-
-        return str -> str
-            .transform(this.replacePlaceholdersView())
-            .transform(this.getPricer().replacePlaceholders())
-            .replace(Placeholders.PRODUCT_PRICE_TYPE, getShop().plugin().getLangManager().getEnum(this.getPricer().getType()))
-            .replace(Placeholders.PRODUCT_DISCOUNT_ALLOWED, LangManager.getBoolean(this.isDiscountAllowed()))
-            .replace(Placeholders.PRODUCT_ITEM_META_ENABLED, LangManager.getBoolean(this.isItemMetaEnabled()))
-            .replace(Placeholders.PRODUCT_ITEM_NAME, itemName)
-            // .replace(Placeholders.PRODUCT_ITEM_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(buyItem))))
-            .replace(Placeholders.PRODUCT_PREVIEW_NAME, ComponentUtil.asMiniMessage(ItemUtil.getName(this.getPreview())))
-            // .replace(Placeholders.PRODUCT_PREVIEW_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getPreview()))))
-            ;
+    public @NotNull PlaceholderMap getPlaceholders() {
+        PlaceholderMap map = new PlaceholderMap(this.placeholderMap);
+        map.getKeys().addAll(this.getPricer().getPlaceholders().getKeys());
+        map.getKeys().addAll(this.getStock().getPlaceholders().getKeys());
+        return map;
     }
 
-    @NotNull
-    private UnaryOperator<String> replacePlaceholdersView() {
-        ICurrency currency = this.getCurrency();
-        double priceBuy = this.getPricer().getPriceBuy();
-        double priceSell = this.getPricer().getPriceSell();
-
-        return str -> str
-            .transform(this.getStock().replacePlaceholders())
-            .replace(Placeholders.PRODUCT_DISCOUNT_AMOUNT, NumberUtil.format(this.getShop().getDiscountPlain(this)))
-            .replace(Placeholders.PRODUCT_CURRENCY, this.getCurrency().getConfig().getName())
-            .replace(Placeholders.PRODUCT_PRICE_BUY, NumberUtil.format(priceBuy))
-            .replace(Placeholders.PRODUCT_PRICE_BUY_FORMATTED, priceBuy >= 0 ? currency.format(priceBuy) : "-")
-            .replace(Placeholders.PRODUCT_PRICE_SELL, NumberUtil.format(priceSell))
-            .replace(Placeholders.PRODUCT_PRICE_SELL_FORMATTED, priceSell >= 0 ? currency.format(priceSell) : "-");
+    public @NotNull PlaceholderMap getPlaceholders(@NotNull Player player) {
+        PlaceholderMap placeholderMap = new PlaceholderMap(this.getPlaceholders());
+        placeholderMap.getKeys().addAll(this.getStock().getPlaceholders(player).getKeys());
+        placeholderMap
+            .add(Placeholders.PRODUCT_PRICE_SELL_ALL, () -> NumberUtil.format(this.getPricer().getPriceSell()))
+            .add(Placeholders.PRODUCT_PRICE_SELL_ALL_FORMATTED,
+                () -> this.getPricer().getPriceSell() >= 0
+                    ? this.getCurrency().format(this.getPricer().getPriceSellAll(player))
+                    : "-")
+        ;
+        return placeholderMap;
     }
 
-    @NotNull
-    public UnaryOperator<String> replacePlaceholders(@NotNull Player player) {
-        double priceSell = this.getPricer().getPriceSell();
-        double priceSellAll = this.getPricer().getPriceSellAll(player);
-        ICurrency currency = this.getCurrency();
-        return str -> str
-            .transform(this.replacePlaceholdersView())
-            .transform(this.getStock().replacePlaceholders(player))
-            .replace(Placeholders.PRODUCT_PRICE_SELL_ALL, NumberUtil.format(priceSellAll))
-            .replace(Placeholders.PRODUCT_PRICE_SELL_ALL_FORMATTED, priceSell >= 0 ? currency.format(priceSellAll) : "-")
-            ;
-    }
+    protected abstract @NotNull P get();
 
-    public void prepareTrade(@NotNull Player player, @NotNull ShopClickType click) {
+    public void prepareTrade(@NotNull Player player, @NotNull ShopClickAction click) {
         Shop<?, ?> shop = this.getShop();
-        TradeType tradeType = click.getBuyType();
+        TradeType tradeType = click.getTradeType();
         if (!shop.isTransactionEnabled(tradeType)) {
             return;
         }
@@ -114,11 +87,9 @@ public abstract class Product<
                 shop.plugin().getMessage(Lang.SHOP_PRODUCT_ERROR_UNBUYABLE).send(player);
                 return;
             }
-            if (this.hasItem()) {
-                if (!Config.GENERAL_BUY_WITH_FULL_INVENTORY && PlayerUtil.countItemSpace(player, this.getItem()) == 0) {
-                    this.getShop().plugin().getMessage(Lang.SHOP_PRODUCT_ERROR_FULL_INVENTORY).send(player);
-                    return;
-                }
+            if (!Config.GENERAL_BUY_WITH_FULL_INVENTORY.get() && !this.hasSpace(player)) {
+                this.getShop().plugin().getMessage(Lang.SHOP_PRODUCT_ERROR_FULL_INVENTORY).send(player);
+                return;
             }
         } else if (tradeType == TradeType.SELL) {
             if (!this.isSellable()) {
@@ -137,24 +108,30 @@ public abstract class Product<
             } else {
                 if (shop instanceof ChestShop shopChest) {
                     msgStock = shop.plugin().getMessage(Lang.SHOP_PRODUCT_ERROR_OUT_OF_SPACE);
-                } else msgStock = shop.plugin().getMessage(Lang.SHOP_PRODUCT_ERROR_FULL_STOCK);
+                } else {
+                    msgStock = shop.plugin().getMessage(Lang.SHOP_PRODUCT_ERROR_FULL_STOCK);
+                }
             }
             msgStock.send(player);
             return;
         }
 
-        boolean isSellAll = (click == ShopClickType.SELL_ALL);
-        PreparedProduct<P> prepared = this.getPrepared(tradeType);
-        if (click == ShopClickType.BUY_SINGLE || click == ShopClickType.SELL_SINGLE || isSellAll) {
-            prepared.trade(player, isSellAll);
-            shop.open(player, shop.getView().getPage(player)); // Update current shop page
+        boolean isSellAll = (click == ShopClickAction.SELL_ALL);
+        PreparedProduct<P> prepared = this.getPrepared(tradeType, isSellAll);
+        if (click == ShopClickAction.BUY_SINGLE || click == ShopClickAction.SELL_SINGLE || prepared.isAll()) {
+            prepared.trade(player);
+
+            MenuViewer viewer = shop.getView().getViewer(player);
+            if (viewer != null) {
+                shop.open(player, viewer.getPage()); // Update current shop page
+            }
             return;
         }
         this.openTrade(player, prepared);
     }
 
     public void openTrade(@NotNull Player player, @NotNull PreparedProduct<P> prepared) {
-        Config.getCartMenu(prepared.getTradeType()).open(player, prepared);
+        this.getShop().plugin().getCartMenu().open(player, prepared);
     }
 
     public boolean isBuyable() {
@@ -163,17 +140,10 @@ public abstract class Product<
         }
 
         ProductPricer pricer = this.getPricer();
-        if (pricer.getPriceBuy() < 0D) {
-            return false;
-        }
-
-        return !this.isEmpty();
+        return pricer.getPriceBuy() >= 0D;
     }
 
     public boolean isSellable() {
-        if (!this.hasItem()) {
-            return false;
-        }
         if (this.getStock().getInitialAmount(StockType.GLOBAL, TradeType.SELL) == 0) {
             return false;
         }
@@ -188,23 +158,31 @@ public abstract class Product<
         // to prevent money duplication.
         // If this product can not be purchased, these checks are useless.
         if (this.getShop().isTransactionEnabled(TradeType.BUY) && this.isBuyable()) {
-            if (priceSell > pricer.getPriceBuy()) {
-                return false;
-            }
+            return !(priceSell > pricer.getPriceBuy());
         }
 
-        return !this.isEmpty();
+        return true;
     }
 
-    public boolean isEmpty() {
-        return !this.hasItem();
+    public abstract @NotNull PreparedProduct<P> getPrepared(@NotNull TradeType buyType, boolean all);
+
+    public abstract boolean hasSpace(@NotNull Player player);
+
+    public abstract int getUnitAmount();
+
+    public abstract @NotNull ItemStack getPreview();
+
+    public abstract void delivery(@NotNull Player player, int count);
+
+    public abstract void take(@NotNull Player player, int count);
+
+    public abstract int count(@NotNull Player player);
+
+    public int countUnits(@NotNull Player player) {
+        return this.count(player) / this.getUnitAmount();
     }
 
-    @NotNull
-    public abstract PreparedProduct<P> getPrepared(@NotNull TradeType buyType);
-
-    @NotNull
-    public S getShop() {
+    public @NotNull S getShop() {
         if (this.shop == null) {
             throw new IllegalStateException("Product shop is undefined!");
         }
@@ -218,13 +196,11 @@ public abstract class Product<
         this.shop = shop;
     }
 
-    @NotNull
-    public String getId() {
+    public @NotNull String getId() {
         return this.id;
     }
 
-    @NotNull
-    public ProductPricer getPricer() {
+    public @NotNull ProductPricer getPricer() {
         if (this.pricer == null) {
             throw new IllegalStateException("Product pricer is undefined!");
         }
@@ -236,8 +212,7 @@ public abstract class Product<
         this.pricer.setProduct(this);
     }
 
-    @NotNull
-    public T getStock() {
+    public @NotNull T getStock() {
         if (this.stock == null) {
             throw new IllegalStateException("Product stock is undefined!");
         }
@@ -249,8 +224,7 @@ public abstract class Product<
         this.stock.setProduct(this.get());
     }
 
-    @NotNull
-    public ICurrency getCurrency() {
+    public @NotNull ICurrency getCurrency() {
         return this.currency;
     }
 
@@ -264,68 +238,5 @@ public abstract class Product<
 
     public void setDiscountAllowed(boolean isAllowed) {
         this.isDiscountAllowed = isAllowed;
-    }
-
-    public boolean isItemMetaEnabled() {
-        return this.isItemMetaEnabled;
-    }
-
-    public void setItemMetaEnabled(boolean isEnabled) {
-        this.isItemMetaEnabled = isEnabled;
-    }
-
-    @NotNull
-    public ItemStack getPreview() {
-        return this.itemPreview.clone();
-    }
-
-    public void setPreview(@NotNull ItemStack preview) {
-        this.itemPreview = preview.clone();
-    }
-
-    public @Nullable PluginItem<?> getPreviewPluginItemOrNull() {
-        return itemPreviewAsPluginItem;
-    }
-
-    public void setPreviewPluginItem(@Nullable PluginItem<?> pluginItem) {
-        this.itemPreviewAsPluginItem = pluginItem;
-    }
-
-    @NotNull
-    public ItemStack getItem() {
-        return this.itemReal.clone();
-    }
-
-    public void setItem(@Nullable ItemStack item) {
-        this.itemReal = item == null ? new ItemStack(Material.AIR) : item.clone();
-        this.itemReal.setAmount(1);
-    }
-
-    public @Nullable PluginItem<?> getPluginItemOrNull() {
-        return itemRealAsPluginItem;
-    }
-
-    public void setPluginItem(@Nullable PluginItem<?> pluginItem) {
-        this.itemRealAsPluginItem = pluginItem;
-    }
-
-    public boolean hasItem() {
-        return !this.getItem().getType().isAir();
-    }
-
-    public boolean isItemMatches(@NotNull ItemStack item) {
-        return this.isItemMetaEnabled() ? this.getItem().isSimilar(item) : this.getItem().getType() == item.getType();
-    }
-
-    public int countItem(@NotNull Player player) {
-        if (!this.hasItem()) return 0;
-
-        return PlayerUtil.countItem(player, this::isItemMatches);
-    }
-
-    public boolean takeItem(@NotNull Player player, int amount) {
-        if (!this.hasItem()) return false;
-
-        return PlayerUtil.takeItem(player, this::isItemMatches, amount);
     }
 }

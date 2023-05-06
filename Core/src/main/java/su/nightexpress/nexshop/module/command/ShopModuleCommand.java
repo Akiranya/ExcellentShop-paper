@@ -25,14 +25,12 @@ public class ShopModuleCommand<M extends ShopModule> extends AbstractModuleComma
     }
 
     @Override
-    @NotNull
-    public String getUsage() {
+    public @NotNull String getUsage() {
         return "";
     }
 
     @Override
-    @NotNull
-    public String getDescription() {
+    public @NotNull String getDescription() {
         return "";
     }
 

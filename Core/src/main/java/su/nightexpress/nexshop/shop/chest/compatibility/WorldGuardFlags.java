@@ -36,8 +36,7 @@ public class WorldGuardFlags implements ClaimHook {
             StateFlag flag = new StateFlag(NAME_CHEST_SHOP_CREATE, true);
             flagRegistry.register(flag);
             FLAG_CHEST_SHOP_CREATE = flag;
-        }
-        catch (FlagConflictException e) {
+        } catch (FlagConflictException e) {
             Flag<?> existing = flagRegistry.get(NAME_CHEST_SHOP_CREATE);
             if (existing instanceof StateFlag existing2) {
                 FLAG_CHEST_SHOP_CREATE = existing2;

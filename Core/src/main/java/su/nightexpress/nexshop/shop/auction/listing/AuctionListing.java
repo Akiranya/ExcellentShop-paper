@@ -9,7 +9,6 @@ import su.nightexpress.nexshop.shop.auction.Placeholders;
 import su.nightexpress.nexshop.shop.auction.config.AuctionConfig;
 
 import java.util.UUID;
-import java.util.function.UnaryOperator;
 
 public class AuctionListing extends AbstractAuctionItem {
 
@@ -45,15 +44,10 @@ public class AuctionListing extends AbstractAuctionItem {
     ) {
         super(id, owner, ownerName, itemStack, currency, price, dateCreation);
         this.expireDate = expireDate;
-    }
-
-    @Override
-    @NotNull
-    public UnaryOperator<String> replacePlaceholders() {
-        return str -> str
-            .transform(super.replacePlaceholders())
-            .replace(Placeholders.LISTING_EXPIRES_IN, TimeUtil.formatTimeLeft(this.getExpireDate()))
-            ;
+        this.placeholderMap
+            .add(Placeholders.LISTING_EXPIRES_IN, () -> TimeUtil.formatTimeLeft(this.getExpireDate()))
+            .add(Placeholders.LISTING_EXPIRE_DATE, AuctionConfig.DATE_FORMAT.format(TimeUtil.getLocalDateTimeOf(this.getExpireDate())))
+        ;
     }
 
     public long getExpireDate() {

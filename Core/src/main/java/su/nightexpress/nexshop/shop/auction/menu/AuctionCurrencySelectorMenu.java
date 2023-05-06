@@ -65,8 +65,7 @@ public class AuctionCurrencySelectorMenu extends AbstractMenuAuto<ExcellentShop,
         this.open(player, 1);
     }
 
-    @Nullable
-    private Pair<ItemStack, Double> getPrepared(@NotNull Player player) {
+    private @Nullable Pair<ItemStack, Double> getPrepared(@NotNull Player player) {
         return PREPARED_ITEM.get(player);
     }
 
@@ -75,15 +74,12 @@ public class AuctionCurrencySelectorMenu extends AbstractMenuAuto<ExcellentShop,
         return this.objectSlots;
     }
 
-    @Override
-    @NotNull
-    protected List<ICurrency> getObjects(@NotNull Player player) {
+    @Override protected @NotNull List<ICurrency> getObjects(@NotNull Player player) {
         return new ArrayList<>(this.auctionManager.getCurrencies(player));
     }
 
     @Override
-    @NotNull
-    protected ItemStack getObjectStack(@NotNull Player player, @NotNull ICurrency currency) {
+    protected @NotNull ItemStack getObjectStack(@NotNull Player player, @NotNull ICurrency currency) {
         ItemStack item = currency.getIcon();
 
         Pair<ItemStack, Double> prepared = this.getPrepared(player);
@@ -92,14 +88,14 @@ public class AuctionCurrencySelectorMenu extends AbstractMenuAuto<ExcellentShop,
         double price = prepared.getSecond();
         double tax = AuctionUtils.calculateTax(price, AuctionConfig.LISTINGS_TAX_ON_LISTING_ADD);
 
-        // Prepare name and lore
+        // Prepare displayName and lore
         UnaryOperator<String> replacer = str -> str
             .transform(currency.replacePlaceholders())
             .replace(Placeholders.GENERIC_PRICE, currency.format(price))
             .replace(Placeholders.GENERIC_TAX, currency.format(tax));
         final String name = StringUtil.replace(this.itemName, replacer);
         final List<String> lore = StringUtil.replace(this.itemLore, replacer);
-        // Apply
+        // Apply displayName and lore
         item.editMeta(meta -> {
             meta.displayName(ComponentUtil.asComponent(name));
             meta.lore(ComponentUtil.asComponent(lore));
@@ -108,8 +104,7 @@ public class AuctionCurrencySelectorMenu extends AbstractMenuAuto<ExcellentShop,
     }
 
     @Override
-    @NotNull
-    protected MenuClick getObjectClick(@NotNull Player player, @NotNull ICurrency currency) {
+    protected @NotNull MenuClick getObjectClick(@NotNull Player player, @NotNull ICurrency currency) {
         return (player2, type, e) -> {
             Pair<ItemStack, Double> prepared = this.getPrepared(player2);
             if (prepared == null) {

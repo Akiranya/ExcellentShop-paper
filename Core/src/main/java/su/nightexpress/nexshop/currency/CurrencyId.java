@@ -13,13 +13,11 @@ public class CurrencyId {
     public static final String GAME_POINTS = "game_points";
     public static final String GEMS_ECONOMY = "gemseconomy";
 
-    @NotNull
-    public static String[] values() {
+    public static @NotNull String[] values() {
         return new String[]{EXP, VAULT, PLAYER_POINTS, GAME_POINTS, GEMS_ECONOMY};
     }
 
-    @NotNull
-    public static Stream<String> stream() {
+    public static @NotNull Stream<String> stream() {
         return Arrays.stream(values());
     }
 

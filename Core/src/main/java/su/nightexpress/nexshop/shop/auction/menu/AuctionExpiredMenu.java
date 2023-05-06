@@ -57,15 +57,13 @@ public class AuctionExpiredMenu extends AbstractAuctionMenu<AuctionListing> {
     }
 
     @Override
-    @NotNull
-    protected List<AuctionListing> getObjects(@NotNull Player player) {
+    protected @NotNull List<AuctionListing> getObjects(@NotNull Player player) {
         UUID id = this.seeOthers.getOrDefault(player, player.getUniqueId());
         return this.auctionManager.getExpiredListings(id);
     }
 
     @Override
-    @NotNull
-    protected MenuClick getObjectClick(@NotNull Player player, @NotNull AuctionListing item) {
+    protected @NotNull MenuClick getObjectClick(@NotNull Player player, @NotNull AuctionListing item) {
         return (player1, type, e) -> {
             this.auctionManager.takeListing(player1, item);
             this.open(player1, this.getPage(player1));

@@ -15,13 +15,11 @@ public class ItemCurrency extends AbstractCurrency implements MultiCurrency {
     }
 
     @Override
-    @NotNull
-    public CurrencyItemConfig getConfig() {
+    public @NotNull CurrencyItemConfig getConfig() {
         return (CurrencyItemConfig) super.getConfig();
     }
 
-    @NotNull
-    public ItemStack getItem() {
+    public @NotNull ItemStack getItem() {
         return this.getConfig().getItem();
     }
 

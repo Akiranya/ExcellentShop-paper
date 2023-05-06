@@ -11,7 +11,6 @@ import su.nightexpress.nexshop.shop.auction.Placeholders;
 import su.nightexpress.nexshop.shop.auction.config.AuctionConfig;
 
 import java.util.UUID;
-import java.util.function.UnaryOperator;
 
 public class AuctionCompletedListing extends AbstractAuctionItem {
 
@@ -33,8 +32,7 @@ public class AuctionCompletedListing extends AbstractAuctionItem {
             System.currentTimeMillis()
         );
 
-        double tax =
-            buyer.hasPermission(Perms.AUCTION_BYPASS_LISTING_TAX) ? 0D : AuctionConfig.LISTINGS_TAX_ON_LISTING_PURCHASE;
+        double tax = buyer.hasPermission(Perms.AUCTION_BYPASS_LISTING_TAX) ? 0D : AuctionConfig.LISTINGS_TAX_ON_LISTING_PURCHASE;
         if (tax > 0D) {
             this.price -= Math.max(0D, AuctionUtils.calculateTax(this.getPrice(), tax));
         }
@@ -56,20 +54,13 @@ public class AuctionCompletedListing extends AbstractAuctionItem {
         this.setRewarded(isRewarded);
         this.buyerName = buyerName;
         this.buyDate = buyDate;
+        this.placeholderMap
+            .add(Placeholders.LISTING_BUYER, this.getBuyerName())
+            .add(Placeholders.LISTING_BUY_DATE, AuctionConfig.DATE_FORMAT.format(TimeUtil.getLocalDateTimeOf(this.getBuyDate())))
+        ;
     }
 
-    @Override
-    @NotNull
-    public UnaryOperator<String> replacePlaceholders() {
-        return str -> str
-            .transform(super.replacePlaceholders())
-            .replace(Placeholders.LISTING_BUYER, this.getBuyerName())
-            .replace(Placeholders.LISTING_BUY_DATE, AuctionConfig.DATE_FORMAT.format(TimeUtil.getLocalDateTimeOf(this.getBuyDate())))
-            ;
-    }
-
-    @NotNull
-    public String getBuyerName() {
+    public @NotNull String getBuyerName() {
         return this.buyerName;
     }
 

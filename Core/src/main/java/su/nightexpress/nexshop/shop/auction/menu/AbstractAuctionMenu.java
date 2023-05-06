@@ -26,7 +26,7 @@ public abstract class AbstractAuctionMenu<A extends AbstractAuctionItem> extends
 
     protected int[] objectSlots;
 
-    // display name and lore are stored as MiniMessage representation
+    // display name and lore are stored as MiniMessage strings
     protected String itemName;
     protected List<String> itemLore;
 
@@ -66,16 +66,15 @@ public abstract class AbstractAuctionMenu<A extends AbstractAuctionItem> extends
     }
 
     @Override
-    @NotNull
-    protected ItemStack getObjectStack(@NotNull Player player, @NotNull A aucItem) {
+    protected @NotNull ItemStack getObjectStack(@NotNull Player player, @NotNull A aucItem) {
         ItemStack aucItemStack = aucItem.getItemStack().clone();
         UnaryOperator<String> replacer = aucItem.replacePlaceholders();
         aucItemStack.editMeta(meta -> {
-            // Prepare name
+            // Modify displayName
             String rawName = replacer.apply(this.itemName);
             Component name = ComponentUtil.asComponent(rawName);
             meta.displayName(name);
-            // Prepare lore
+            // Modify lore
             List<String> rawLore;
             rawLore = StringUtil.replacePlaceholderList(PLACEHOLDER_LORE_FORMAT, this.itemLore, this.getLoreFormat(player, aucItem));
             rawLore = StringUtil.replace(rawLore, replacer);
@@ -87,8 +86,7 @@ public abstract class AbstractAuctionMenu<A extends AbstractAuctionItem> extends
         return aucItemStack;
     }
 
-    @NotNull
-    protected List<String> getLoreFormat(@NotNull Player player, @NotNull A aucItem) {
+    protected @NotNull List<String> getLoreFormat(@NotNull Player player, @NotNull A aucItem) {
         FormatType formatType = FormatType.PLAYER;
         if (player.hasPermission(Perms.ADMIN)) formatType = FormatType.ADMIN;
         else if (aucItem.isOwner(player)) formatType = FormatType.OWNER;
