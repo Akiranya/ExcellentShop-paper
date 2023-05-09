@@ -1,7 +1,6 @@
 plugins {
     id("su.nightexpress.excellentshop.java-conventions")
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
     id("net.kyori.indra.git") version "2.1.1"
 }
 
@@ -35,27 +34,6 @@ version = "$version".decorateVersion()
 
 fun lastCommitHash(): String = indraGit.commit()?.name?.substring(0, 7) ?: error("Could not determine commit hash")
 fun String.decorateVersion(): String = if (endsWith("-SNAPSHOT")) "$this-${lastCommitHash()}" else this
-
-bukkit {
-    main = "su.nightexpress.nexshop.ExcellentShop"
-    name = "ExcellentShop"
-    version = "${project.version}"
-    description = "Advanced 3 in 1 shop plugin with a lot of cool features!"
-    apiVersion = "1.17"
-    authors = listOf("NightExpress")
-    depend = listOf("NexEngine", "MewCore")
-    softDepend = listOf(
-        "Vault",
-        "Citizens",
-        "PlayerPoints",
-        "WorldGuard",
-        "Lands",
-        "PlotSquared",
-        "GamePoints",
-        "GriefPrevention",
-        "Broker"
-    )
-}
 
 tasks {
     build {
