@@ -24,7 +24,7 @@ public class VirtualLocales extends su.nexmedia.engine.api.editor.EditorLocales 
         .name("Display Name")
         .currentHeader().current("Name", Placeholders.SHOP_NAME).breakLine()
         .text("Sets the shop display name.", "It's used in GUIs, messages, etc.").breakLine()
-        .noteHeader().notes("This is" + ORANGE + " NOT" + ORANGE_CLOSE + " shop GUI title!").breakLine()
+        .noteHeader().notes("This is " + ORANGE + "NOT" + ORANGE_CLOSE + " shop GUI title!").breakLine()
         .actionsHeader().action("Left-Click", "Change")
         .build();
 
