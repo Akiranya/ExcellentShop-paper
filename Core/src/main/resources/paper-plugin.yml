@@ -3,7 +3,7 @@ main: su.nightexpress.nexshop.ExcellentShop
 version: ${version}
 api-version: 1.19
 authors: [ NightExpress, Nailm ]
-description: ${description}
+description: Advanced 3 in 1 shop plugin with a lot of cool features!
 load-before: [ ]
 load-after:
   - name: NexEngine
@@ -21,7 +21,7 @@ dependencies:
   - name: GemsEconomy
     required: false
     bootstrap: false
-  - name: Citizens
+  - name: PlayerPoints
     required: false
     bootstrap: false
   - name: WorldGuard
