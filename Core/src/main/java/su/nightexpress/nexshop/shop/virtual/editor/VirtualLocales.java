@@ -24,7 +24,7 @@ public class VirtualLocales extends su.nexmedia.engine.api.editor.EditorLocales 
         .name("Display Name")
         .currentHeader().current("Name", Placeholders.SHOP_NAME).breakLine()
         .text("Sets the shop display name.", "It's used in GUIs, messages, etc.").breakLine()
-        .noteHeader().notes("This is" + ORANGE + " NOT" + GRAY + " shop GUI title!").breakLine()
+        .noteHeader().notes("This is" + ORANGE + " NOT" + ORANGE_CLOSE + " shop GUI title!").breakLine()
         .actionsHeader().action("Left-Click", "Change")
         .build();
 
@@ -39,14 +39,14 @@ public class VirtualLocales extends su.nexmedia.engine.api.editor.EditorLocales 
         .name("Pages Amount")
         .currentHeader().current("Pages", Placeholders.SHOP_VIRTUAL_PAGES).breakLine()
         .text("Sets amount of pages for the shop.").breakLine()
-        .noteHeader().notes("Don't forget to add page items in " + YELLOW + "View Editor" + GRAY + "!").breakLine()
+        .noteHeader().notes("Don't forget to add page items in " + YELLOW + "View Editor" + YELLOW_CLOSE + "!").breakLine()
         .actionsHeader().action("Left-Click", "+1 Page").action("Right-Click", "-1 Page")
         .build();
 
     public static final EditorLocale SHOP_ICON = builder(PREFIX + "Shop.Icon")
         .name("Icon")
         .text("Sets the shop icon to be used in GUIs.").breakLine()
-        .noteHeader().notes("Instead of name & lore, " + ORANGE + "Display Name" + GRAY + " and " + ORANGE + "Description" + GRAY + " are used.").breakLine()
+        .noteHeader().notes("Instead of name & lore, " + ORANGE + "Display Name" + ORANGE_CLOSE + " and " + ORANGE + "Description" + ORANGE_CLOSE + " are used.").breakLine()
         .actionsHeader().action("Drag & Drop", "Replace").action("Right-Click", "Get a Copy")
         .build();
 
@@ -62,24 +62,24 @@ public class VirtualLocales extends su.nexmedia.engine.api.editor.EditorLocales 
         .name("Transactions")
         .currentHeader().current("Buying Enabled", Placeholders.SHOP_BUY_ALLOWED)
         .current("Selling Enabled", Placeholders.SHOP_SELL_ALLOWED).breakLine()
-        .text("Sets whether " + YELLOW + "buying" + GRAY + " and/or " + YELLOW + "selling" + GRAY + " are", "enabled in this shop.").breakLine()
+        .text("Sets whether " + YELLOW + "buying" + YELLOW_CLOSE + " and/or " + YELLOW + "selling" + YELLOW_CLOSE + " are", "enabled in this shop.").breakLine()
         .actionsHeader().action("Left-Click", "Toggle Buying").action("Right-Click", "Toggle Selling")
         .build();
 
-    public static final EditorLocale SHOP_ATTACHED_NPCS = builder(PREFIX_OLD + "SHOP_CHANGE_CITIZENS_ID")
+    /*public static final EditorLocale SHOP_ATTACHED_NPCS = builder(PREFIX_OLD + "SHOP_CHANGE_CITIZENS_ID")
         .name("Attached NPCs")
         .currentHeader().current("NPC IDs", Placeholders.SHOP_VIRTUAL_NPC_IDS).breakLine()
         .text("A list of NPC Ids attached to this shop.", "Those NPCs will open shop GUI on click.").breakLine()
-        .warningHeader().warning("You must have " + RED + "Citizens " + GRAY + "installed!").breakLine()
+        .warningHeader().warning("You must have " + RED + "Citizens " + RED_CLOSE + "installed!").breakLine()
         .actionsHeader().action("Left-Click", "Add ID").action("Right-Click", "Clear List")
-        .build();
+        .build();*/
 
     public static final EditorLocale SHOP_VIEW_EDITOR = builder(PREFIX_OLD + "SHOP_CHANGE_VIEW_DESIGN")
         .name("View Editor")
         .currentHeader().current("Title", Placeholders.SHOP_VIRTUAL_VIEW_TITLE)
         .current("Size", Placeholders.SHOP_VIRTUAL_VIEW_SIZE).breakLine()
-        .text("Sets " + YELLOW + "title" + GRAY + " & " + YELLOW + "size" + GRAY + " for the shop GUI.", "Here you can create custom")
-        .text("GUI layout for this shop.", "Simply place items in editor and press " + YELLOW + "ESC" + GRAY + " to save.").breakLine()
+        .text("Sets " + YELLOW + "title" + YELLOW_CLOSE + " & " + YELLOW + "size" + YELLOW_CLOSE + " for the shop GUI.", "Here you can create custom")
+        .text("GUI layout for this shop.", "Simply place items in editor and press " + YELLOW + "ESC" + YELLOW_CLOSE + " to save.").breakLine()
         .actionsHeader().action("Left-Click", "Open Editor").action("Shift-Left", "Change Title")
         .action("Shift-Right", "Change Size")
         .build();
@@ -99,7 +99,7 @@ public class VirtualLocales extends su.nexmedia.engine.api.editor.EditorLocales 
     public static final EditorLocale PRODUCT_OBJECT = builder(PREFIX + "Product.Object")
         .name(Placeholders.PRODUCT_PREVIEW_NAME)
         .text("You can take & put this product in any other", "slot. Or store it in your inventory to", "add it in other pages or even shops!")
-        .text("All product settings will be " + GREEN + "saved" + GRAY + "!").breakLine()
+        .text("All product settings will be " + GREEN + "saved" + GREEN_CLOSE + "!").breakLine()
         .actionsHeader().action("Shift-Left", "Edit").action("Shift-Right", "Delete" + RED + " (No Undo)")
         .build();
 
@@ -131,7 +131,7 @@ public class VirtualLocales extends su.nexmedia.engine.api.editor.EditorLocales 
     public static final EditorLocale PRODUCT_RESPECT_ITEM_META = builder("VirtualShop.Editor.Product.RespectItemMeta")
         .name("Respect Item Meta")
         .currentHeader().current("Enabled", Placeholders.PRODUCT_ITEM_META_ENABLED).breakLine()
-        .text("Sets whether product should respect", "meta of the " + YELLOW + "Actual Item" + GRAY + ".")
+        .text("Sets whether product should respect", "meta of the " + YELLOW + "Actual Item" + YELLOW_CLOSE + ".")
         .text("This means, players will be able to sell", "similar (exact) items only.").breakLine()
         .noteHeader().notes("Enable this for custom items!").breakLine()
         .actionsHeader().action("Left-Click", "Toggle")
@@ -140,8 +140,8 @@ public class VirtualLocales extends su.nexmedia.engine.api.editor.EditorLocales 
     public static final EditorLocale PRODUCT_RESPECT_PLUGIN_ITEM = builder("VirtualShop.Editor.Product.RespectPluginItem")
         .name("Respect Plugin Item")
         .currentHeader().current("Enabled", Placeholders.PRODUCT_PLUGIN_ITEM_ENABLED).breakLine()
-        .text("Sets whether product should respect", "custom items from other plugins.")
-        .text("This means, players will be able to sell", "the item even if meta is changed!").breakLine()
+        .text("Sets whether product should respect", YELLOW + "custom items" + YELLOW_CLOSE + " from " + YELLOW + "other plugins" + YELLOW_CLOSE + ".")
+        .text("This means, players will be able to sell", "the item even if meta has changed", "as long as the \"internal ID\" of the item", "is still kept.").breakLine()
         .noteHeader().notes("Enable this for custom items", "from external plugins!").breakLine()
         .actionsHeader().action("Left-Click", "Toggle")
         .build();
@@ -157,7 +157,7 @@ public class VirtualLocales extends su.nexmedia.engine.api.editor.EditorLocales 
         .name("Commands")
         .currentHeader().text(Placeholders.PRODUCT_VIRTUAL_COMMANDS).breakLine()
         .text("A list of commands to execute when", "player purchases this product.").breakLine()
-        .noteHeader().notes("Use " + ORANGE + Placeholders.Player.NAME + GRAY + " for player name.").breakLine()
+        .noteHeader().notes("Use " + ORANGE + Placeholders.Player.NAME + ORANGE_CLOSE + " for player name.").breakLine()
         .actionsHeader().action("Left-Click", "Add Command").action("Right-Click", "Clear List")
         .build();
 
@@ -175,9 +175,9 @@ public class VirtualLocales extends su.nexmedia.engine.api.editor.EditorLocales 
         .current("Buy Auto-Restock", Placeholders.PRODUCT_STOCK_GLOBAL_BUY_RESTOCK_TIME)
         .current("Sell Initial", Placeholders.PRODUCT_STOCK_GLOBAL_SELL_AMOUNT_INITIAL)
         .current("Sell Auto-Restock", Placeholders.PRODUCT_STOCK_GLOBAL_SELL_RESTOCK_TIME).breakLine()
-        .text("Sets how many of the product will be available", "for " + YELLOW + "all" + GRAY + " players at the same time.")
+        .text("Sets how many of the product will be available", "for " + YELLOW + "all" + YELLOW_CLOSE + " players at the same time.")
         .text("Amount of product left for", "sell/purchase will be changed on each transaction.").breakLine()
-        .noteHeader().notes("-1 for initial = " + ORANGE + "unlimited", "-1 for restock = " + ORANGE + "never" + GRAY + " auto-restock.").breakLine()
+        .noteHeader().notes("-1 for initial = " + ORANGE + "unlimited", "-1 for restock = " + ORANGE + "never" + ORANGE_CLOSE + " auto-restock.").breakLine()
         .actionsHeader()
         .action("Left-Click", "Change Buy Initial").action("Right-Click", "Change Buy Restock")
         .action("Shift-Left", "Change Sell Initial").action("Shift-Right", "Change Sell Restock")
@@ -191,9 +191,9 @@ public class VirtualLocales extends su.nexmedia.engine.api.editor.EditorLocales 
         .current("Buy Auto-Restock", Placeholders.PRODUCT_STOCK_PLAYER_BUY_RESTOCK_TIME)
         .current("Sell Limit", Placeholders.PRODUCT_STOCK_PLAYER_SELL_AMOUNT_INITIAL)
         .current("Sell Auto-Restock", Placeholders.PRODUCT_STOCK_PLAYER_SELL_RESTOCK_TIME).breakLine()
-        .text("Sets how many of the product will be available", "for " + YELLOW + "each" + GRAY + " player individually.")
+        .text("Sets how many of the product will be available", "for " + YELLOW + "each" + YELLOW_CLOSE + " player individually.")
         .text("Amount of product left for", "sell/purchase will be changed on each transaction.").breakLine()
-        .noteHeader().notes("-1 for limit = " + ORANGE + "unlimited", "-1 for restock = " + ORANGE + "never" + GRAY + " auto-restock.").breakLine()
+        .noteHeader().notes("-1 for limit = " + ORANGE + "unlimited", "-1 for restock = " + ORANGE + "never" + ORANGE_CLOSE + " auto-restock.").breakLine()
         .actionsHeader()
         .action("Left-Click", "Change Buy Limit").action("Right-Click", "Change Buy Restock")
         .action("Shift-Left", "Change Sell Limit").action("Shift-Right", "Change Sell Restock")
@@ -204,7 +204,7 @@ public class VirtualLocales extends su.nexmedia.engine.api.editor.EditorLocales 
         .name("Price Type")
         .currentHeader().current("Current", Placeholders.PRODUCT_PRICE_TYPE).breakLine()
         .text("Sets the product price type.", "Different types have different settings.").breakLine()
-        .warningHeader().warning("When changed, previous settings will be " + RED + "lost" + GRAY + "!").breakLine()
+        .warningHeader().warning("When changed, previous settings will be " + RED + "lost" + RED_CLOSE + "!").breakLine()
         .actionsHeader().action("Left-Click", "Toggle")
         .build();
 
@@ -248,7 +248,7 @@ public class VirtualLocales extends su.nexmedia.engine.api.editor.EditorLocales 
         .current("Days", Placeholders.PRODUCT_PRICER_FLOAT_REFRESH_DAYS)
         .current("Times", Placeholders.PRODUCT_PRICER_FLOAT_REFRESH_TIMES).breakLine()
         .text("Sets conditions, when the product price will be refreshed.", "Until that, the previous generated price will be used.").breakLine()
-        .warningHeader().warning("You have to set at least one " + RED + "day" + GRAY + " and " + RED + "time" + GRAY + "!").breakLine()
+        .warningHeader().warning("You have to set at least one " + RED + "day" + RED_CLOSE + " and " + RED + "time" + RED_CLOSE + "!").breakLine()
         .actionsHeader().action("Lift-Click", "Add Day").action("Shift-Left", "Clear Days")
         .action("Right-Click", "Add Time").action("Shift-Right", "Clear Times")
         .build();
@@ -322,7 +322,7 @@ public class VirtualLocales extends su.nexmedia.engine.api.editor.EditorLocales 
         .name("Active Days")
         .currentHeader().current("Days", Placeholders.DISCOUNT_CONFIG_DAYS).breakLine()
         .text("A list of days, when this discount will have effect.").breakLine()
-        .noteHeader().notes("At least one " + ORANGE + "day" + GRAY + " and " + ORANGE + "time" + GRAY + " are required!").breakLine()
+        .noteHeader().notes("At least one " + ORANGE + "day" + ORANGE_CLOSE + " and " + ORANGE + "time" + ORANGE_CLOSE + " are required!").breakLine()
         .actionsHeader().action("Left-Click", "Add Day").action("Right-Click", "Clear List")
         .build();
 
@@ -330,7 +330,7 @@ public class VirtualLocales extends su.nexmedia.engine.api.editor.EditorLocales 
         .name("Active Times")
         .currentHeader().current("Days", Placeholders.DISCOUNT_CONFIG_TIMES).breakLine()
         .text("A list of times, when this discount will be activated.").breakLine()
-        .noteHeader().notes("At least one " + ORANGE + "day" + GRAY + " and " + ORANGE + "time" + GRAY + " are required!").breakLine()
+        .noteHeader().notes("At least one " + ORANGE + "day" + ORANGE_CLOSE + " and " + ORANGE + "time" + ORANGE_CLOSE + " are required!").breakLine()
         .actionsHeader().action("Left-Click", "Add Time").action("Right-Click", "Clear List")
         .build();
 }
