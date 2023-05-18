@@ -166,25 +166,33 @@ public class ChestProduct extends Product<ChestProduct, ChestShop, ChestProductS
         return true;
     }
 
-    @Override
-    public boolean isRespectPluginItem() {
-        // chest products shouldn't support plugin items
-        return false;
+    @Override public void setRespectPluginItem(final boolean respectPluginItem) {
+        throw new UnsupportedOperationException("plugin item is not supported for this type of product");
     }
 
-    @Override public void setRespectPluginItem(final boolean respectPluginItem) {
-        // chest products shouldn't support plugin items
+    @Override
+    public boolean isRespectPluginItem() {
+        throw new UnsupportedOperationException("plugin item is not supported for this type of product");
     }
 
     @Override
     public void setPluginItem(final @NotNull PluginItem<?> pluginItem) {
-        // chest products shouldn't support plugin items
+        throw new UnsupportedOperationException("plugin item is not supported for this type of product");
     }
 
     @Override
     public @Nullable PluginItem<?> getPluginItem() {
-        // chest products shouldn't support plugin items
-        return null;
+        throw new UnsupportedOperationException("plugin item is not supported for this type of product");
+    }
+
+    @Override
+    public void setPluginItemAmount(final int amount) {
+        throw new UnsupportedOperationException("plugin item is not supported for this type of product");
+    }
+
+    @Override
+    public int getPluginItemAmount() {
+        throw new UnsupportedOperationException("plugin item is not supported for this type of product");
     }
 
     /*@Override

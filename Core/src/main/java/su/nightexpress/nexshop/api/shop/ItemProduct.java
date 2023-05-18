@@ -19,6 +19,10 @@ public interface ItemProduct {
     @Nullable PluginItem<?> getPluginItem();
 
     void setPluginItem(@Nullable PluginItem<?> pluginItem);
+
+    int getPluginItemAmount();
+
+    void setPluginItemAmount(int amount);
     // Akiranya ends
 
     /**

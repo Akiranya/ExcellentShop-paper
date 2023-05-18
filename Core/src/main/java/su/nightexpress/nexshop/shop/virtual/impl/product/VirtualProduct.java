@@ -103,7 +103,11 @@ public abstract class VirtualProduct extends Product<VirtualProduct, VirtualShop
         if (item != null && !item.getType().isAir()) {
             product = new VirtualItemProduct(id, item, currency);
             ((ItemProduct) product).setRespectItemMeta(cfg.getBoolean(path + ".Item_Meta_Enabled"));
+            // Akiranya starts - plugin item support
             ((ItemProduct) product).setRespectPluginItem(cfg.getBoolean(path + ".Plugin_Item_Enabled"));
+            ((ItemProduct) product).setPluginItem(cfg.getPluginItem(path + ".Content.Plugin_Item"));
+            ((ItemProduct) product).setPluginItemAmount(cfg.getInt(path + ".Content.Plugin_Item_Amount", 1));
+            // Akiranya ends
         } else {
             ItemStack preview = cfg.getItemEncoded(path + ".Content.Preview");
             if (preview == null) preview = new ItemStack(Material.COMMAND_BLOCK);
@@ -129,8 +133,9 @@ public abstract class VirtualProduct extends Product<VirtualProduct, VirtualShop
             cfg.set(path + ".Item_Meta_Enabled", itemProduct.isRespectItemMeta());
             // Akiranya starts - plugin item support
             if (itemProduct.getPluginItem() != null) {
-                cfg.setPluginItem(path + ".Content.Plugin_Item", itemProduct.getItem());
                 cfg.set(path + ".Plugin_Item_Enabled", itemProduct.isRespectPluginItem());
+                cfg.set(path + ".Content.Plugin_Item", itemProduct.getPluginItem().asReference());
+                cfg.set(path + ".Content.Plugin_Item_Amount", itemProduct.getPluginItemAmount());
             }
             // Akiranya ends
         }
