@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
+import su.nexmedia.engine.utils.ComponentUtil;
 import su.nightexpress.nexshop.ShopAPI;
 import su.nightexpress.nexshop.api.IScheduled;
 import su.nightexpress.nexshop.api.currency.ICurrency;
@@ -125,6 +126,7 @@ public abstract class VirtualProduct extends Product<VirtualProduct, VirtualShop
 
     public static void write(@NotNull VirtualProduct product, @NotNull JYML cfg, @NotNull String path) {
         cfg.remove(path + ".Content");
+        cfg.set(path + ".Content.Name", ComponentUtil.asPlainText(product.getPreview().displayName()));
         if (product instanceof CommandProduct commandProduct) {
             cfg.setItemEncoded(path + ".Content.Preview", commandProduct.getPreview());
             cfg.set(path + ".Content.Commands", commandProduct.getCommands());
