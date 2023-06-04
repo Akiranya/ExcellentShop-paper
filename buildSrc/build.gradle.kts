@@ -5,16 +5,11 @@ plugins {
 repositories {
     mavenCentral()
     gradlePluginPortal()
-    maven("https://repo.papermc.io/repository/maven-public/")
+    maven(uri("${System.getenv("HOME")}/MewcraftRepository"))
 }
 
 dependencies {
-    implementation("io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin:1.5.5")
+    implementation("cc.mewcraft.java-conventions", "cc.mewcraft.java-conventions.gradle.plugin", "1.0.0")
+    implementation("cc.mewcraft.publishing-conventions", "cc.mewcraft.publishing-conventions.gradle.plugin", "1.0.0")
+    implementation("cc.mewcraft.repository-conventions", "cc.mewcraft.repository-conventions.gradle.plugin", "1.0.0")
 }
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
-

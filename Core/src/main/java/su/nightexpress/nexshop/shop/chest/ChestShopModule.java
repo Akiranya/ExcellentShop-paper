@@ -76,11 +76,9 @@ public class ChestShopModule extends ShopModule {
         this.plugin.registerPermissions(ChestPerms.class);
 
         this.chestNMS = switch (Version.CURRENT) {
-            case V1_17_R1 -> new V1_17_R1();
             case V1_18_R2 -> new V1_18_R2();
-            case V1_19_R2 -> new V1_19_R2();
             case V1_19_R3 -> new V1_19_R3();
-            default -> throw new IllegalStateException("unsupported Minecraft version");
+            default -> throw new IllegalStateException("Unsupported Minecraft version: " + Version.CURRENT);
         };
         this.displayHandler = new ChestDisplayHandler(this);
         this.displayHandler.setup();
