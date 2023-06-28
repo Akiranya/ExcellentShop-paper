@@ -1,4 +1,4 @@
-rootProject.name = "ExcellentShop-spigot"
+rootProject.name = "ExcellentShop"
 
 include(":Core")
 include(":NMS")

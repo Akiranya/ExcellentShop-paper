@@ -1,11 +1,11 @@
 plugins {
     id("su.nightexpress.project-conventions")
     id("cc.mewcraft.publishing-conventions")
-    alias(libs.plugins.indra)
-    alias(libs.plugins.shadow)
+    id("cc.mewcraft.deploy-conventions")
+    id("cc.mewcraft.paper-plugins")
 }
 
-description = "Core"
+project.ext.set("name", "ExcellentShop")
 
 dependencies {
     // nms modules
@@ -35,46 +35,4 @@ dependencies {
     compileOnly("com.github.TechFortress", "GriefPrevention", "16.17.1")
     compileOnly("com.github.angeschossen", "LandsAPI", "6.20.0")
     compileOnly("org.black_ixx", "playerpoints", "3.0.0")
-}
-
-tasks {
-    build {
-        dependsOn(shadowJar)
-    }
-    jar {
-        archiveClassifier.set("noshade")
-    }
-    shadowJar {
-        minimize {
-            exclude(dependency("su.nightexpress.excellentshop:.*:.*"))
-        }
-        archiveFileName.set("ExcellentShop-${project.version}.jar")
-        archiveClassifier.set("")
-        destinationDirectory.set(file("$rootDir"))
-    }
-    processResources {
-        filesMatching("**/paper-plugin.yml") {
-            expand(
-                mapOf(
-                    "version" to "${project.version}",
-                    "description" to project.description
-                )
-            )
-        }
-    }
-    register("deployJar") {
-        doLast {
-            exec {
-                commandLine("rsync", shadowJar.get().archiveFile.get().asFile.absoluteFile, "dev:data/dev/jar")
-            }
-        }
-    }
-    register("deployJarFresh") {
-        dependsOn(build)
-        finalizedBy(named("deployJar"))
-    }
-}
-
-indra {
-    javaVersions().target(17)
 }
