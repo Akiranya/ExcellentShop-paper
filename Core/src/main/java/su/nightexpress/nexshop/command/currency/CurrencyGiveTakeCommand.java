@@ -4,19 +4,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.AbstractCommand;
+import su.nexmedia.engine.api.command.CommandResult;
 import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.NumberUtil;
-import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.Perms;
 import su.nightexpress.nexshop.Placeholders;
-import su.nightexpress.nexshop.api.currency.ICurrency;
+import su.nightexpress.nexshop.api.currency.Currency;
 import su.nightexpress.nexshop.config.Lang;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CurrencyGiveTakeCommand extends AbstractCommand<ExcellentShop> {
 
@@ -31,11 +28,15 @@ public class CurrencyGiveTakeCommand extends AbstractCommand<ExcellentShop> {
         this.mode = mode;
     }
 
-    @Override public @NotNull String getUsage() {
+    @Override
+    @NotNull
+    public String getUsage() {
         return plugin.getMessage(this.mode == Mode.GIVE ? Lang.COMMAND_CURRENCY_GIVE_USAGE : Lang.COMMAND_CURRENCY_TAKE_USAGE).getLocalized();
     }
 
-    @Override public @NotNull String getDescription() {
+    @Override
+    @NotNull
+    public String getDescription() {
         return plugin.getMessage(this.mode == Mode.GIVE ? Lang.COMMAND_CURRENCY_GIVE_DESC : Lang.COMMAND_CURRENCY_TAKE_DESC).getLocalized();
     }
 
@@ -44,7 +45,9 @@ public class CurrencyGiveTakeCommand extends AbstractCommand<ExcellentShop> {
         return false;
     }
 
-    @Override public @NotNull List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
+    @Override
+    @NotNull
+    public List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
         if (arg == 2) {
             return new ArrayList<>(this.plugin.getCurrencyManager().getCurrencyIds());
         }
@@ -58,34 +61,34 @@ public class CurrencyGiveTakeCommand extends AbstractCommand<ExcellentShop> {
     }
 
     @Override
-    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
-        if (args.length < 5) {
+    protected void onExecute(@NotNull CommandSender sender, @NotNull CommandResult result) {
+        if (result.length() < 5) {
             this.printUsage(sender);
             return;
         }
 
-        ICurrency currency = this.plugin.getCurrencyManager().getCurrency(args[2]);
+        Currency currency = this.plugin.getCurrencyManager().getCurrency(result.getArg(2));
         if (currency == null) {
             plugin.getMessage(Lang.ERROR_CURRENCY_INVALID).send(sender);
             return;
         }
 
-        Player player = plugin.getServer().getPlayer(args[3]);
+        Player player = plugin.getServer().getPlayer(result.getArg(3));
         if (player == null) {
             this.errorPlayer(sender);
             return;
         }
 
-        double amount = StringUtil.getDouble(args[4], 0D);
+        double amount = result.getDouble(4, 0);
         if (amount <= 0D) {
-            this.errorNumber(sender, args[4]);
+            this.errorNumber(sender, result.getArg(4));
             return;
         }
 
         if (this.mode == Mode.GIVE) {
-            currency.give(player, amount);
+            currency.getHandler().give(player, amount);
         } else {
-            currency.take(player, amount);
+            currency.getHandler().take(player, amount);
         }
 
         plugin.getMessage(this.mode == Mode.GIVE ? Lang.COMMAND_CURRENCY_GIVE_DONE : Lang.COMMAND_CURRENCY_TAKE_DONE)

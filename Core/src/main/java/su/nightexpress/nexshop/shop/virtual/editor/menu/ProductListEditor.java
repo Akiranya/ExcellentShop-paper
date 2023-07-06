@@ -20,8 +20,7 @@ import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PDCUtil;
 import su.nightexpress.nexshop.ExcellentShop;
-import su.nightexpress.nexshop.shop.FlatProductPricer;
-import su.nightexpress.nexshop.shop.virtual.VirtualShopModule;
+import su.nightexpress.nexshop.shop.price.FlatProductPricer;
 import su.nightexpress.nexshop.shop.virtual.editor.VirtualLocales;
 import su.nightexpress.nexshop.shop.virtual.impl.product.VirtualCommandProduct;
 import su.nightexpress.nexshop.shop.virtual.impl.product.VirtualItemProduct;
@@ -29,10 +28,7 @@ import su.nightexpress.nexshop.shop.virtual.impl.product.VirtualProduct;
 import su.nightexpress.nexshop.shop.virtual.impl.product.VirtualProductStock;
 import su.nightexpress.nexshop.shop.virtual.impl.shop.VirtualShop;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -47,7 +43,8 @@ public class ProductListEditor extends EditorMenu<ExcellentShop, VirtualShop> {
         this.keyProductCache = new NamespacedKey(plugin, "product_cache");
     }
 
-    private @NotNull ItemStack cacheProduct(@NotNull VirtualProduct product) {
+    @NotNull
+    private ItemStack cacheProduct(@NotNull VirtualProduct product) {
         String pId = UUID.randomUUID().toString();
         PRODUCT_CACHE.put(pId, product);
 
@@ -56,7 +53,8 @@ public class ProductListEditor extends EditorMenu<ExcellentShop, VirtualShop> {
         return stack;
     }
 
-    private @Nullable VirtualProduct getCachedProduct(@NotNull ItemStack stack) {
+    @Nullable
+    private VirtualProduct getCachedProduct(@NotNull ItemStack stack) {
         String pId = PDCUtil.getString(stack, this.keyProductCache).orElse(null);
         if (pId == null) return null;
 
@@ -105,6 +103,7 @@ public class ProductListEditor extends EditorMenu<ExcellentShop, VirtualShop> {
         for (VirtualProduct product : shop.getProducts()) {
             if (product.getPage() != page) continue;
 
+            // Mewcraft start
             ItemStack productIcon = product.getPreview().clone();
             productIcon.editMeta(meta -> {
                 meta.displayName(ComponentUtil.asComponent(VirtualLocales.PRODUCT_OBJECT.getLocalizedName()));
@@ -112,10 +111,12 @@ public class ProductListEditor extends EditorMenu<ExcellentShop, VirtualShop> {
                 meta.addItemFlags(ItemFlag.values());
                 ItemUtil.replaceNameAndLore(meta, product.replacePlaceholders());
             });
+            // Mewcraft end
 
             MenuItem productItem = new MenuItem(productIcon);
             productItem.setOptions(ItemOptions.personalWeak(viewer.getPlayer()));
             productItem.setSlots(product.getSlot());
+            productItem.setPriority(200);
             productItem.setClick((viewer2, event) -> {
                 if (!event.isLeftClick() && !event.isRightClick()) return;
 
@@ -142,7 +143,7 @@ public class ProductListEditor extends EditorMenu<ExcellentShop, VirtualShop> {
                 if (cursor != null && !cursor.getType().isAir()) {
                     VirtualProduct cached = this.getCachedProduct(cursor);
                     if (cached == null) {
-                        cached = new VirtualItemProduct(cursor, VirtualShopModule.defaultCurrency);
+                        cached = new VirtualItemProduct(cursor, plugin.getCurrencyManager().getAny());
                         //cached.setItem(cursor);
                         cached.setPricer(new FlatProductPricer());
                         cached.setStock(new VirtualProductStock());
@@ -177,9 +178,9 @@ public class ProductListEditor extends EditorMenu<ExcellentShop, VirtualShop> {
             VirtualProduct product = hasCursor ? this.getCachedProduct(cursor) : null;
             if (product == null) {
                 if (hasCursor) {
-                    product = new VirtualItemProduct(cursor, VirtualShopModule.defaultCurrency);
+                    product = new VirtualItemProduct(cursor, plugin.getCurrencyManager().getAny());
                 } else if (event.isRightClick()) {
-                    product = new VirtualCommandProduct(new ItemStack(Material.COMMAND_BLOCK), VirtualShopModule.defaultCurrency);
+                    product = new VirtualCommandProduct(new ItemStack(Material.COMMAND_BLOCK), plugin.getCurrencyManager().getAny());
                 } else return;
                 product.setPricer(new FlatProductPricer());
                 product.setStock(new VirtualProductStock());
@@ -202,8 +203,7 @@ public class ProductListEditor extends EditorMenu<ExcellentShop, VirtualShop> {
             Player player = viewer.getPlayer();
 
             Menu<?> menu = Menu.getMenu(player);
-            if (menu != null)
-                return;
+            if (menu != null) return;
 
             this.object.getEditor().open(player, 1);
         });

@@ -13,9 +13,8 @@ import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.NumberUtil;
 import su.nightexpress.nexshop.Placeholders;
-import su.nightexpress.nexshop.api.currency.ICurrency;
+import su.nightexpress.nexshop.api.currency.Currency;
 import su.nightexpress.nexshop.api.type.ShopClickAction;
-import su.nightexpress.nexshop.api.type.StockType;
 import su.nightexpress.nexshop.api.type.TradeType;
 import su.nightexpress.nexshop.config.Config;
 import su.nightexpress.nexshop.config.Lang;
@@ -30,17 +29,17 @@ public abstract class Product<
     protected final PlaceholderMap placeholderMap;
 
     protected S shop;
-    protected ICurrency currency;
+    protected Currency currency;
     protected ProductPricer pricer;
     protected T stock;
     protected boolean isDiscountAllowed;
 
-    public Product(@NotNull String id, @NotNull ICurrency currency) {
+    public Product(@NotNull String id, @NotNull Currency currency) {
         this.id = id.toLowerCase();
         this.setCurrency(currency);
         this.placeholderMap = new PlaceholderMap()
             .add(Placeholders.PRODUCT_DISCOUNT_AMOUNT, () -> NumberUtil.format(this.getShop().getDiscountPlain(this)))
-            .add(Placeholders.PRODUCT_CURRENCY, () -> this.getCurrency().getConfig().getName())
+            .add(Placeholders.PRODUCT_CURRENCY, () -> this.getCurrency().getName())
             .add(Placeholders.PRODUCT_PRICE_BUY, () -> NumberUtil.format(this.getPricer().getPriceBuy()))
             .add(Placeholders.PRODUCT_PRICE_BUY_FORMATTED, () -> this.getPricer().getPriceBuy() >= 0 ? getCurrency().format(this.getPricer().getPriceBuy()) : "-")
             .add(Placeholders.PRODUCT_PRICE_SELL, () -> NumberUtil.format(this.getPricer().getPriceSell()))
@@ -48,8 +47,7 @@ public abstract class Product<
             .add(Placeholders.PRODUCT_PRICE_TYPE, () -> getShop().plugin().getLangManager().getEnum(this.getPricer().getType()))
             .add(Placeholders.PRODUCT_DISCOUNT_ALLOWED, () -> LangManager.getBoolean(this.isDiscountAllowed()))
             .add(Placeholders.PRODUCT_PREVIEW_NAME, () -> ComponentUtil.asMiniMessage(ItemUtil.getName(this.getPreview())))
-        //.add(Placeholders.PRODUCT_PREVIEW_LORE, () -> String.join("\n", ComponentUtil.asMiniMessage((ItemUtil.getLore(this.getPreview()))))
-        ;
+        /*.add(Placeholders.PRODUCT_PREVIEW_LORE, () -> String.join("\n", ComponentUtil.asMiniMessage((ItemUtil.getLore(this.getPreview()))))*/;
     }
 
     @Override
@@ -65,11 +63,7 @@ public abstract class Product<
         placeholderMap.getKeys().addAll(this.getStock().getPlaceholders(player).getKeys());
         placeholderMap
             .add(Placeholders.PRODUCT_PRICE_SELL_ALL, () -> NumberUtil.format(this.getPricer().getPriceSell()))
-            .add(Placeholders.PRODUCT_PRICE_SELL_ALL_FORMATTED,
-                () -> this.getPricer().getPriceSell() >= 0
-                    ? this.getCurrency().format(this.getPricer().getPriceSellAll(player))
-                    : "-")
-        ;
+            .add(Placeholders.PRODUCT_PRICE_SELL_ALL_FORMATTED, () -> this.getPricer().getPriceSell() >= 0 ? this.getCurrency().format(this.getPricer().getPriceSellAll(player)) : "-");
         return placeholderMap;
     }
 
@@ -135,18 +129,18 @@ public abstract class Product<
     }
 
     public boolean isBuyable() {
-        if (this.getStock().getInitialAmount(StockType.GLOBAL, TradeType.BUY) == 0) {
+        /*if (this.getStock().getLeftAmount(TradeType.BUY) == 0) {
             return false;
-        }
+        }*/
 
         ProductPricer pricer = this.getPricer();
         return pricer.getPriceBuy() >= 0D;
     }
 
     public boolean isSellable() {
-        if (this.getStock().getInitialAmount(StockType.GLOBAL, TradeType.SELL) == 0) {
+        /*if (this.getStock().getLeftAmount(TradeType.SELL) == 0) {
             return false;
-        }
+        }*/
 
         ProductPricer pricer = this.getPricer();
         double priceSell = pricer.getPriceSell();
@@ -224,11 +218,11 @@ public abstract class Product<
         this.stock.setProduct(this.get());
     }
 
-    public @NotNull ICurrency getCurrency() {
+    public @NotNull Currency getCurrency() {
         return this.currency;
     }
 
-    public void setCurrency(@NotNull ICurrency currency) {
+    public void setCurrency(@NotNull Currency currency) {
         this.currency = currency;
     }
 

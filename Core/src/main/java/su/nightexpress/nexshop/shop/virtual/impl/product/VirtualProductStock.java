@@ -14,11 +14,9 @@ import su.nightexpress.nexshop.api.type.StockType;
 import su.nightexpress.nexshop.api.type.TradeType;
 import su.nightexpress.nexshop.config.Lang;
 import su.nightexpress.nexshop.data.stock.ProductStockData;
-import su.nightexpress.nexshop.data.stock.ProductStockManager;
+import su.nightexpress.nexshop.data.stock.ProductStockStorage;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class VirtualProductStock extends ProductStock<VirtualProduct> {
 
@@ -81,12 +79,12 @@ public class VirtualProductStock extends ProductStock<VirtualProduct> {
             .add(Placeholders.PRODUCT_STOCK_GLOBAL_SELL_RESTOCK_DATE, () -> {
                 long restockDate = this.getRestockDate(TradeType.SELL);
                 return restockDate < 0 ? never : restockDate == 0 ? "-" : TimeUtil.formatTimeLeft(restockDate);
-            })
-        ;
+            });
     }
 
     @Override
-    public @NotNull PlaceholderMap getPlaceholders(@NotNull Player player) {
+    @NotNull
+    public PlaceholderMap getPlaceholders(@NotNull Player player) {
         String never = LangManager.getPlain(Lang.OTHER_NEVER);
         String infinite = LangManager.getPlain(Lang.OTHER_INFINITY);
         return new PlaceholderMap(this.getPlaceholders())
@@ -109,7 +107,8 @@ public class VirtualProductStock extends ProductStock<VirtualProduct> {
             ;
     }
 
-    public static @NotNull VirtualProductStock read(@NotNull JYML cfg, @NotNull String path) {
+    @NotNull
+    public static VirtualProductStock read(@NotNull JYML cfg, @NotNull String path) {
         VirtualProductStock stock = new VirtualProductStock();
         for (StockType stockType : StockType.values()) {
             for (TradeType tradeType : TradeType.values()) {
@@ -132,32 +131,34 @@ public class VirtualProductStock extends ProductStock<VirtualProduct> {
         }
     }
 
-    public @Nullable ProductStockData getProductStockData(@NotNull TradeType tradeType, @Nullable Player player) {
+    @Nullable
+    public ProductStockData getProductStockData(@NotNull TradeType tradeType, @Nullable Player player) {
         StockType stockType = player == null ? StockType.GLOBAL : StockType.PLAYER;
         String holder = player == null ? this.getProduct().getShop().getId() : player.getUniqueId().toString();
 
         return this.getProductStockData(holder, stockType, tradeType);
     }
 
-    private @Nullable ProductStockData getProductStockData(@NotNull String holder, @NotNull StockType stockType, @NotNull TradeType tradeType) {
+    @Nullable
+    private ProductStockData getProductStockData(@NotNull String holder, @NotNull StockType stockType, @NotNull TradeType tradeType) {
         // Если лимит не установлен, то и записи в БД нет.
         if (this.isUnlimited(stockType, tradeType)) {
-            ProductStockManager.removeProductStockData(holder, this.getProduct(), stockType, tradeType);
+            ProductStockStorage.removeProductStockData(holder, this.getProduct(), stockType, tradeType);
             return null;
         }
 
         // Получаем запись из БД о текущих лимитах.
         // Если такая есть, проверяем актуальность и пополняем если нужно.
-        ProductStockData stockData = ProductStockManager.getData(holder, this.getProduct().getId(), stockType, tradeType);
+        ProductStockData stockData = ProductStockStorage.getData(holder, this.getProduct().getId(), stockType, tradeType);
         if (stockData != null && stockData.isRestockTime()) {
             if (stockType == StockType.GLOBAL) {
                 stockData.restock(this);
-                ProductStockManager.saveProductStockData(holder, stockData);
+                ProductStockStorage.saveProductStockData(holder, stockData);
             }
             // Для Юзер стока удаляем запись вместо пополнения, чтобы не шло время обновления, пока не будет
             // совершена хотя бы одна покупка.
             else {
-                ProductStockManager.removeProductStockData(holder, this.getProduct(), stockType, tradeType);
+                ProductStockStorage.removeProductStockData(holder, this.getProduct(), stockType, tradeType);
                 return null;
             }
         }
@@ -185,10 +186,10 @@ public class VirtualProductStock extends ProductStock<VirtualProduct> {
 
         if (!this.isUnlimited(StockType.PLAYER, tradeType)) {
             int userAmountLeft = this.getLeftAmount(tradeType, player);
-            // int amountLeftOpp = this.getLeftAmount(tradeType.getOpposite(), player);
+            //int amountLeftOpp = this.getLeftAmount(tradeType.getOpposite(), player);
 
             this.setLeftAmount(tradeType, userAmountLeft - amount, player);
-            // this.setLeftAmount(tradeType.getOpposite(), amountLeftOpp + amount, player);
+            //this.setLeftAmount(tradeType.getOpposite(), amountLeftOpp + amount, player);
         }
     }
 
@@ -243,13 +244,14 @@ public class VirtualProductStock extends ProductStock<VirtualProduct> {
         ProductStockData stockData = this.getProductStockData(holder, stockType, tradeType);
 
         int initial = this.getInitialAmount(stockType, tradeType);
+        int itemsLeft = stockType == StockType.GLOBAL ? amount : Math.min(initial, amount);
         if (stockData == null) {
             stockData = new ProductStockData(this, tradeType, stockType);
-            stockData.setItemsLeft(Math.min(initial, amount));
-            ProductStockManager.createProductStockData(holder, stockData);
+            stockData.setItemsLeft(itemsLeft);
+            ProductStockStorage.createProductStockData(holder, stockData);
         } else {
-            stockData.setItemsLeft(Math.min(initial, amount));
-            ProductStockManager.saveProductStockData(holder, stockData);
+            stockData.setItemsLeft(itemsLeft);
+            ProductStockStorage.saveProductStockData(holder, stockData);
         }
     }
 

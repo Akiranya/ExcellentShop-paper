@@ -20,16 +20,16 @@ import su.nexmedia.engine.utils.LocationUtil;
 import su.nexmedia.engine.utils.NumberUtil;
 import su.nexmedia.engine.utils.Pair;
 import su.nightexpress.nexshop.Placeholders;
-import su.nightexpress.nexshop.api.currency.ICurrency;
+import su.nightexpress.nexshop.api.currency.Currency;
 import su.nightexpress.nexshop.api.shop.Shop;
 import su.nightexpress.nexshop.api.type.TradeType;
-import su.nightexpress.nexshop.shop.FlatProductPricer;
 import su.nightexpress.nexshop.shop.chest.ChestDisplayHandler;
 import su.nightexpress.nexshop.shop.chest.ChestShopModule;
 import su.nightexpress.nexshop.shop.chest.config.ChestConfig;
 import su.nightexpress.nexshop.shop.chest.config.ChestLang;
 import su.nightexpress.nexshop.shop.chest.menu.ShopSettingsMenu;
 import su.nightexpress.nexshop.shop.chest.type.ChestShopType;
+import su.nightexpress.nexshop.shop.price.FlatProductPricer;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -56,7 +56,7 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
     private final ChestShopView view;
 
     public ChestShop(@NotNull ChestShopModule module, @NotNull Player owner, @NotNull Container container, @NotNull ChestShopType type) {
-        this(module, new JYML(module.getFullPath() + ChestShopModule.DIR_SHOPS, UUID.randomUUID() + ".yml"));
+        this(module, new JYML(module.getAbsolutePath() + ChestShopModule.DIR_SHOPS, UUID.randomUUID() + ".yml"));
         this.setBank(new ChestShopBank(this));
         this.setLocation(container.getLocation());
         this.setType(type);
@@ -71,10 +71,8 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         this.view = new ChestShopView(this);
 
         this.placeholderMap
-            .add(Placeholders.SHOP_BANK_BALANCE, () -> ChestConfig.ALLOWED_CURRENCIES
-                .stream()
-                .map(currency -> currency.format(this.getBank().getBalance(currency)))
-                .collect(Collectors.joining(", ")))
+            .add(Placeholders.SHOP_BANK_BALANCE, () -> ChestShopModule.ALLOWED_CURRENCIES.stream()
+                .map(currency -> currency.format(this.getBank().getBalance(currency))).collect(Collectors.joining(", ")))
             .add(Placeholders.SHOP_CHEST_OWNER, this::getOwnerName)
             .add(Placeholders.SHOP_CHEST_LOCATION_X, () -> NumberUtil.format(this.getLocation().getX()))
             .add(Placeholders.SHOP_CHEST_LOCATION_Y, () -> NumberUtil.format(this.getLocation().getY()))
@@ -108,13 +106,13 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
             return false;
         }
 
-        this.ownerName = this.isAdminShop() ? ChestConfig.ADMIN_SHOP_NAME : this.ownerPlayer.getName();
+        this.ownerName = this.isAdminShop() ? ChestConfig.ADMIN_SHOP_NAME.get() : this.ownerPlayer.getName();
         this.setName(cfg.getString("Name", this.getOwnerName()));
 
         for (TradeType tradeType : TradeType.values()) {
             this.setTransactionEnabled(tradeType, cfg.getBoolean("Transaction_Allowed." + tradeType.name(), true));
         }
-        for (ICurrency currency : ChestConfig.ALLOWED_CURRENCIES) {
+        for (Currency currency : ChestShopModule.ALLOWED_CURRENCIES) {
             this.getBank().deposit(currency, cfg.getDouble("Bank." + currency.getId()));
         }
 
@@ -166,20 +164,24 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
     }
 
     @Override
-    protected @NotNull ChestShop get() {
+    @NotNull
+    protected ChestShop get() {
         return this;
     }
 
-    public @NotNull ChestShopModule getModule() {
+    @NotNull
+    public ChestShopModule getModule() {
         return module;
     }
 
     @Override
-    public @NotNull ChestShopView getView() {
+    @NotNull
+    public ChestShopView getView() {
         return this.view;
     }
 
-    public @NotNull ShopSettingsMenu getEditor() {
+    @NotNull
+    public ShopSettingsMenu getEditor() {
         if (this.settingsMenu == null) {
             this.settingsMenu = new ShopSettingsMenu(this);
         }
@@ -195,19 +197,20 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         if (item.getType().isAir() || this.isProduct(item)) {
             return false;
         }
-        if (!ChestConfig.isAllowedItem(item)) {
+        if (!ChestShopModule.isAllowedItem(item)) {
             plugin.getMessage(ChestLang.SHOP_PRODUCT_ERROR_BAD_ITEM).send(player);
             return false;
         }
 
-        ChestProduct shopProduct = new ChestProduct(ChestConfig.DEFAULT_CURRENCY, item);
+        ChestProduct shopProduct = new ChestProduct(ChestShopModule.DEFAULT_CURRENCY, item);
         shopProduct.setStock(new ChestProductStock());
         shopProduct.setPricer(new FlatProductPricer());
         this.addProduct(shopProduct);
         return true;
     }
 
-    public @NotNull ChestShopType getType() {
+    @NotNull
+    public ChestShopType getType() {
         return type;
     }
 
@@ -219,7 +222,8 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         return this.getType() == ChestShopType.ADMIN;
     }
 
-    public @NotNull Container getContainer() {
+    @NotNull
+    public Container getContainer() {
         return (Container) this.getLocation().getBlock().getState();
     }
 
@@ -231,10 +235,11 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         return this.getProducts().stream().anyMatch(product -> product.isItemMatches(item));
     }
 
-    public @NotNull Pair<Container, Container> getSides() {
+    @NotNull
+    public Pair<Container, Container> getSides() {
         Container container = this.getContainer();
 
-        // if (!(this.getContainer() instanceof Chest chest)) return Pair.of(container, container);
+        //if (!(this.getContainer() instanceof Chest chest)) return Pair.of(container, container);
         if (!this.isDoubleChest()) return Pair.of(container, container);
 
         DoubleChest doubleChest = (DoubleChest) this.getInventory().getHolder();
@@ -246,7 +251,8 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         return Pair.of(left != null ? left : container, right != null ? right : container);
     }
 
-    public @NotNull Inventory getInventory() {
+    @NotNull
+    public Inventory getInventory() {
         if (this.isDoubleChest()) {
             DoubleChest doubleChest = (DoubleChest) this.getContainer().getInventory().getHolder();
             if (doubleChest != null) {
@@ -269,7 +275,8 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         player.teleport(location);
     }
 
-    public @NotNull Location getLocation() {
+    @NotNull
+    public Location getLocation() {
         return this.location;
     }
 
@@ -287,21 +294,24 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         return chunkZ;
     }
 
-    public @NotNull UUID getOwnerId() {
+    @NotNull
+    public UUID getOwnerId() {
         return this.ownerId;
     }
 
     public void setOwner(@NotNull OfflinePlayer player) {
         this.ownerId = player.getUniqueId();
-        this.ownerName = this.isAdminShop() ? ChestConfig.ADMIN_SHOP_NAME : player.getName();
+        this.ownerName = this.isAdminShop() ? ChestConfig.ADMIN_SHOP_NAME.get() : player.getName();
         this.ownerPlayer = player;
     }
 
-    public @NotNull String getOwnerName() {
+    @NotNull
+    public String getOwnerName() {
         return this.ownerName;
     }
 
-    public @NotNull OfflinePlayer getOwner() {
+    @NotNull
+    public OfflinePlayer getOwner() {
         return this.ownerPlayer;
     }
 
@@ -319,13 +329,14 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         this.displayCreated = displayCreated;
     }*/
 
-    public @NotNull List<String> getDisplayText() {
+    @NotNull
+    public List<String> getDisplayText() {
         if (this.displayText == null) this.updateDisplayText();
         return this.displayText;
     }
 
     public void updateDisplayText() {
-        this.displayText = new ArrayList<>(ChestConfig.getDisplayText(this.getType()));
+        this.displayText = new ArrayList<>(ChestShopModule.getHologramLines(this.getType()));
         this.displayText.replaceAll(this.replacePlaceholders());
     }
 
@@ -345,12 +356,12 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
     private double getDisplayYOffset() {
         if (this.getContainer() instanceof Chest) {
             return -1D;
-        } else {
-            return -0.85D;
         }
+        return -0.85D;
     }
 
-    public @NotNull Location getDisplayLocation() {
+    @NotNull
+    public Location getDisplayLocation() {
         if (this.displayHologramLoc == null) {
             Location invLocation = this.getInventory().getLocation();
             if (invLocation == null || !this.isDoubleChest()) {
@@ -363,7 +374,8 @@ public class ChestShop extends Shop<ChestShop, ChestProduct> implements ICleanab
         return this.displayHologramLoc;
     }
 
-    public @NotNull Location getDisplayItemLocation() {
+    @NotNull
+    public Location getDisplayItemLocation() {
         if (this.displayItemLoc == null) {
             Location glassLocation = this.getDisplayLocation();
             this.displayItemLoc = glassLocation.clone().add(0, 1.4, 0);

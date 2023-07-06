@@ -4,11 +4,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.utils.TimeUtil;
-import su.nightexpress.nexshop.api.currency.ICurrency;
+import su.nightexpress.nexshop.api.currency.Currency;
 import su.nightexpress.nexshop.shop.auction.Placeholders;
 import su.nightexpress.nexshop.shop.auction.config.AuctionConfig;
 
-import java.util.UUID;
+import java.util.*;
 
 public class AuctionListing extends AbstractAuctionItem {
 
@@ -17,13 +17,13 @@ public class AuctionListing extends AbstractAuctionItem {
     public AuctionListing(
         @NotNull Player player,
         @NotNull ItemStack itemStack,
-        @NotNull ICurrency currency,
+        @NotNull Currency currency,
         double price
     ) {
         this(
             UUID.randomUUID(),
             player.getUniqueId(),
-            player.getName(),
+            player.getName(), // Mewcraft
             itemStack,
             currency,
             price,
@@ -37,7 +37,7 @@ public class AuctionListing extends AbstractAuctionItem {
         @NotNull UUID owner,
         @NotNull String ownerName,
         @NotNull ItemStack itemStack,
-        @NotNull ICurrency currency,
+        @NotNull Currency currency,
         double price,
         long dateCreation,
         long expireDate
@@ -46,8 +46,7 @@ public class AuctionListing extends AbstractAuctionItem {
         this.expireDate = expireDate;
         this.placeholderMap
             .add(Placeholders.LISTING_EXPIRES_IN, () -> TimeUtil.formatTimeLeft(this.getExpireDate()))
-            .add(Placeholders.LISTING_EXPIRE_DATE, AuctionConfig.DATE_FORMAT.format(TimeUtil.getLocalDateTimeOf(this.getExpireDate())))
-        ;
+            .add(Placeholders.LISTING_EXPIRE_DATE, AuctionConfig.DATE_FORMAT.format(TimeUtil.getLocalDateTimeOf(this.getExpireDate())));
     }
 
     public long getExpireDate() {

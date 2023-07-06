@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.nexshop.Placeholders;
-import su.nightexpress.nexshop.api.currency.ICurrency;
+import su.nightexpress.nexshop.api.currency.Currency;
 import su.nightexpress.nexshop.api.shop.ItemProduct;
 
 import java.util.Objects;
@@ -25,11 +25,11 @@ public class VirtualItemProduct extends VirtualProduct implements ItemProduct {
     private boolean respectPluginItem;
     // Akiranya ends
 
-    public VirtualItemProduct(@NotNull ItemStack item, @NotNull ICurrency currency) {
+    public VirtualItemProduct(@NotNull ItemStack item, @NotNull Currency currency) {
         this(UUID.randomUUID().toString(), item, currency);
     }
 
-    public VirtualItemProduct(@NotNull String id, @NotNull ItemStack item, @NotNull ICurrency currency) {
+    public VirtualItemProduct(@NotNull String id, @NotNull ItemStack item, @NotNull Currency currency) {
         super(id, currency);
         this.setItem(item);
         this.setRespectItemMeta(item.hasItemMeta());

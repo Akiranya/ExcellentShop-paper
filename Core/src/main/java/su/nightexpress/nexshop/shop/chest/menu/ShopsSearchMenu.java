@@ -3,15 +3,17 @@ package su.nightexpress.nexshop.shop.chest.menu;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.menu.AbstractMenuAuto;
-import su.nexmedia.engine.api.menu.MenuClick;
-import su.nexmedia.engine.api.menu.MenuItem;
+import su.nexmedia.engine.api.menu.AutoPaged;
 import su.nexmedia.engine.api.menu.MenuItemType;
+import su.nexmedia.engine.api.menu.click.ClickHandler;
+import su.nexmedia.engine.api.menu.click.ItemClick;
+import su.nexmedia.engine.api.menu.impl.ConfigMenu;
+import su.nexmedia.engine.api.menu.impl.MenuOptions;
+import su.nexmedia.engine.api.menu.impl.MenuViewer;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.Placeholders;
@@ -20,7 +22,7 @@ import su.nightexpress.nexshop.shop.chest.impl.ChestProduct;
 
 import java.util.*;
 
-public class ShopsSearchMenu extends AbstractMenuAuto<ExcellentShop, ChestProduct> {
+public class ShopsSearchMenu extends ConfigMenu<ExcellentShop> implements AutoPaged<ChestProduct> {
 
     private final ChestShopModule module;
     private final Map<Player, List<ChestProduct>> searchCache;
@@ -30,80 +32,82 @@ public class ShopsSearchMenu extends AbstractMenuAuto<ExcellentShop, ChestProduc
     private final List<Component> productLore;
 
     public ShopsSearchMenu(@NotNull ChestShopModule module) {
-        super(module.plugin(), JYML.loadOrExtract(module.plugin(), module.getPath() + "menu/shops_search.yml"), "");
+        super(module.plugin(), JYML.loadOrExtract(module.plugin(), module.getLocalPath() + "/menu/", "shops_search.yml"));
         this.module = module;
         this.searchCache = new WeakHashMap<>();
 
         this.productSlots = cfg.getIntArray("Product.Slots");
+        // Mewcraft start
         this.productName = cfg.getComponent("Product.Name", Component.empty());
         this.productLore = cfg.getComponentList("Product.Lore");
+        // Mewcraft end
 
-        MenuClick click = (player, type, e) -> {
-            if (type instanceof MenuItemType type2) {
-                this.onItemClickDefault(player, type2);
-            }
-        };
+        this.registerHandler(MenuItemType.class)
+            .addClick(MenuItemType.CLOSE, (viewer, event) -> plugin.runTask(task -> viewer.getPlayer().closeInventory()))
+            .addClick(MenuItemType.PAGE_PREVIOUS, ClickHandler.forPreviousPage(this))
+            .addClick(MenuItemType.PAGE_NEXT, ClickHandler.forNextPage(this));
 
-        for (String id : cfg.getSection("Content")) {
-            MenuItem menuItem = cfg.getMenuItem("Content." + id, MenuItemType.class);
+        this.load();
+    }
 
-            if (menuItem.getType() != null) {
-                menuItem.setClickHandler(click);
-            }
-            this.addItem(menuItem);
-        }
+    @Override
+    public void onPrepare(@NotNull MenuViewer viewer, @NotNull MenuOptions options) {
+        super.onPrepare(viewer, options);
+        this.getItemsForPage(viewer).forEach(this::addItem);
     }
 
     public void open(@NotNull Player player, @NotNull Material material) {
         List<ChestProduct> products = new ArrayList<>();
-        this.module.getShops().forEach(shop -> products.addAll(shop.getProducts().stream().filter(product -> product.getItem().getType() == material).toList()));
+        this.module.getShops().forEach(shop -> {
+            products.addAll(shop.getProducts().stream().filter(product -> product.getItem().getType() == material).toList());
+        });
         this.searchCache.put(player, products);
         this.open(player, 1);
     }
 
-    private @NotNull Collection<ChestProduct> getSearchResult(@NotNull Player player) {
+    @NotNull
+    private Collection<ChestProduct> getSearchResult(@NotNull Player player) {
         return this.searchCache.getOrDefault(player, Collections.emptyList());
     }
 
     @Override
-    protected int[] getObjectSlots() {
+    public int[] getObjectSlots() {
         return this.productSlots;
     }
 
     @Override
-    protected @NotNull List<ChestProduct> getObjects(@NotNull Player player) {
+    @NotNull
+    public List<ChestProduct> getObjects(@NotNull Player player) {
         return new ArrayList<>(this.getSearchResult(player).stream()
-            .sorted((p1, p2) -> (int) (p1.getPricer().getPriceBuy() - p2.getPricer().getPriceBuy())).toList()
-        );
+            .sorted((p1, p2) -> (int) (p1.getPricer().getPriceBuy() - p2.getPricer().getPriceBuy())).toList());
     }
 
     @Override
-    protected @NotNull ItemStack getObjectStack(@NotNull Player player, @NotNull ChestProduct product) {
-        ItemStack item = product.getItem();
-        ItemStack preview = product.getPreview();
+    @NotNull
+    public ItemStack getObjectStack(@NotNull Player player, @NotNull ChestProduct product) {
+        ItemStack item = new ItemStack(product.getItem());
+        // Mewcraft start
         item.editMeta(meta -> {
             meta.displayName(this.productName);
             meta.lore(this.productLore);
-            ItemUtil.replaceNameAndLore(meta, product.replacePlaceholders(), product.getShop().replacePlaceholders());
-            ItemUtil.replacePlaceholderListComponent(meta, Placeholders.PRODUCT_ITEM_LORE, ItemUtil.getLore(item)); // Last to compress empty
-            ItemUtil.replacePlaceholderListComponent(meta, Placeholders.PRODUCT_PREVIEW_LORE, ItemUtil.getLore(preview), true);
+            ItemUtil.replaceNameAndLore(item, product.replacePlaceholders(), product.getShop().replacePlaceholders());
+            ItemUtil.replacePlaceholderListComponent(meta, Placeholders.PRODUCT_PREVIEW_LORE, ItemUtil.getLore(item), true); // Last to compress empty
         });
+        // Mewcraft end
         return item;
     }
 
     @Override
-    protected @NotNull MenuClick getObjectClick(@NotNull Player player, @NotNull ChestProduct product) {
-        return (player1, type, e) -> product.getShop().teleport(player1);
+    @NotNull
+    public ItemClick getObjectClick(@NotNull ChestProduct product) {
+        return (viewer, event) -> {
+            product.getShop().teleport(viewer.getPlayer());
+        };
     }
 
     @Override
-    public void onClose(@NotNull Player player, @NotNull InventoryCloseEvent e) {
-        super.onClose(player, e);
-        this.searchCache.remove(player);
-    }
-
-    @Override
-    public boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
-        return true;
+    public void onClose(@NotNull MenuViewer viewer, @NotNull InventoryCloseEvent event) {
+        super.onClose(viewer, event);
+        this.searchCache.remove(viewer.getPlayer());
     }
 }

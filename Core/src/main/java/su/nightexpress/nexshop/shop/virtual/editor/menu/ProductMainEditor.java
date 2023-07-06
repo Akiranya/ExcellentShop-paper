@@ -12,10 +12,14 @@ import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.api.menu.click.ItemClick;
 import su.nexmedia.engine.api.menu.impl.EditorMenu;
 import su.nexmedia.engine.api.menu.impl.MenuViewer;
-import su.nexmedia.engine.utils.*;
+import su.nexmedia.engine.utils.Colorizer;
+import su.nexmedia.engine.utils.ComponentUtil;
+import su.nexmedia.engine.utils.ItemUtil;
+import su.nexmedia.engine.utils.PlayerUtil;
+import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.Placeholders;
-import su.nightexpress.nexshop.api.currency.ICurrency;
+import su.nightexpress.nexshop.api.currency.Currency;
 import su.nightexpress.nexshop.api.shop.CommandProduct;
 import su.nightexpress.nexshop.api.shop.ItemProduct;
 import su.nightexpress.nexshop.api.type.StockType;
@@ -25,8 +29,7 @@ import su.nightexpress.nexshop.shop.virtual.config.VirtualLang;
 import su.nightexpress.nexshop.shop.virtual.editor.VirtualLocales;
 import su.nightexpress.nexshop.shop.virtual.impl.product.VirtualProduct;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ProductMainEditor extends EditorMenu<ExcellentShop, VirtualProduct> {
 
@@ -55,8 +58,7 @@ public class ProductMainEditor extends EditorMenu<ExcellentShop, VirtualProduct>
             }
 
             ItemStack cursor = event.getCursor();
-            if (cursor == null || cursor.getType().isAir())
-                return;
+            if (cursor == null || cursor.getType().isAir()) return;
 
             if (product instanceof ItemProduct itemProduct) {
                 itemProduct.setItem(cursor);
@@ -75,16 +77,19 @@ public class ProductMainEditor extends EditorMenu<ExcellentShop, VirtualProduct>
                 locale = VirtualLocales.PRODUCT_PREVIEW;
                 original = commandProduct.getPreview();
 
-            } else return;
+            } else
+                return;
 
             item.setType(original.getType());
             item.setAmount(original.getAmount());
             item.setItemMeta(original.getItemMeta());
+            // Mewcraft start
             item.editMeta(meta -> {
                 meta.displayName(ComponentUtil.asComponent(locale.getLocalizedName()));
                 meta.lore(ComponentUtil.asComponent(locale.getLocalizedLore()));
                 meta.addItemFlags(ItemFlag.values());
             });
+            // Mewcraft end
         });
 
         // Akiranya starts - plugin item support
@@ -128,7 +133,7 @@ public class ProductMainEditor extends EditorMenu<ExcellentShop, VirtualProduct>
             } else if (event.isLeftClick()) {
                 this.getEditorPrice().open(viewer.getPlayer(), 1);
             } else {
-                List<ICurrency> currencies = new ArrayList<>(plugin.getCurrencyManager().getCurrencies());
+                List<Currency> currencies = new ArrayList<>(plugin.getCurrencyManager().getCurrencies());
                 int index = currencies.indexOf(product.getCurrency()) + 1;
                 if (index >= currencies.size()) index = 0;
                 product.setCurrency(currencies.get(index));
@@ -146,7 +151,7 @@ public class ProductMainEditor extends EditorMenu<ExcellentShop, VirtualProduct>
 
         this.getItems().forEach(menuItem -> {
             if (menuItem.getOptions().getDisplayModifier() == null) {
-                menuItem.getOptions().setDisplayModifier((viewer, item) -> ItemUtil.replaceNameAndLore(item, product.replacePlaceholders()));
+                menuItem.getOptions().setDisplayModifier((viewer, item) -> ItemUtil.replaceNameAndLore(item, product.replacePlaceholders())); // Mewcraft
             }
         });
     }
@@ -191,7 +196,8 @@ public class ProductMainEditor extends EditorMenu<ExcellentShop, VirtualProduct>
         }
     }
 
-    public @NotNull ProductPriceEditor getEditorPrice() {
+    @NotNull
+    public ProductPriceEditor getEditorPrice() {
         if (this.editorPrice == null) {
             this.editorPrice = new ProductPriceEditor(this.object);
         }

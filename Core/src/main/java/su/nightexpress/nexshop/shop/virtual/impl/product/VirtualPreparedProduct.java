@@ -8,8 +8,8 @@ import su.nightexpress.nexshop.api.event.VirtualShopTransactionEvent;
 import su.nightexpress.nexshop.api.shop.PreparedProduct;
 import su.nightexpress.nexshop.api.type.TradeType;
 import su.nightexpress.nexshop.config.Lang;
-import su.nightexpress.nexshop.shop.TransactionResult;
-import su.nightexpress.nexshop.shop.TransactionResult.Result;
+import su.nightexpress.nexshop.shop.util.TransactionResult;
+import su.nightexpress.nexshop.shop.util.TransactionResult.Result;
 import su.nightexpress.nexshop.shop.virtual.config.VirtualLang;
 import su.nightexpress.nexshop.shop.virtual.impl.shop.VirtualShop;
 
@@ -20,13 +20,14 @@ public class VirtualPreparedProduct extends PreparedProduct<VirtualProduct> {
     }
 
     @Override
-    protected @NotNull TransactionResult buy(@NotNull Player player) {
+    @NotNull
+    protected TransactionResult buy(@NotNull Player player) {
         VirtualProduct product = this.getProduct();
         VirtualShop shop = product.getShop();
         ExcellentShop plugin = shop.plugin();
 
         double price = this.getPrice();
-        double balance = product.getCurrency().getBalance(player);
+        double balance = product.getCurrency().getHandler().getBalance(player);
 
         Result result = TransactionResult.Result.SUCCESS;
         if (balance < price) {
@@ -47,7 +48,7 @@ public class VirtualPreparedProduct extends PreparedProduct<VirtualProduct> {
 
             // Process transaction
             product.delivery(player, this.getUnits());
-            product.getCurrency().take(player, price);
+            product.getCurrency().getHandler().take(player, price);
             shop.getBank().deposit(product.getCurrency(), price);
             shop.getModule().getLogger().logTransaction(event);
             plugin.getMessage(VirtualLang.PRODUCT_PURCHASE_BUY).replace(this.replacePlaceholders()).send(player);
@@ -56,7 +57,8 @@ public class VirtualPreparedProduct extends PreparedProduct<VirtualProduct> {
     }
 
     @Override
-    protected @NotNull TransactionResult sell(@NotNull Player player) {
+    @NotNull
+    protected TransactionResult sell(@NotNull Player player) {
         VirtualProduct product = this.getProduct();
         VirtualShop shop = product.getShop();
         ExcellentShop plugin = shop.plugin();
@@ -98,7 +100,7 @@ public class VirtualPreparedProduct extends PreparedProduct<VirtualProduct> {
 
             shop.getBank().withdraw(product.getCurrency(), price);
             shop.getModule().getLogger().logTransaction(event);
-            product.getCurrency().give(player, price);
+            product.getCurrency().getHandler().give(player, price);
             product.take(player, fined);
             plugin.getMessage(VirtualLang.PRODUCT_PURCHASE_SELL).replace(this.replacePlaceholders()).send(player);
         }

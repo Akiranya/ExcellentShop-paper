@@ -9,21 +9,32 @@ load-after:
   - name: NexEngine
     bootstrap: false
 dependencies:
-  - name: NexEngine
-    required: true
-    bootstrap: false
-  - name: MewCore
-    required: true
-    bootstrap: false
-  - name: Vault
-    required: false
-    bootstrap: false
-  - name: GemsEconomy
-    required: false
-    bootstrap: false
-  - name: PlayerPoints
-    required: false
-    bootstrap: false
-  - name: WorldGuard
-    required: false
-    bootstrap: false
+  server:
+    NexEngine:
+      load: BEFORE
+      required: true
+      join-classpath: true
+    MewCore: # TODO Make it optional
+      load: OMIT
+      required: true
+      join-classpath: true
+    Vault:
+      load: OMIT
+      required: false
+      join-classpath: true
+    CoinsEngine:
+      load: OMIT
+      required: false
+      join-classpath: true
+    GemsEconomy:
+      load: OMIT
+      required: false
+      join-classpath: true
+    PlayerPoints:
+      load: OMIT
+      required: false
+      join-classpath: true
+    WorldGuard:
+      load: OMIT
+      required: false
+      join-classpath: true

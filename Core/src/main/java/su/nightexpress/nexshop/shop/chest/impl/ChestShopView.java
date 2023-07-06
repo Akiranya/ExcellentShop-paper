@@ -19,9 +19,7 @@ import su.nightexpress.nexshop.api.shop.ShopView;
 import su.nightexpress.nexshop.api.type.ShopClickAction;
 import su.nightexpress.nexshop.config.Config;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class ChestShopView extends ShopView<ChestShop, ChestProduct> implements AutoPaged<ChestProduct> {
 
@@ -29,10 +27,10 @@ public class ChestShopView extends ShopView<ChestShop, ChestProduct> implements 
     private static List<String> PRODUCT_FORMAT_LORE;
 
     public ChestShopView(@NotNull ChestShop shop) {
-        super(shop, JYML.loadOrExtract(shop.plugin(), shop.getModule().getPath() + "view.yml"));
+        super(shop, JYML.loadOrExtract(shop.plugin(), shop.getModule().getLocalPath(), "view.yml"));
 
         PRODUCT_SLOTS = cfg.getIntArray("Product_Slots");
-        PRODUCT_FORMAT_LORE = cfg.getStringList("Product_Format.Lore.Text");
+        PRODUCT_FORMAT_LORE = cfg.getStringList("Product_Format.Lore.Text"); // Mewcraft - no legacy color
 
         this.registerHandler(MenuItemType.class)
             .addClick(MenuItemType.PAGE_NEXT, ClickHandler.forNextPage(this))
@@ -63,12 +61,14 @@ public class ChestShopView extends ShopView<ChestShop, ChestProduct> implements 
     }
 
     @Override
-    public @NotNull List<ChestProduct> getObjects(@NotNull Player player) {
+    @NotNull
+    public List<ChestProduct> getObjects(@NotNull Player player) {
         return new ArrayList<>(this.getShop().getProducts());
     }
 
     @Override
-    public @NotNull ItemStack getObjectStack(@NotNull Player player, @NotNull ChestProduct product) {
+    @NotNull
+    public ItemStack getObjectStack(@NotNull Player player, @NotNull ChestProduct product) {
         ItemStack preview = product.getPreview();
         preview.editMeta(meta -> {
             List<Component> lore = new ArrayList<>();
@@ -89,21 +89,18 @@ public class ChestShopView extends ShopView<ChestShop, ChestProduct> implements 
             lore = ComponentUtil.replace(lore, placeholderMap.replacer());
             meta.lore(lore);
         });
+
         return preview;
     }
 
     @Override
-    public @NotNull ItemClick getObjectClick(@NotNull ChestProduct product) {
+    @NotNull
+    public ItemClick getObjectClick(@NotNull ChestProduct product) {
         return (viewer, event) -> {
             ShopClickAction clickType = Config.GUI_CLICK_ACTIONS.get().get(event.getClick());
             if (clickType == null) return;
 
             product.prepareTrade(viewer.getPlayer(), clickType);
         };
-    }
-
-    @Override
-    public @NotNull Comparator<ChestProduct> getObjectSorter() {
-        return ((o1, o2) -> 0);
     }
 }

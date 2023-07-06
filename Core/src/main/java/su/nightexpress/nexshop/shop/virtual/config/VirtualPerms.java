@@ -7,9 +7,9 @@ import su.nightexpress.nexshop.Perms;
 public class VirtualPerms {
 
     private static final String PREFIX = Perms.PREFIX + "virtual.";
-    public static final String PREFIX_SHOP = PREFIX + "shop.";
     private static final String PREFIX_COMMAND = PREFIX + "command.";
     private static final String PREFIX_BYPASS = PREFIX + "bypass.";
+    public static final String PREFIX_SHOP = PREFIX + "shop.";
 
     public static final JPermission MODULE = new JPermission(PREFIX + PlaceholderConstants.WILDCARD, "Full access to the Virtual Shop module.");
     public static final JPermission SHOP = new JPermission(PREFIX_SHOP + PlaceholderConstants.WILDCARD, "Access to all the Virtual Shops.");

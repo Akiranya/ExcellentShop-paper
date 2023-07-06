@@ -10,14 +10,13 @@ import su.nexmedia.engine.utils.FileUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.nexshop.ExcellentShop;
 import su.nightexpress.nexshop.Placeholders;
-import su.nightexpress.nexshop.api.currency.ICurrency;
 import su.nightexpress.nexshop.api.shop.ItemProduct;
 import su.nightexpress.nexshop.api.shop.Product;
 import su.nightexpress.nexshop.api.type.TradeType;
-import su.nightexpress.nexshop.data.price.ProductPriceManager;
-import su.nightexpress.nexshop.data.stock.ProductStockManager;
-import su.nightexpress.nexshop.module.ModuleId;
-import su.nightexpress.nexshop.module.ShopModule;
+import su.nightexpress.nexshop.data.price.ProductPriceStorage;
+import su.nightexpress.nexshop.data.stock.ProductStockStorage;
+import su.nightexpress.nexshop.shop.module.ShopModule;
+import su.nightexpress.nexshop.shop.util.TransactionLogger;
 import su.nightexpress.nexshop.shop.virtual.command.SellMenuCommand;
 import su.nightexpress.nexshop.shop.virtual.command.ShopCommand;
 import su.nightexpress.nexshop.shop.virtual.command.child.EditorCommand;
@@ -40,18 +39,18 @@ import java.util.stream.Collectors;
 
 public class VirtualShopModule extends ShopModule {
 
+    public static final String ID = "virtual_shop";
     public static final String DIR_SHOPS = "/shops/";
-
-    public static ICurrency defaultCurrency;
 
     private final Map<String, VirtualShop> shops;
 
     private ShopMainMenu mainMenu;
     private ShopSellMenu sellMenu;
     private ShopListEditor editor;
+    private TransactionLogger logger;
 
     public VirtualShopModule(@NotNull ExcellentShop plugin) {
-        super(plugin, ModuleId.VIRTUAL_SHOP);
+        super(plugin, ID);
         this.shops = new HashMap<>();
     }
 
@@ -61,32 +60,30 @@ public class VirtualShopModule extends ShopModule {
         this.plugin.getLangManager().loadMissing(VirtualLang.class);
         this.plugin.getLangManager().loadEditor(VirtualLocales.class);
         this.plugin.getLang().saveChanges();
-        this.plugin.registerPermissions(VirtualPerms.class);
-
-        File dir = new File(this.getFullPath() + "shops");
-        if (!dir.exists()) {
-            for (String id : new String[]{"blocks", "brewing", "farmers_market", "fish_market", "food", "hostile_loot", "peaceful_loot", "tools", "weapons", "wool"}) {
-                this.plugin.getConfigManager().extractResources(this.getPath() + "shops/" + id);
-            }
-        }
-
         this.cfg.initializeOptions(VirtualConfig.class);
-        if ((defaultCurrency = plugin.getCurrencyManager().getCurrency(VirtualConfig.DEFAULT_CURRENCY.get())) == null) {
-            this.interruptLoad("Invalid default currency!");
-            return;
+        this.plugin.registerPermissions(VirtualPerms.class);
+        this.logger = new TransactionLogger(this);
+
+        File dir = new File(this.getAbsolutePath() + DIR_SHOPS);
+        if (!dir.exists()) {
+            System.out.println(dir.getAbsolutePath());
+            for (String id : new String[]{"blocks", "brewing", "farmers_market", "fish_market", "food", "hostile_loot", "peaceful_loot", "tools", "weapons", "wool"}) {
+                System.out.println("extract path: '" + (this.getLocalPath() + DIR_SHOPS + id) + "'");
+                this.plugin.getConfigManager().extractResources("/" + this.getLocalPath() + DIR_SHOPS + id);
+            }
         }
 
         this.loadShops();
         this.loadMainMenu();
 
-        this.moduleCommand.addChildren(new OpenCommand(this));
-        this.moduleCommand.addChildren(new EditorCommand(this));
+        this.command.addChildren(new OpenCommand(this));
+        this.command.addChildren(new EditorCommand(this));
 
         if (VirtualConfig.MAIN_MENU_ENABLED.get()) {
-            this.moduleCommand.addChildren(new MenuCommand(this));
+            this.command.addChildren(new MenuCommand(this));
         }
         if (VirtualConfig.SELL_MENU_ENABLED.get()) {
-            this.sellMenu = new ShopSellMenu(this, JYML.loadOrExtract(plugin, this.getPath() + "sell.menu.yml"));
+            this.sellMenu = new ShopSellMenu(this, JYML.loadOrExtract(plugin, this.getLocalPath(), "sell.menu.yml"));
             this.plugin.getCommandManager().registerCommand(new SellMenuCommand(this, VirtualConfig.SELL_MENU_COMMANDS.get().split(",")));
         }
         if (!VirtualConfig.SHOP_SHORTCUTS.get().isEmpty()) {
@@ -114,10 +111,10 @@ public class VirtualShopModule extends ShopModule {
     }
 
     private void loadShops() {
-        for (File folder : FileUtil.getFolders(this.getFullPath() + "shops")) {
+        for (File folder : FileUtil.getFolders(this.getAbsolutePath() + DIR_SHOPS)) {
             String id = folder.getName();
 
-            //<editor-fold desc="OLD DATA">
+            // ---------- OLD DATA START ----------
             File fileOld = new File(folder.getAbsolutePath(), folder.getName() + ".yml");
             File fileNew = new File(folder.getAbsolutePath(), "config.yml");
             if (fileOld.exists() && !fileNew.exists()) {
@@ -126,18 +123,19 @@ public class VirtualShopModule extends ShopModule {
                     continue;
                 }
             }
-            //</editor-fold>
+            // ---------- OLD DATA END ----------
 
             VirtualShop shop = new VirtualShop(this, new JYML(fileNew), id);
             if (shop.load()) {
                 this.getShopsMap().put(shop.getId(), shop);
-                ProductStockManager.loadData(shop).thenRun(() -> shop.getProducts().forEach(product -> product.getStock().unlock()));
-                ProductPriceManager.loadData(shop).thenRun(() -> shop.getProducts().forEach(product -> product.getPricer().update()));
+                //ProductStockStorage.loadData(shop).thenRun(() -> shop.getProducts().forEach(product -> product.getStock().unlock()));
+                //ProductPriceStorage.loadData(shop).thenRun(() -> shop.getProducts().forEach(product -> product.getPricer().update()));
             } else {
                 this.error("Shop not loaded: " + shop.getFile().getName());
             }
         }
         this.info("Shops Loaded: " + this.getShopsMap().size());
+        this.updateShopPricesStocks();
     }
 
     private void loadMainMenu() {
@@ -150,18 +148,31 @@ public class VirtualShopModule extends ShopModule {
         this.mainMenu = new ShopMainMenu(this);
     }
 
-    public @NotNull ShopListEditor getEditor() {
+    @NotNull
+    public TransactionLogger getLogger() {
+        return logger;
+    }
+
+    @NotNull
+    public ShopListEditor getEditor() {
         if (this.editor == null) {
             this.editor = new ShopListEditor(this);
         }
         return editor;
     }
 
+    public void updateShopPricesStocks() {
+        this.getShops().forEach(shop -> {
+            ProductStockStorage.loadData(shop).thenRun(() -> shop.getProducts().forEach(product -> product.getStock().unlock()));
+            ProductPriceStorage.loadData(shop).thenRun(() -> shop.getProducts().forEach(product -> product.getPricer().update()));
+        });
+    }
+
     public boolean createShop(@NotNull String id) {
         if (this.getShopById(id) != null) {
             return false;
         }
-        JYML cfg = new JYML(this.getFullPath() + DIR_SHOPS + id, "config.yml");
+        JYML cfg = new JYML(this.getAbsolutePath() + DIR_SHOPS + id, "config.yml");
         VirtualShop shop = new VirtualShop(this, cfg, id);
         shop.setName("<yellow><b>" + StringUtil.capitalizeFully(id.replace("_", " ")));
         shop.setDescription(List.of("<gray>Edit me in <green>/shop editor"));
@@ -193,16 +204,18 @@ public class VirtualShopModule extends ShopModule {
         return true;
     }
 
-    public @NotNull ShopSellMenu getSellMenu() {
+    @NotNull
+    public ShopSellMenu getSellMenu() {
         return sellMenu;
     }
 
-    public @Nullable ShopMainMenu getMainMenu() {
+    @Nullable
+    public ShopMainMenu getMainMenu() {
         return mainMenu;
     }
 
     public boolean delete(@NotNull VirtualShop shop) {
-        if (FileUtil.deleteRecursive(this.getFullPath() + DIR_SHOPS + shop.getId())) {
+        if (FileUtil.deleteRecursive(this.getAbsolutePath() + DIR_SHOPS + shop.getId())) {
             shop.clear();
             this.getShopsMap().remove(shop.getId());
             this.loadMainMenu();
@@ -211,19 +224,23 @@ public class VirtualShopModule extends ShopModule {
         return false;
     }
 
-    public @NotNull Map<String, VirtualShop> getShopsMap() {
+    @NotNull
+    public Map<String, VirtualShop> getShopsMap() {
         return this.shops;
     }
 
-    public @NotNull Collection<VirtualShop> getShops() {
+    @NotNull
+    public Collection<VirtualShop> getShops() {
         return this.getShopsMap().values();
     }
 
-    public @NotNull List<VirtualShop> getShops(@NotNull Player player) {
+    @NotNull
+    public List<VirtualShop> getShops(@NotNull Player player) {
         return this.getShops().stream().filter(shop -> shop.canAccess(player, false)).toList();
     }
 
-    public @Nullable VirtualShop getShopById(@NotNull String id) {
+    @Nullable
+    public VirtualShop getShopById(@NotNull String id) {
         return this.getShopsMap().get(id.toLowerCase());
     }
 
@@ -237,7 +254,6 @@ public class VirtualShopModule extends ShopModule {
      * @param item      the item to match with
      * @param tradeType the trade type
      * @param shop      the shop from which the product is searched
-     *
      * @return a product if there is a match, otherwise null
      */
     public @Nullable VirtualProduct getProductByItem(@NotNull Player player, @NotNull ItemStack item, @NotNull TradeType tradeType, @NotNull VirtualShop shop) {

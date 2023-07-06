@@ -8,17 +8,17 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.nexshop.ShopAPI;
-import su.nightexpress.nexshop.api.IScheduled;
-import su.nightexpress.nexshop.api.currency.ICurrency;
+import su.nightexpress.nexshop.api.currency.Currency;
 import su.nightexpress.nexshop.api.shop.ItemProduct;
 import su.nightexpress.nexshop.api.shop.Product;
 import su.nightexpress.nexshop.api.shop.ProductPricer;
 import su.nightexpress.nexshop.api.type.TradeType;
-import su.nightexpress.nexshop.currency.CurrencyId;
-import su.nightexpress.nexshop.shop.FlatProductPricer;
-import su.nightexpress.nexshop.shop.FloatProductPricer;
-import su.nightexpress.nexshop.shop.chest.config.ChestConfig;
+import su.nightexpress.nexshop.currency.CurrencyManager;
+import su.nightexpress.nexshop.shop.util.TimeUtils;
+import su.nightexpress.nexshop.shop.chest.ChestShopModule;
 import su.nightexpress.nexshop.shop.chest.menu.ProductPriceMenu;
+import su.nightexpress.nexshop.shop.price.FlatProductPricer;
+import su.nightexpress.nexshop.shop.price.FloatProductPricer;
 
 import java.util.UUID;
 
@@ -27,11 +27,11 @@ public class ChestProduct extends Product<ChestProduct, ChestShop, ChestProductS
     private ItemStack item;
     private ProductPriceMenu priceEditor;
 
-    public ChestProduct(@NotNull ICurrency currency, @NotNull ItemStack item) {
+    public ChestProduct(@NotNull Currency currency, @NotNull ItemStack item) {
         this(UUID.randomUUID().toString(), currency, item);
     }
 
-    public ChestProduct(@NotNull String id, @NotNull ICurrency currency, @NotNull ItemStack item) {
+    public ChestProduct(@NotNull String id, @NotNull Currency currency, @NotNull ItemStack item) {
         super(id, currency);
         this.setItem(item);
     }
@@ -50,8 +50,8 @@ public class ChestProduct extends Product<ChestProduct, ChestShop, ChestProductS
                 pricer.setPriceMax(TradeType.BUY, buyMax);
                 pricer.setPriceMin(TradeType.SELL, sellMin);
                 pricer.setPriceMin(TradeType.SELL, sellMax);
-                pricer.setDays(IScheduled.parseDays(cfg.getString(path + ".Purchase.Randomizer.Times.Days", "")));
-                pricer.setTimes(IScheduled.parseTimesOld(cfg.getStringList(path + ".Purchase.Randomizer.Times.Times")));
+                pricer.setDays(TimeUtils.parseDays(cfg.getString(path + ".Purchase.Randomizer.Times.Days", "")));
+                pricer.setTimes(TimeUtils.parseTimesOld(cfg.getStringList(path + ".Purchase.Randomizer.Times.Times")));
                 cfg.addMissing(path + ".Price.Type", pricer.getType().name());
                 pricer.write(cfg, path + ".Price");
             } else {
@@ -66,10 +66,10 @@ public class ChestProduct extends Product<ChestProduct, ChestShop, ChestProductS
             cfg.saveChanges();
         }
 
-        String currencyId = cfg.getString(path + ".Currency", CurrencyId.VAULT);
-        ICurrency currency = ShopAPI.getCurrencyManager().getCurrency(currencyId);
-        if (currency == null) {
-            currency = ChestConfig.DEFAULT_CURRENCY;
+        String currencyId = cfg.getString(path + ".Currency", CurrencyManager.VAULT);
+        Currency currency = ShopAPI.getCurrencyManager().getCurrency(currencyId);
+        if (currency == null || !ChestShopModule.isAllowedCurrency(currency)) {
+            currency = ChestShopModule.DEFAULT_CURRENCY;
         }
 
         ItemStack item = cfg.getItemEncoded(path + ".Reward.Item");
@@ -104,7 +104,7 @@ public class ChestProduct extends Product<ChestProduct, ChestShop, ChestProductS
 
     public @NotNull ProductPriceMenu getPriceEditor() {
         if (this.priceEditor == null) {
-            this.priceEditor = new ProductPriceMenu(this);
+            this.priceEditor = new ProductPriceMenu(this.getShop().plugin(), this);
         }
         return priceEditor;
     }

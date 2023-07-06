@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "su.nightexpress.excellentshop"
-version = "4.3.12"
+version = "4.4.1"
 
 repositories {
     maven("https://jitpack.io") {

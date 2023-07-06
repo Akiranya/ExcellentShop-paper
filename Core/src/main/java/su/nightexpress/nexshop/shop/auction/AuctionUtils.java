@@ -8,7 +8,7 @@ import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.NumberUtil;
 import su.nexmedia.engine.utils.TimeUtil;
 import su.nexmedia.engine.utils.random.Rnd;
-import su.nightexpress.nexshop.api.currency.ICurrency;
+import su.nightexpress.nexshop.api.currency.Currency;
 import su.nightexpress.nexshop.data.user.ShopUser;
 import su.nightexpress.nexshop.shop.auction.config.AuctionConfig;
 import su.nightexpress.nexshop.shop.auction.listing.AuctionCompletedListing;
@@ -38,23 +38,20 @@ public class AuctionUtils {
 
         for (int i = 0; i < 20; i++) {
             UUID ownerId = Rnd.get(owners.keySet());
-            if (ownerId == null) continue;
 
             String ownerName = owners.get(ownerId);
 
             ItemStack item = new ItemStack(Rnd.get(materials));
             item.setAmount(Rnd.get(1, item.getMaxStackSize()));
 
-            if ((ItemUtil.isArmor(item) || ItemUtil.isWeapon(item)) && Rnd.chance(30D)) {
+            if ((ItemUtil.isArmor(item) || ItemUtil.isSword(item) || ItemUtil.isTool(item)) && Rnd.chance(30D)) {
                 for (int y = 0; y < Rnd.get(4); y++) {
                     Enchantment enchantment = Rnd.get(Enchantment.values());
                     item.addUnsafeEnchantment(enchantment, Rnd.get(enchantment.getStartLevel(), enchantment.getMaxLevel()));
                 }
             }
 
-            ICurrency currency = Rnd.get(auctionManager.getCurrencies());
-            if (currency == null) currency = auctionManager.getCurrencyDefault();
-
+            Currency currency = Rnd.get(auctionManager.getCurrencies());
             double price = NumberUtil.round((int) Rnd.getDouble(50, 10_000D));
 
             LocalDateTime created = LocalDateTime.now().minusDays(Rnd.get(5)).minusHours(Rnd.get(6)).minusMinutes(Rnd.get(30));

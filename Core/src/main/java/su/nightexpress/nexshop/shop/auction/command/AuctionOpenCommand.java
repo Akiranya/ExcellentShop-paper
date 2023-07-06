@@ -16,30 +16,24 @@ public class AuctionOpenCommand extends AbstractOpenCommand {
 
     public AuctionOpenCommand(@NotNull AuctionManager module) {
         super(module, new String[]{"open"}, Perms.AUCTION_COMMAND_OPEN);
+        this.setDescription(plugin.getMessage(AuctionLang.COMMAND_OPEN_DESC));
     }
 
     @Override
-    public @NotNull String getUsage() {
-        return "";
-    }
-
-    @Override
-    public @NotNull String getDescription() {
-        return plugin.getMessage(AuctionLang.COMMAND_OPEN_DESC).getLocalized();
-    }
-
-    @Override
-    public @NotNull List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
+    @NotNull
+    public List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
         return Collections.emptyList();
     }
 
     @Override
-    protected @NotNull AuctionMainMenu getMenu() {
+    @NotNull
+    protected AuctionMainMenu getMenu() {
         return this.module.getMainMenu();
     }
 
     @Override
-    protected @Nullable Permission getPermissionsOthers() {
+    @Nullable
+    protected Permission getPermissionsOthers() {
         return Perms.AUCTION_COMMAND_OPEN;
     }
 }

@@ -7,15 +7,12 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JOption;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.hooks.Hooks;
-import su.nightexpress.nexshop.api.currency.ICurrency;
+import su.nightexpress.nexshop.api.currency.Currency;
 import su.nightexpress.nexshop.shop.auction.AuctionCategory;
 import su.nightexpress.nexshop.shop.auction.AuctionManager;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -47,7 +44,7 @@ public class AuctionConfig {
     public static Map<String, AuctionCategory> CATEGORIES_MAP;
 
     public static void load(@NotNull AuctionManager manager) {
-        JYML cfgCategories = JYML.loadOrExtract(manager.plugin(), manager.getPath() + "categories.yml");
+        JYML cfgCategories = JYML.loadOrExtract(manager.plugin(), manager.getLocalPath(), "categories.yml");
         JYML cfg = manager.getConfig();
         cfg.initializeOptions(AuctionConfig.class);
 
@@ -92,7 +89,7 @@ public class AuctionConfig {
 
             if (!isEnabled) continue;
 
-            ICurrency currency = manager.plugin().getCurrencyManager().getCurrency(curId);
+            Currency currency = manager.plugin().getCurrencyManager().getCurrency(curId);
             if (currency == null) {
                 manager.error("Invalid/Unknown currency provided: '" + curId + "'. Ignoring...");
                 continue;
@@ -112,14 +109,14 @@ public class AuctionConfig {
         }
         LISTINGS_DISABLED_MATERIALS = cfg.getStringSet(path + "Disabled_Materials").stream()
             .map(String::toUpperCase).collect(Collectors.toSet());
-        LISTINGS_DISABLED_NAMES = cfg.getStringSet(path + "Disabled_Names");
-        LISTINGS_DISABLED_LORES = cfg.getStringSet(path + "Disabled_Lores");
+        LISTINGS_DISABLED_NAMES = cfg.getStringSet(path + "Disabled_Names"); // Mewcraft
+        LISTINGS_DISABLED_LORES = cfg.getStringSet(path + "Disabled_Lores"); // Mewcraft
 
         path = "Settings.Listings.Price.";
 
         LISTINGS_PRICE_PER_CURRENCY = new HashMap<>();
         for (String curId : cfg.getSection(path + "Per_Currency")) {
-            ICurrency currency = manager.plugin().getCurrencyManager().getCurrency(curId);
+            Currency currency = manager.plugin().getCurrencyManager().getCurrency(curId);
             if (currency == null || !manager.getCurrencies().contains(currency)) continue;
 
             double pMin = cfg.getDouble(path + "Per_Currency." + curId + ".Min", -1);
@@ -170,15 +167,15 @@ public class AuctionConfig {
         return LISTINGS_PRICE_PER_MATERIAL.getOrDefault(material.name().toLowerCase(), new double[]{-1, -1})[index];
     }
 
-    public static double getCurrencyPriceMin(@NotNull ICurrency currency) {
+    public static double getCurrencyPriceMin(@NotNull Currency currency) {
         return getCurrencyPriceLimit(currency, 0);
     }
 
-    public static double getCurrencyPriceMax(@NotNull ICurrency currency) {
+    public static double getCurrencyPriceMax(@NotNull Currency currency) {
         return getCurrencyPriceLimit(currency, 1);
     }
 
-    private static double getCurrencyPriceLimit(@NotNull ICurrency currency, int index) {
+    private static double getCurrencyPriceLimit(@NotNull Currency currency, int index) {
         return LISTINGS_PRICE_PER_CURRENCY.getOrDefault(currency.getId(), new double[]{-1, -1})[index];
     }
 

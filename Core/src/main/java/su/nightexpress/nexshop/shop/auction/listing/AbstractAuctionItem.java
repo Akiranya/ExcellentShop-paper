@@ -8,11 +8,11 @@ import su.nexmedia.engine.api.placeholder.PlaceholderMap;
 import su.nexmedia.engine.utils.ComponentUtil;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.TimeUtil;
-import su.nightexpress.nexshop.api.currency.ICurrency;
+import su.nightexpress.nexshop.api.currency.Currency;
 import su.nightexpress.nexshop.shop.auction.Placeholders;
 import su.nightexpress.nexshop.shop.auction.config.AuctionConfig;
 
-import java.util.UUID;
+import java.util.*;
 
 public abstract class AbstractAuctionItem implements Placeholder {
 
@@ -21,7 +21,7 @@ public abstract class AbstractAuctionItem implements Placeholder {
     protected String ownerName;
     protected ItemStack itemStack;
     protected double price;
-    protected final ICurrency currency;
+    protected final Currency currency;
     protected final long dateCreation;
     protected PlaceholderMap placeholderMap;
 
@@ -30,7 +30,7 @@ public abstract class AbstractAuctionItem implements Placeholder {
         @NotNull UUID owner,
         @NotNull String ownerName,
         @NotNull ItemStack itemStack,
-        ICurrency currency,
+        Currency currency,
         double price,
         long dateCreation
     ) {
@@ -47,11 +47,10 @@ public abstract class AbstractAuctionItem implements Placeholder {
             .add(Placeholders.LISTING_DATE_CREATION, AuctionConfig.DATE_FORMAT.format(TimeUtil.getLocalDateTimeOf(this.getDateCreation())))
             .add(Placeholders.LISTING_ITEM_AMOUNT, String.valueOf(this.getItemStack().getAmount()))
             .add(Placeholders.LISTING_ITEM_NAME, ComponentUtil.asMiniMessage(ItemUtil.getName(this.getItemStack())))
-            //.add(Placeholders.LISTING_ITEM_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getItemStack()))))
+            /*.add(Placeholders.LISTING_ITEM_LORE, String.join("\n", ComponentUtil.asMiniMessage(ItemUtil.getLore(this.getItemStack()))))*/
             .add(Placeholders.LISTING_ITEM_VALUE, String.valueOf(ItemUtil.toBase64(this.getItemStack())))
             .add(Placeholders.LISTING_DELETES_IN, () -> TimeUtil.formatTimeLeft(this.getDeleteDate()))
-            .add(Placeholders.LISTING_DELETE_DATE, AuctionConfig.DATE_FORMAT.format(TimeUtil.getLocalDateTimeOf(this.getDeleteDate())))
-        ;
+            .add(Placeholders.LISTING_DELETE_DATE, AuctionConfig.DATE_FORMAT.format(TimeUtil.getLocalDateTimeOf(this.getDeleteDate())));
     }
 
     @Override
@@ -79,7 +78,7 @@ public abstract class AbstractAuctionItem implements Placeholder {
         return itemStack;
     }
 
-    public @NotNull ICurrency getCurrency() {
+    public @NotNull Currency getCurrency() {
         return currency;
     }
 

@@ -12,25 +12,19 @@ public class AuctionSellingCommand extends AbstractOpenCommand {
 
     public AuctionSellingCommand(@NotNull AuctionManager module) {
         super(module, new String[]{"selling", "listings"}, Perms.AUCTION_COMMAND_SELLING);
+        this.setDescription(plugin.getMessage(AuctionLang.COMMAND_SELLING_DESC));
+        this.setUsage(plugin.getMessage(AuctionLang.COMMAND_SELLING_USAGE));
     }
 
     @Override
-    public @NotNull String getUsage() {
-        return plugin.getMessage(AuctionLang.COMMAND_SELLING_USAGE).getLocalized();
-    }
-
-    @Override
-    public @NotNull String getDescription() {
-        return plugin.getMessage(AuctionLang.COMMAND_SELLING_DESC).getLocalized();
-    }
-
-    @Override
-    protected @NotNull AuctionSellingMenu getMenu() {
+    @NotNull
+    protected AuctionSellingMenu getMenu() {
         return this.module.getSellingMenu();
     }
 
     @Override
-    protected @Nullable Permission getPermissionsOthers() {
+    @Nullable
+    protected Permission getPermissionsOthers() {
         return Perms.AUCTION_COMMAND_SELLING_OTHERS;
     }
 }

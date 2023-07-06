@@ -4,10 +4,8 @@
 /buildSrc/build
 /Core/build
 /NMS/build
-/V1_17_R1/build
 /V1_18_R2/build
-/V1_19/build
-/V1_19_R2/build
 /V1_19_R3/build
+/V1_20_R1/build
 
 /ExcellentShop*.jar

@@ -5,16 +5,15 @@ import su.nexmedia.engine.api.config.JOption;
 import su.nightexpress.nexshop.Placeholders;
 import su.nightexpress.nexshop.api.type.StockType;
 import su.nightexpress.nexshop.api.type.TradeType;
-import su.nightexpress.nexshop.currency.CurrencyId;
 
 import java.util.*;
 
 public class VirtualConfig {
 
-    public static final JOption<String> DEFAULT_CURRENCY = JOption.create("General.Default_Currency", CurrencyId.VAULT,
+    /*public static final JOption<String>      DEFAULT_CURRENCY       = JOption.create("General.Default_Currency", CurrencyManager.VAULT,
         "Sets default currency for the Virtual Shop module.",
         "This currency will be used when you create new products or in case, where other currencies are not available.",
-        "Compatible plugins: https://github.com/nulli0n/ExcellentShop-spigot/wiki/Shop-Currency");
+        "Compatible plugins: https://github.com/nulli0n/ExcellentShop-spigot/wiki/Shop-Currency");*/
 
     public static final JOption<Boolean> MAIN_MENU_ENABLED = JOption.create("General.Main_Menu_Enabled", true,
         "When 'true', enables the Main Menu, where you can list all of your Virtual Shops.");
@@ -39,7 +38,8 @@ public class VirtualConfig {
 
     public static final JOption<String> SHOP_FORMAT_NAME = JOption.create("GUI.Shop_Format.Name", Placeholders.SHOP_NAME,
         "Sets display name for the shop item in the Main Menu.",
-        "You can use 'Shop' placeholders here:" + Placeholders.URL_WIKI_PLACEHOLDERS);
+        "You can use 'Shop' placeholders here:" + Placeholders.URL_WIKI_PLACEHOLDERS
+    ); // Mewcraft
 
     public static final JOption<List<String>> SHOP_FORMAT_LORE = JOption.create("GUI.Shop_Format.Lore",
         Arrays.asList(
@@ -49,7 +49,7 @@ public class VirtualConfig {
         ),
         "Sets lore for the shop item in the Main Menu.",
         "You can use 'Shop' placeholders here: " + Placeholders.URL_WIKI_PLACEHOLDERS
-    );
+    ); // Mewcraft
 
     public static final JOption<List<String>> PRODUCT_FORMAT_LORE_GENERAL_ALL = JOption.create("GUI.Product_Format.Lore.General.All",
         Arrays.asList(
@@ -77,7 +77,7 @@ public class VirtualConfig {
         "- %stock_player_buy% - Player limit info for purchase (if present)",
         "- %stock_player_sell% - Player limit info for sale (if present).",
         "You can use 'Product' placeholders here: " + Placeholders.URL_WIKI_PLACEHOLDERS
-    );
+    ); // Mewcraft
 
     public static final JOption<List<String>> PRODUCT_FORMAT_LORE_GENERAL_BUY_ONLY = JOption.create("GUI.Product_Format.Lore.General.Buy_Only",
         Arrays.asList(
@@ -101,7 +101,7 @@ public class VirtualConfig {
         "- %stock_global_buy% - Global stock info for purchase (if present)",
         "- %stock_player_buy% - Player limit info for purchase (if present).",
         "You can use 'Product' placeholders here: " + Placeholders.URL_WIKI_PLACEHOLDERS
-    );
+    ); // Mewcraft
 
     public static final JOption<List<String>> PRODUCT_FORMAT_LORE_GENERAL_SELL_ONLY = JOption.create("GUI.Product_Format.Lore.General.Sell_Only",
         Arrays.asList(
@@ -125,13 +125,13 @@ public class VirtualConfig {
         "- %stock_global_sell% - Global stock info for sale (if present)",
         "- %stock_player_sell% - Player limit info for sale (if present).",
         "You can use 'Product' placeholders here: " + Placeholders.URL_WIKI_PLACEHOLDERS
-    );
+    ); // Mewcraft
 
     public static final JOption<List<String>> PRODUCT_FORMAT_LORE_DISCOUNT = JOption.create("GUI.Product_Format.Lore.Discount",
         Collections.singletonList("<red><b>[!] <#C70039>SALE <yellow>" + Placeholders.PRODUCT_DISCOUNT_AMOUNT + "</yellow>% OFF</#C70039> [!]"),
         "Sets the discount display format when there is active discounts in the shop applicable to a product.",
         "You can use 'Product' placeholders here: " + Placeholders.URL_WIKI_PLACEHOLDERS
-    );
+    ); // Mewcraft
 
     public static final JOption<Map<StockType, Map<TradeType, List<String>>>> PRODUCT_FORMAT_LORE_STOCK = new JOption<Map<StockType, Map<TradeType, List<String>>>>("GUI.Product_Format.Lore.Stock",
         (cfg, path, def) -> {
@@ -155,8 +155,11 @@ public class VirtualConfig {
         "Sets the stock display format for each Stock and Trade types.",
         "If product stock settings is undefined, format will be skipped.",
         "You can use 'Product' placeholders here: " + Placeholders.URL_WIKI_PLACEHOLDERS
-    ).setWriter((cfg, path, map) ->
-        map.forEach((stockType, map1) ->
-            map1.forEach(((tradeType, lore) ->
-                cfg.set(path + "." + stockType.name() + "." + tradeType.name(), lore)))));
+    ).setWriter((cfg, path, map) -> {
+        map.forEach((stockType, map1) -> {
+            map1.forEach(((tradeType, lore) -> {
+                cfg.set(path + "." + stockType.name() + "." + tradeType.name(), lore);
+            }));
+        });
+    });
 }
