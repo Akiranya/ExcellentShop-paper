@@ -1,6 +1,6 @@
 plugins {
+    id("cc.mewcraft.repo-conventions")
     id("cc.mewcraft.java-conventions")
-    id("cc.mewcraft.repository-conventions")
 }
 
 group = "su.nightexpress.excellentshop"
