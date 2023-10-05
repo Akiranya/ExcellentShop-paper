@@ -1,6 +1,6 @@
 plugins {
     id("su.nightexpress.project-conventions")
-    alias(libs.plugins.paperweight.userdev)
+    alias(libs.plugins.paperdev)
 }
 
 dependencies {
