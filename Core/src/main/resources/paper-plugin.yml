@@ -14,10 +14,6 @@ dependencies:
       load: BEFORE
       required: true
       join-classpath: true
-    MewCore: # TODO Make it optional
-      load: OMIT
-      required: true
-      join-classpath: true
     Vault:
       load: OMIT
       required: false
