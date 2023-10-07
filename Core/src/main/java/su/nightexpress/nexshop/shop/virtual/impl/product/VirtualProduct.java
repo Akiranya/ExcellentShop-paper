@@ -14,9 +14,9 @@ import su.nightexpress.nexshop.api.shop.ProductPricer;
 import su.nightexpress.nexshop.api.type.StockType;
 import su.nightexpress.nexshop.api.type.TradeType;
 import su.nightexpress.nexshop.currency.CurrencyManager;
-import su.nightexpress.nexshop.shop.util.TimeUtils;
 import su.nightexpress.nexshop.shop.price.FlatProductPricer;
 import su.nightexpress.nexshop.shop.price.FloatProductPricer;
+import su.nightexpress.nexshop.shop.util.TimeUtils;
 import su.nightexpress.nexshop.shop.virtual.editor.menu.ProductMainEditor;
 import su.nightexpress.nexshop.shop.virtual.impl.shop.VirtualShop;
 
@@ -136,7 +136,7 @@ public abstract class VirtualProduct extends Product<VirtualProduct, VirtualShop
             // Akiranya starts - plugin item support
             if (itemProduct.getPluginItem() != null) {
                 cfg.set(path + ".Plugin_Item_Enabled", itemProduct.isRespectPluginItem());
-                cfg.set(path + ".Content.Plugin_Item", itemProduct.getPluginItem().asReference());
+                cfg.set(path + ".Content.Plugin_Item", itemProduct.getPluginItem().getReference());
                 cfg.set(path + ".Content.Plugin_Item_Amount", itemProduct.getPluginItemAmount());
             }
             // Akiranya ends

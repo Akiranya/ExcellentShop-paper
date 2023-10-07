@@ -1,6 +1,6 @@
 package su.nightexpress.nexshop.api.shop;
 
-import cc.mewcraft.mewcore.item.api.PluginItem;
+import cc.mewcraft.spatula.item.PluginItem;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

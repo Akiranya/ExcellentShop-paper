@@ -1,7 +1,7 @@
 package su.nightexpress.nexshop.shop.virtual.impl.product;
 
-import cc.mewcraft.mewcore.item.api.PluginItem;
-import cc.mewcraft.mewcore.item.api.PluginItemRegistry;
+import cc.mewcraft.spatula.item.PluginItem;
+import cc.mewcraft.spatula.item.PluginItemRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -80,7 +80,7 @@ public class VirtualItemProduct extends VirtualProduct implements ItemProduct {
     @Override
     public void setRespectPluginItem(final boolean respectPluginItem) {
         this.respectPluginItem = respectPluginItem;
-        this.setPluginItem(PluginItemRegistry.get().fromItemStackNullable(this.item));
+        this.setPluginItem(PluginItemRegistry.INSTANCE.byItemStackOrNull(this.item));
         this.setPluginItemAmount(this.item.getAmount());
     }
 

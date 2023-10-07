@@ -7,19 +7,12 @@ plugins {
 
 project.ext.set("name", "ExcellentShop")
 
-repositories {
-    maven("")
-}
-
 dependencies {
     // nms modules
     implementation(project(":NMS"))
     implementation(project(":V1_18_R2", configuration = "reobf"))
     implementation(project(":V1_19_R3", configuration = "reobf"))
     implementation(project(":V1_20_R1", configuration = "reobf"))
-
-    // my own libs
-    compileOnly(libs.mewcore)
 
     // server api
     compileOnly(libs.server.paper)
@@ -36,4 +29,7 @@ dependencies {
     // libs present as other plugins (not on Mewcraft server)
     compileOnly("com.github.TechFortress", "GriefPrevention", "16.17.1")
     compileOnly("com.github.angeschossen", "LandsAPI", "6.20.0")
+
+    // adds support for custom items from various plugins
+    compileOnly(libs.spatula.item)
 }
